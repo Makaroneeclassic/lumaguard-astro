@@ -101,9 +101,9 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
 
               {/* Meta details */}
               <div className="px-6 space-y-2">
-                <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition-colors">
+                <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition-colors">
                   {item.title}
-                </h3>
+                </h2>
                 <p className="text-slate-500 text-xs font-medium flex items-center gap-1">
                   📍 {item.location}
                 </p>

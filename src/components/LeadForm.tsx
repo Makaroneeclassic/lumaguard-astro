@@ -107,12 +107,14 @@ export default function LeadForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="col-span-1 md:col-span-2 space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-name" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 ชื่อ-นามสกุล *
               </label>
               <input
                 type="text"
                 required
+                id="lead-name"
+                autoComplete="name"
                 placeholder="ระบุชื่อของคุณ"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -122,12 +124,14 @@ export default function LeadForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-phone" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 เบอร์โทรศัพท์ติดต่อ *
               </label>
               <input
                 type="tel"
                 required
+                id="lead-phone"
+                autoComplete="tel"
                 placeholder="08X-XXX-XXXX"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -137,12 +141,14 @@ export default function LeadForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-district" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 เขต / อำเภอ (ที่ตั้งอาคาร) *
               </label>
               <input
                 type="text"
                 required
+                id="lead-district"
+                autoComplete="address-level2"
                 placeholder="เช่น วัฒนา, บางนา"
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
@@ -152,10 +158,11 @@ export default function LeadForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-property-type" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 ประเภทสิ่งปลูกสร้าง
               </label>
               <select
+                id="lead-property-type"
                 value={formData.propertyType}
                 onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
                 disabled={status === "submitting"}
@@ -169,11 +176,12 @@ export default function LeadForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-area-size" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 พื้นที่กระจกโดยประมาณ (ตร.ม.)
               </label>
               <input
                 type="number"
+                id="lead-area-size"
                 placeholder="เช่น 30, 150"
                 value={formData.areaSize}
                 onChange={(e) => setFormData({ ...formData, areaSize: e.target.value })}

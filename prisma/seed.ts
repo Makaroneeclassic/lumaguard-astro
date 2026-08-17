@@ -20,8 +20,17 @@ async function main() {
 
   // 1. Seed Admin User
   const adminEmail = process.env.ADMIN_EMAIL || "admin@lumaguardthailand.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "adminpassword123";
   const adminName = process.env.ADMIN_NAME || "Lumaguard Admin";
+
+  // เดิมมีค่าเริ่มต้นเป็น "adminpassword123" ซึ่งอันตราย เพราะถ้าลืมตั้ง
+  // ADMIN_PASSWORD จะได้บัญชีแอดมินที่ใช้รหัสผ่านซึ่งเดาได้ทันที
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword || adminPassword.length < 12) {
+    throw new Error(
+      "ต้องตั้ง ADMIN_PASSWORD ในไฟล์ .env และต้องยาวอย่างน้อย 12 ตัวอักษร\n" +
+        "สร้างรหัสผ่านได้ด้วย: openssl rand -base64 24",
+    );
+  }
 
   await prisma.user.upsert({
     where: { email: adminEmail },
@@ -70,164 +79,83 @@ async function main() {
     {
       routePath: "/",
       pageName: "Home Page",
-      title: "LUMAGUARD | Advanced Window Film Solutions Bangkok",
-      description: "Enjoy natural light without the intense heat. Reduce indoor temperature by up to 12°C with our advanced nano-ceramic window films.",
-      keywords: "window film, solar control, heat rejection, uv protection, bangkok window film, ceramic film",
-      ogTitle: "LUMAGUARD | Advanced Window Film Solutions",
-      ogDescription: "Enjoy natural light without the intense heat. Reduce indoor temperature by up to 12°C with our advanced nano-ceramic window films.",
+      title: "ฟิล์มกรองแสงอาคาร บ้าน คอนโด นาโนเซรามิก | LUMAGUARD",
+      description: "ติดฟิล์มกรองแสงบ้านและคอนโด ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก LUMAGUARD ประเมินราคาหน้างานฟรี",
+      keywords: "ฟิล์มกรองแสงบ้าน, ฟิล์มติดกระจกบ้าน, ฟิล์มกรองแสงคอนโด, ฟิล์มกันความร้อน, ฟิล์มนาโนเซรามิก",
+      ogTitle: "ฟิล์มกรองแสงอาคาร บ้าน คอนโด | LUMAGUARD",
+      ogDescription: "ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก ประเมินราคาหน้างานฟรี",
     },
     {
       routePath: "/products",
       pageName: "Products Page",
-      title: "Product Comparison & Specs | LUMAGUARD Window Films",
-      description: "Compare our window film series: Element Carbon, Guardian Ceramic, and Apex Multi-Layer Sputtered. Find the perfect fit for your home or office.",
-      keywords: "element carbon, guardian ceramic, apex sputter, window film specs, tser, irr",
-      ogTitle: "Product Comparison & Performance Matrix | LUMAGUARD",
-      ogDescription: "Compare our window film series: Element Carbon, Guardian Ceramic, and Apex Sputtered. Detailed technical data sheets.",
+      title: "เทียบสเปกฟิล์มกรองแสง 18 รุ่น 6 ซีรีส์ | LUMAGUARD",
+      description: "เปรียบเทียบค่า VLT, IRR, UVR และ TSER ของฟิล์มกรองแสงอาคารครบ 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex และ Guardian เลือกรุ่นที่เหมาะกับบ้านคุณ",
+      keywords: "สเปกฟิล์มกรองแสง, ค่า TSER, ค่า VLT, เปรียบเทียบฟิล์มกรองแสง, ฟิล์มเซรามิก",
+      ogTitle: "เทียบสเปกฟิล์มกรองแสงครบ 18 รุ่น | LUMAGUARD",
+      ogDescription: "เปรียบเทียบค่า VLT, IRR, UVR และ TSER ฟิล์มกรองแสงอาคารทั้ง 6 ซีรีส์ พร้อมตารางสเปกละเอียด",
     },
     {
       routePath: "/services",
       pageName: "Services & Installation Process",
-      title: "Our Services & Precision Installation Process | LUMAGUARD",
-      description: "Learn about our professional installation workflow, from site survey and laser measurements to dust-controlled application and digital warranty.",
-      keywords: "installation process, site survey, laser measurement, digital warranty, window film service",
-      ogTitle: "Professional Window Film Installation Process | LUMAGUARD",
-      ogDescription: "Learn about our professional installation workflow, from site survey and laser measurements to dust-controlled application.",
+      title: "บริการติดตั้งฟิล์มกรองแสง ขั้นตอนงานติดตั้ง | LUMAGUARD",
+      description: "ขั้นตอนการติดตั้งฟิล์มกรองแสงอาคารโดยทีมช่างมืออาชีพ ตั้งแต่สำรวจหน้างาน วัดขนาดกระจก ติดตั้งในพื้นที่ควบคุมฝุ่น พร้อมรับประกันคุณภาพงานติดตั้ง",
+      keywords: "ติดตั้งฟิล์มกรองแสง, ช่างติดฟิล์มกระจกบ้าน, ขั้นตอนติดฟิล์ม, รับติดฟิล์มอาคาร",
+      ogTitle: "บริการติดตั้งฟิล์มกรองแสงโดยทีมมืออาชีพ | LUMAGUARD",
+      ogDescription: "ตั้งแต่สำรวจหน้างาน วัดขนาดกระจก จนถึงติดตั้งในพื้นที่ควบคุมฝุ่น พร้อมรับประกันคุณภาพ",
     },
     {
       routePath: "/portfolio",
       pageName: "Portfolio Page",
-      title: "Bangkok Project Portfolio | LUMAGUARD Window Films",
-      description: "Explore our premium window film installations across Bangkok's finest residences, condos in Sukhumvit, and commercial offices.",
-      keywords: "portfolio, bangkok condo installation, luxury estate tinting, window film case studies",
-      ogTitle: "Bangkok Project Portfolio | LUMAGUARD",
-      ogDescription: "Explore our premium window film installations across Bangkok's finest residences, condos, and commercial offices.",
+      title: "ผลงานติดฟิล์มกรองแสง บ้านและคอนโดในกรุงเทพฯ | LUMAGUARD",
+      description: "รวมผลงานติดตั้งฟิล์มกรองแสงอาคาร บ้านเดี่ยว คอนโดมิเนียม และอาคารสำนักงานในกรุงเทพฯ ดูภาพงานจริงพร้อมรุ่นฟิล์มที่เลือกใช้ในแต่ละโครงการ",
+      keywords: "ผลงานติดฟิล์ม, ติดฟิล์มคอนโด กรุงเทพ, ติดฟิล์มบ้าน, ตัวอย่างงานติดฟิล์ม",
+      ogTitle: "ผลงานติดฟิล์มกรองแสงในกรุงเทพฯ | LUMAGUARD",
+      ogDescription: "ภาพงานติดตั้งจริงในบ้านเดี่ยว คอนโด และอาคารสำนักงานทั่วกรุงเทพฯ",
     },
     {
       routePath: "/contact",
       pageName: "Contact Us & FAQ Page",
-      title: "Contact & FAQ Support | LUMAGUARD Window Films",
-      description: "Get a free quote and on-site demonstration in Bangkok. Find answers to common questions about window film maintenance, warranty, and tech specs.",
-      keywords: "contact lumaguard, free quote bangkok, window film faq, warranty, window film care",
-      ogTitle: "Contact & Technical FAQ Support | LUMAGUARD",
-      ogDescription: "Get a free quote and on-site demonstration in Bangkok. Find answers to common questions about window film maintenance and warranty.",
+      title: "ติดต่อเรา ขอใบเสนอราคาฟรี | LUMAGUARD",
+      description: "ขอใบเสนอราคาติดฟิล์มกรองแสงบ้านและคอนโดฟรี พร้อมบริการประเมินหน้างานในกรุงเทพฯ และปริมณฑล ติดต่อทางโทรศัพท์หรือ LINE @LUMAGUARD ได้ทุกวัน",
+      keywords: "ขอใบเสนอราคาฟิล์มกรองแสง, ติดต่อ LUMAGUARD, ประเมินราคาติดฟิล์มฟรี",
+      ogTitle: "ติดต่อเรา ขอใบเสนอราคาฟรี | LUMAGUARD",
+      ogDescription: "ประเมินหน้างานและเสนอราคาฟรีในกรุงเทพฯ และปริมณฑล ติดต่อทางโทรศัพท์หรือ LINE",
     },
     {
       routePath: "/blog",
       pageName: "Blog Listing Page",
-      title: "Insights & Energy Efficiency Blog | LUMAGUARD",
-      description: "Read our latest articles on home comfort, solar heat reduction science, energy savings, privacy technology, and modern architecture.",
-      keywords: "blog, energy saving tips, window tinting guide, home comfort, uv protection insights",
-      ogTitle: "Insights & Energy Efficiency Blog | LUMAGUARD",
-      ogDescription: "Read our latest articles on home comfort, solar heat reduction science, energy savings, privacy technology, and modern architecture.",
+      title: "บทความฟิล์มกรองแสงอาคาร บ้าน และคอนโด | LUMAGUARD",
+      description: "รวมบทความและคู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง เทคนิคประหยัดค่าไฟ ฟิล์มนิรภัย และความรู้เรื่องฟิล์มนาโนเซรามิกจากทีมวิศวกร",
+      keywords: "บทความฟิล์มกรองแสง, วิธีเลือกฟิล์มกรองแสง, ลดความร้อนในบ้าน, ประหยัดค่าแอร์",
+      ogTitle: "บทความและคู่มือเลือกฟิล์มกรองแสง | LUMAGUARD",
+      ogDescription: "คู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง และเทคนิคประหยัดค่าไฟ",
     },
   ];
 
+  // ใช้ upsert เพื่อให้รัน seed ซ้ำแล้วค่า SEO อัปเดตตามไฟล์นี้ได้
+  // เดิมสร้างเฉพาะตอนยังไม่มีแถว ทำให้แก้ข้อความในไฟล์แล้วรันซ้ำก็ไม่มีผล
+  //
+  // ข้อควรระวัง: ถ้าภายหลังแก้ค่า SEO ผ่านหน้า /admin แล้วมารัน seed ซ้ำ
+  // ค่าที่แก้ไว้จะถูกเขียนทับด้วยค่าในไฟล์นี้
   for (const page of pagesSeo) {
-    const existingPageSeo = await prisma.seoPage.findUnique({
+    const data = {
+      pageName: page.pageName,
+      title: page.title,
+      description: page.description,
+      keywords: page.keywords,
+      ogTitle: page.ogTitle,
+      ogDescription: page.ogDescription,
+    };
+
+    await prisma.seoPage.upsert({
       where: { routePath: page.routePath },
+      update: data,
+      create: { routePath: page.routePath, ...data },
     });
-
-    if (!existingPageSeo) {
-      await prisma.seoPage.create({
-        data: {
-          routePath: page.routePath,
-          pageName: page.pageName,
-          title: page.title,
-          description: page.description,
-          keywords: page.keywords,
-          ogTitle: page.ogTitle,
-          ogDescription: page.ogDescription,
-        },
-      });
-      console.log(`Page SEO settings seeded for: ${page.routePath}`);
-    }
+    console.log(`Page SEO settings seeded/updated: ${page.routePath}`);
   }
 
-  // 4. Seed Blog Posts
-  const blogPosts = [
-    {
-      title: "How to Keep Your Home 12°C Cooler This Summer with Nano-Ceramic Window Film",
-      slug: "keep-home-12c-cooler-summer-nano-ceramic-film",
-      excerpt: "Discover the science behind nano-ceramic window films and how they can drastically reduce your AC bills while maintaining perfect visibility.",
-      content: `As global temperatures continue to rise, the struggle to maintain a comfortable indoor environment becomes more than just a matter of luxury—it's about sustainability and cost-efficiency. Traditional cooling methods often lead to skyrocketing energy bills, but the secret to a cooler home might lie in the very glass you look through.
-
-## The Science of Solar Rejection
-Nano-ceramic window films represent the pinnacle of light filtration technology. Unlike metallic films that interfere with electronic signals, nano-ceramic particles are small enough to be invisible to the naked eye but dense enough to block up to 99% of infrared heat and UV rays.
-
-In our recent laboratory tests, homes equipped with LUMAGUARD Titan series film maintained an internal surface temperature on furniture and flooring that was consistently 12.4°C lower than non-treated equivalents during peak sun hours.
-
-### Key Benefits of Nano-Ceramic Installation:
-- **Selective Filtration:** Allows natural visible light in while reflecting the thermal energy that causes heat gain.
-- **UV Protection:** Blocks 99.9% of harmful rays that fade your premium upholstery and hardwood floors.
-- **Signal Clarity:** Zero interference with 5G, Wi-Fi, or GPS signals due to the non-metallic composition.
-
-## Sustainable Luxury
-Beyond the immediate comfort, installing high-performance window film is an investment in your property's value. By reducing the load on your HVAC system, you extend the life of your equipment and significantly reduce your carbon footprint. It is the most invisible way to make a visible impact on your energy consumption.`,
-      coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuCAkS6xVyLEoNixpQdJGX08H9PZheN2B8h_EIlO6IgqKxEAllHs2hhuXXdVgPjKX2QAgnh0FvW9dcQQcmxqNnD3XuZnDT1ZjcO3DA7tkjaeAXM0SpX4jE4haaJmVKTmhgFG6lECesVYWFbYBcCfgT8OG6wdJw93gBAiJvFEDvyU4MXK3mcL2zW80l93RQIjT_GH2TjS4DGYxxc70GsZXFME3doQnqqlf9OuoCD-XySQIftDwqfO2Ce77MsRR_o4-Ks1H39eAFeovYrC",
-      authorName: "Marcus Thorne",
-      authorImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuBlljv2Ii_FXtn87-35BHHMI_vNKJnqjUZIy1L-7Uhuun-OA6wlgUtd1wD6CAsogVVjlX6kZbEYXJSu1kon0gcyTA69nQAvurMp50OiKqwNO4f2bByRkRtY3w1XP3NAYwF7KXTF3ZXOabSD7reGON7P6d_JGhUfy6eTh4LghtdnQ0UoOKrvbrbeANMBelc2m_SyjtkJmAAvJqfvh5SrwZSXHMjF3T2Pi1m9X3s-_Ys_f86sxzJkFo-JxXDL5G6ExtBMa1HYaGRo7mgk",
-      category: "Energy Efficiency",
-      readingTime: "8 min read",
-      seoTitle: "How to Keep Your Home 12°C Cooler This Summer | LUMAGUARD",
-      seoDesc: "Discover the science behind nano-ceramic window films and how they can drastically reduce your AC bills while maintaining perfect visibility.",
-      seoKeywords: "nano-ceramic window film, solar heat rejection, energy saving tips",
-    },
-    {
-      title: "Reinforcing Your Glass: A Security Masterclass",
-      slug: "reinforcing-glass-security-masterclass",
-      excerpt: "Learn how safety window films provide an invisible barrier against break-ins and accidental glass impacts.",
-      content: `Home security is multi-layered. While alarms and cameras warn you of an intrusion, they do not physical delay access. Windows are the primary entry point for intruders. This is where security window film acts as your invisible shield.
-
-## How Security Film Works
-Made from heavy-duty polyester and bonded by aggressive adhesives, security film is designed to hold shattered glass together. If a window is hit by a heavy object, the glass cracks but remains firmly held in the frame, preventing easy entry.
-
-### Critical Safety Benefits:
-- **Delay Intrusion:** Gives homeowners valuable minutes to contact authorities or move to safety.
-- **Accidental Impact Protection:** Prevents injury from flying glass shards during heavy storms or accidental impacts.
-- **Invisible Defense:** Maintains the pristine look of your luxury facade without needing unsightly metal bars.`,
-      coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuD6XfKzP8x0MdNxhYVPk904PiQtHp3soztCsw24md_pVD27VRql4zFOu9up1jo-KZxRSGW8NkriOsl0SAkf5GBKPL57vheZUvl-H0ol6vn9ZiScU2oLKaobIJox3Whe6NEDplA7mSfXeDPJJ7BagjZRGMteHGGMeObjUsLy8XCgfNlEyv7bXKNzokd2eGjP18FulstfCKQ5GidiHvwyGwHFfojS7mcZXiVeM4y1UArg-hrEecf0Mg8bWyU4JGh4fJ_-CxbjOhKT8bD_",
-      authorName: "Marcus Thorne",
-      authorImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuBlljv2Ii_FXtn87-35BHHMI_vNKJnqjUZIy1L-7Uhuun-OA6wlgUtd1wD6CAsogVVjlX6kZbEYXJSu1kon0gcyTA69nQAvurMp50OiKqwNO4f2bByRkRtY3w1XP3NAYwF7KXTF3ZXOabSD7reGON7P6d_JGhUfy6eTh4LghtdnQ0UoOKrvbrbeANMBelc2m_SyjtkJmAAvJqfvh5SrwZSXHMjF3T2Pi1m9X3s-_Ys_f86sxzJkFo-JxXDL5G6ExtBMa1HYaGRo7mgk",
-      category: "Home Security",
-      readingTime: "5 min read",
-      seoTitle: "Reinforcing Your Glass: Security Film Guide | LUMAGUARD",
-      seoDesc: "Learn how safety window films provide an invisible barrier against break-ins and accidental glass impacts.",
-      seoKeywords: "security window film, safety film, shatterproof glass",
-    },
-    {
-      title: "Preserving Your Artwork and Flooring from UV Damage",
-      slug: "preserving-artwork-flooring-uv-damage",
-      excerpt: "UV rays are the silent killers of fine art and upholstery. Learn how to block 99% of them while letting light in.",
-      content: `Discerning homeowners spend thousands on designer furniture, original artwork, and premium hardwood flooring. Yet, solar exposure is a constant threat. Ultraviolet radiation causes fading, discoloration, and structural degradation of materials.
-
-## The Chemistry of Fading
-Fading is caused by a combination of UV rays (40%), visible light (25%), and solar heat (25%). To truly protect your interior, you need a film that targets all three of these components.
-
-Our premium series filters block 99.9% of UV radiation. By selecting a film with targeted visible light transmission (VLT), you keep the interior bright while ensuring your assets are shielded.`,
-      coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnHJJO0eenAHHdgNQOkyM9AkSbPm1Y-d-E8fM9RgrzoCn0X1OhXVNc-tIDLh32pqEjSbRfz3rtkB7A5QEPmGw_oO6O_g_OtVxDbGrp3rplKQEFP9KFukYVVk2UgnR02gSljn4fqRzyPke3iK5JZv-hopvdJ5lBbKFeOQ70nPVCcvHsDq1NUAlxHcSP7paWEooOGrsEbOiXFfbFD068sooTbYwnuOM5QQLI0_d7dMCoEMzam6wt9GbBxwlzmO9hjlVDFgKq_2kL1Pu1",
-      authorName: "Marcus Thorne",
-      authorImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuBlljv2Ii_FXtn87-35BHHMI_vNKJnqjUZIy1L-7Uhuun-OA6wlgUtd1wD6CAsogVVjlX6kZbEYXJSu1kon0gcyTA69nQAvurMp50OiKqwNO4f2bByRkRtY3w1XP3NAYwF7KXTF3ZXOabSD7reGON7P6d_JGhUfy6eTh4LghtdnQ0UoOKrvbrbeANMBelc2m_SyjtkJmAAvJqfvh5SrwZSXHMjF3T2Pi1m9X3s-_Ys_f86sxzJkFo-JxXDL5G6ExtBMa1HYaGRo7mgk",
-      category: "Interior Design",
-      readingTime: "6 min read",
-      seoTitle: "Protecting Art and Floors from UV Fading | LUMAGUARD",
-      seoDesc: "UV rays are the silent killers of fine art and upholstery. Learn how to block 99% of them while letting light in.",
-      seoKeywords: "uv protection, fading prevention, museum grade film",
-    },
-  ];
-
-  for (const post of blogPosts) {
-    const existingPost = await prisma.blogPost.findUnique({
-      where: { slug: post.slug },
-    });
-
-    if (!existingPost) {
-      await prisma.blogPost.create({
-        data: post,
-      });
-      console.log(`Blog post seeded: ${post.title}`);
-    }
-  }
+  // (บล็อกย้ายไปเก็บเป็น MDX ใน src/content/blog/ แล้ว ไม่ต้อง seed)
 
   // 5. Seed Portfolio Items
   const portfolioItems = [
@@ -235,7 +163,7 @@ Our premium series filters block 99.9% of UV radiation. By selecting a film with
       title: "The Monument Thong Lo",
       location: "Thong Lo, Bangkok",
       category: "condo",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCj3aBLG7sUb1FGlWSBzeQnmaSBjM2NzPffLQXB-ShkHLTdDVhvbCP2mUDtdJ6mZP3bjqSTzinczicYlea97m43CFG1MzlsLfjRJwOHjey3h6pJzeOiUpAngYd7JMAkFCxg1GDO1GKzU4EyZxK51rFewo9skCoHVBRAycVXLdgpPUzLOG0eUvdOATl4mQZ9r5kBIyIyvRfs4B9Oruxe-h-E6IxQI1IvYYWumILmNWizIB7nETJV_i7GxEuWtqOZoN6Vs0Z-gSHg6gYm",
+      image: "/images/gallery/portfolio-monument-thonglo.webp",
       altText: "Luxury condo penthouse Thong Lo floor to ceiling windows",
       seriesUsed: "Apex Sputter 20",
       areaSize: "45 m²",
@@ -245,7 +173,7 @@ Our premium series filters block 99.9% of UV radiation. By selecting a film with
       title: "Santi Pura Residence",
       location: "Bang Na, Bangkok",
       category: "house",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCI2UtsVnRDZPeKdjPpuFIqEzlMMvlaqGP8b5BOuvMFNtur0BsilWjUjbhCHZ0FAQRLaz-zWaGUEcLOvBv-APfQtIglErHMvkJKZiBwkwsE647NbZ5ID7qQ0W4IW5y8QOgs4bxNDRQibYQg_FlvKSBS_9WXgjjpffYzg4Ug0cXfxfBvFTSX0EHX3UtZOyprkktNj3o4TOWGdW7vWBwM4YfE_V-AUP8JP30cY2Ii9n2nBdy2Y9dVRDW3QyzQq1o5B4ZRm_-UVxFPRWjj",
+      image: "/images/gallery/portfolio-santipura-residence.webp",
       altText: "Modern tropical villa Bang Na with large pool windows",
       seriesUsed: "Guardian Ceramic 70",
       areaSize: "180 m²",
@@ -255,7 +183,7 @@ Our premium series filters block 99.9% of UV radiation. By selecting a film with
       title: "Park Origin Phrom Phong",
       location: "Sukhumvit 24, Bangkok",
       category: "condo",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDMAl99TSLKz9hLDWfKCxJdQz-VY0rq4AzQo1Y9tyz9vFlL9a8OameuPkzIDmPmsKpH0yBNUw6BtTjBCoUiOMh84VDGoiQeMRRMTX4Uk5z-pl1grjFFubrXyZng3CJTUdVOK4g2F4dXx279mySVIPHDQBye7nPFpK9ns7xhaRc7yGEL-F4uDRpZ6I5vosr_qgf0AR_6rqcHgMBKAsEIr323FAbBqFUJkdbi1wVzjbuLLuK6WoSqHRG5jP12TazLZBP-hOIHvzwlvgwA",
+      image: "/images/gallery/portfolio-park-origin-phrom-phong.webp",
       altText: "Bedroom windows with night vision film overlooking Sukhumvit",
       seriesUsed: "Guardian Ceramic 35",
       areaSize: "32 m²",
@@ -580,7 +508,7 @@ Our premium series filters block 99.9% of UV radiation. By selecting a film with
         btnLinkPrimary: "/products",
         btnTextSecondary: "ประเมินราคาฟรี",
         btnLinkSecondary: "/contact",
-        bgImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnVROa8cqtTIq7_9E77pWVQpAtdz9OLYdNAJ7nGW0-Pl85wCkGi0TDT4IRC8o2_losMlkRb5QnegGPx4_u0MVaiAWYYNMwu7tdJnBJELGDzJyglM3_6XRvyCyxsKjhJQqD5s1tnHDHHizvaveh6pLJ9txAywWBsS-P9hkWpsJi2CxLPrzth2GknOhZuPlU5e7EkonPV9LBs8uRncfTOiyFJaMUxuuYgULZyojPqmbtXJxF0zcZthUL4-xXMWwCc3-b2lxVlYYUc-NG",
+        bgImage: "/images/gallery/home-penthouse-interior.webp",
       },
       isActive: true,
     },

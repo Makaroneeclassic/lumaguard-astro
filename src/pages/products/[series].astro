@@ -37,11 +37,20 @@ interface Props {
 
 const { series, products } = Astro.props as Props;
 
+/**
+ * ราคาใน DB เก็บเป็นข้อความที่มีเครื่องหมายคั่นหลักพัน เช่น "1,800"
+ * ซึ่ง Number() แปลงไม่ได้และคืน NaN ทำให้ราคาที่แสดงและใน AggregateOffer
+ * ตกไปใช้ค่าสำรองที่ไม่ตรงความจริง จึงต้องตัดอักขระที่ไม่ใช่ตัวเลขออกก่อน
+ */
+const parsePrice = (value: unknown): number =>
+  Number(String(value ?? '').replace(/[^\d.]/g, ''));
+
 const prices = products
-  .map((p) => Number(p.price))
+  .map((p) => parsePrice(p.price))
   .filter((p) => Number.isFinite(p) && p > 0);
-const startingPrice = prices.length > 0 ? Math.min(...prices) : 1100;
-const highestPrice = prices.length > 0 ? Math.max(...prices) : startingPrice;
+const hasPrices = prices.length > 0;
+const startingPrice = hasPrices ? Math.min(...prices) : 0;
+const highestPrice = hasPrices ? Math.max(...prices) : 0;
 
 const canonical = absoluteUrl(`/products/${series.slug}`);
 const breadcrumb = [
@@ -51,7 +60,9 @@ const breadcrumb = [
 ];
 
 const title = `${series.displayName} — ${series.tag} | LUMAGUARD`;
-const description = `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ม. พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`;
+const description = hasPrices
+  ? `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ม. พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`
+  : `${series.subtitle} พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์ ปรึกษาและประเมินราคาหน้างานฟรี`;
 
 const productSchema = {
   '@context': 'https://schema.org',
@@ -61,7 +72,9 @@ const productSchema = {
   category: 'ฟิล์มกรองแสงอาคาร',
   brand: { '@type': 'Brand', name: BUSINESS.name },
   url: canonical,
-  ...(products.length > 0 && {
+  // ประกาศ offers เฉพาะเมื่ออ่านราคาได้จริง การส่งราคาที่ผิดไปให้ Google
+  // แย่กว่าการไม่ส่งเลย เพราะราคาใน rich result จะไม่ตรงกับที่ลูกค้าเจอ
+  ...(hasPrices && {
     offers: {
       '@type': 'AggregateOffer',
       priceCurrency: 'THB',
@@ -151,8 +164,17 @@ const FEATURES = [
       <div class="bg-primary/5 p-6 rounded-2xl border-l-4 border-primary space-y-2">
         <h3 class="font-headline font-bold text-primary text-sm">ประเมินราคาคุ้มค่าคุ้มราคา</h3>
         <p class="text-xs text-on-surface-variant leading-relaxed">
-          ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางเมตร</strong>
-          (คิดตามพื้นที่กระจกจริง) พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
+          {hasPrices ? (
+            <>
+              ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางเมตร</strong>
+              (คิดตามพื้นที่กระจกจริง) พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
+            </>
+          ) : (
+            <>
+              คิดราคาตามพื้นที่กระจกจริง พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
+              ทีมงานประเมินราคาหน้างานให้ฟรี
+            </>
+          )}
         </p>
       </div>
     </section>

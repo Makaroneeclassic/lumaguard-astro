@@ -61,8 +61,13 @@ export default function TopNavBar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
-          <button className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors">
-            <Search className="w-5 h-5" />
+          {/* TODO: ปุ่มนี้ยังไม่มี onClick — ยังไม่มีระบบค้นหาในเว็บ */}
+          <button
+            type="button"
+            aria-label="ค้นหา"
+            className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
+          >
+            <Search className="w-5 h-5" aria-hidden="true" />
           </button>
           <a
             href="/contact"
@@ -79,21 +84,30 @@ export default function TopNavBar() {
 
         {/* Mobile menu button */}
         <div className="md:hidden flex items-center gap-4">
-          <button className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors">
-            <Search className="w-5 h-5" />
+          {/* TODO: ปุ่มนี้ยังไม่มี onClick — ยังไม่มีระบบค้นหาในเว็บ */}
+          <button
+            type="button"
+            aria-label="ค้นหา"
+            className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
+          >
+            <Search className="w-5 h-5" aria-hidden="true" />
           </button>
           <button
+            type="button"
+            aria-label={mobileMenuOpen ? "ปิดเมนู" : "เปิดเมนู"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-on-surface p-2 rounded-lg hover:bg-surface-container-low transition-colors"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-surface/95 border-b border-outline-variant/10 px-6 py-8 space-y-4 animate-fade-in">
+        <div id="mobile-menu" className="md:hidden bg-surface/95 border-b border-outline-variant/10 px-6 py-8 space-y-4 animate-fade-in">
           <div className="flex flex-col space-y-4 font-headline font-bold text-lg">
             {navLinks.map((link) => (
               <a

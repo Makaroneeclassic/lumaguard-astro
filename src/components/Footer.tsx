@@ -18,9 +18,9 @@ export default function Footer() {
 
         {/* Column 2: Quick Links */}
         <div>
-          <h4 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
             เมนูด่วน
-          </h4>
+          </h2>
           <ul className="space-y-4 font-medium text-on-surface-variant">
             <li>
               <a href="/products" className="hover:text-primary transition-colors">
@@ -47,9 +47,9 @@ export default function Footer() {
 
         {/* Column 3: Resources */}
         <div>
-          <h4 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
             ข้อมูล & เอกสาร
-          </h4>
+          </h2>
           <ul className="space-y-4 font-medium text-on-surface-variant">
             <li>
               <a href="#" className="hover:text-primary transition-colors">
@@ -76,9 +76,9 @@ export default function Footer() {
 
         {/* Column 4: HQ Office */}
         <div>
-          <h4 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
             สำนักงานใหญ่
-          </h4>
+          </h2>
           <p className="text-on-surface-variant leading-relaxed mb-4">
             หลักสี่ กรุงเทพฯ
           </p>

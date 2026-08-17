@@ -208,9 +208,9 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               {/* Product Header & Series Badge */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
-                  <h4 className="text-base font-extrabold text-slate-900">
+                  <h3 className="text-base font-extrabold text-slate-900">
                     {product.series} Series {selectedSeries.length > 0 && product.name ? `(รุ่น ${product.name})` : ""}
-                  </h4>
+                  </h3>
                   <span className="text-xs text-slate-500 font-light">{product.technology}</span>
                 </div>
                 <span className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[10px] font-bold border ${getSeriesBadgeColor(product.series)}`}>
