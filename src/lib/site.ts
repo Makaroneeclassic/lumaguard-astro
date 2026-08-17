@@ -12,19 +12,26 @@ export const BUSINESS = {
   legalName: "LUMAGUARD Thailand",
   description:
     "ผู้ผลิตและติดตั้งฟิล์มกรองแสงอาคาร บ้าน คอนโด และฟิล์มใสกันรอยรถยนต์ (PPF) เทคโนโลยีนาโนเซรามิก",
-  // TODO: ยืนยันเบอร์โทรจริงก่อน deploy — ตัวเลขนี้เป็น placeholder
-  telephone: "",
+
+  /** รูปแบบ E.164 สำหรับ schema.org — ตัด 0 นำหน้าออกแล้วใส่รหัสประเทศ */
+  telephone: "+66983539369",
+  /** รูปแบบที่ใช้แสดงบนหน้าเว็บและใน tel: link */
+  telephoneDisplay: "098-353-9369",
+
   email: "",
   lineOfficialAccount: "@LUMAGUARD",
   lineUrl: "https://line.me/R/ti/p/@LUMAGUARD",
+
   address: {
-    // TODO: เติมเลขที่/ถนน/รหัสไปรษณีย์จริงก่อน deploy
+    // TODO: เติมเลขที่และถนนเมื่อพร้อม — Google Business Profile ต้องใช้ที่อยู่เต็ม
     streetAddress: "",
     addressLocality: "เขตหลักสี่",
     addressRegion: "กรุงเทพมหานคร",
-    postalCode: "",
+    // รหัสไปรษณีย์ของเขตหลักสี่ — รบกวนยืนยันอีกครั้งว่าตรงกับที่ตั้งจริง
+    postalCode: "10210",
     addressCountry: "TH",
   },
+
   areaServed: ["กรุงเทพมหานคร", "ปริมณฑล"],
   priceRange: "฿฿",
   sameAs: [] as string[], // TODO: ใส่ URL Facebook / Google Business Profile เมื่อสร้างแล้ว

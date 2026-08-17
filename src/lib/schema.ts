@@ -13,7 +13,9 @@ const WEBSITE_ID = `${SITE_URL}/#website`;
  * ติดตั้งฟิล์มอาคารมากที่สุด
  */
 export function buildSiteSchema() {
-  const hasAddress = Boolean(BUSINESS.address.streetAddress && BUSINESS.address.postalCode);
+  // ประกาศ address เมื่อรู้อย่างน้อยระดับเขตและจังหวัด ส่วนเลขที่/ถนน
+  // ใส่เพิ่มเมื่อมี — ที่อยู่ระดับเขตยังช่วย Local SEO ได้ ดีกว่าไม่ประกาศเลย
+  const hasAddress = Boolean(BUSINESS.address.addressLocality && BUSINESS.address.addressRegion);
 
   return {
     '@context': 'https://schema.org',
@@ -55,10 +57,12 @@ export function buildSiteSchema() {
         ...(hasAddress && {
           address: {
             '@type': 'PostalAddress',
-            streetAddress: BUSINESS.address.streetAddress,
+            ...(BUSINESS.address.streetAddress && {
+              streetAddress: BUSINESS.address.streetAddress,
+            }),
             addressLocality: BUSINESS.address.addressLocality,
             addressRegion: BUSINESS.address.addressRegion,
-            postalCode: BUSINESS.address.postalCode,
+            ...(BUSINESS.address.postalCode && { postalCode: BUSINESS.address.postalCode }),
             addressCountry: BUSINESS.address.addressCountry,
           },
         }),
