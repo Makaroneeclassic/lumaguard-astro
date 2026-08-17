@@ -1,0 +1,254 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar';
+import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd.astro';
+import PriceEstimator from '@/components/PriceEstimator';
+import { ALL_PRODUCTS_DATA } from '@/components/ProductMatrix';
+import { SERIES, type SeriesDetail } from '@/lib/series';
+import { buildBreadcrumbSchema } from '@/lib/schema';
+import { SITE_URL, BUSINESS, absoluteUrl } from '@/lib/site';
+import { prisma } from '@/lib/db';
+
+export async function getStaticPaths() {
+  // ชุดหน้าถูกกำหนดจาก SERIES ไม่ใช่จาก DB หน้าจึงครบเสมอแม้ DB ล่ม
+  let dbProducts: any[] = [];
+  try {
+    dbProducts = await prisma.product.findMany({ orderBy: { createdAt: 'asc' } });
+  } catch {
+    console.warn('[products/[series]] เชื่อม DB ไม่ได้ ใช้ข้อมูลสเปกจาก ProductMatrix แทน');
+  }
+
+  const source = dbProducts.length > 0 ? dbProducts : ALL_PRODUCTS_DATA;
+
+  return SERIES.map((series) => ({
+    params: { series: series.slug },
+    props: {
+      series,
+      products: source.filter((p: any) => p.series === series.dbName),
+    },
+  }));
+}
+
+interface Props {
+  series: SeriesDetail;
+  products: any[];
+}
+
+const { series, products } = Astro.props as Props;
+
+const prices = products
+  .map((p) => Number(p.price))
+  .filter((p) => Number.isFinite(p) && p > 0);
+const startingPrice = prices.length > 0 ? Math.min(...prices) : 1100;
+const highestPrice = prices.length > 0 ? Math.max(...prices) : startingPrice;
+
+const canonical = absoluteUrl(`/products/${series.slug}`);
+const breadcrumb = [
+  { name: 'หน้าแรก', url: '/' },
+  { name: 'ผลิตภัณฑ์', url: '/products' },
+  { name: series.displayName, url: `/products/${series.slug}` },
+];
+
+const title = `${series.displayName} — ${series.tag} | LUMAGUARD`;
+const description = `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ม. พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`;
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: series.displayName,
+  description: series.description,
+  category: 'ฟิล์มกรองแสงอาคาร',
+  brand: { '@type': 'Brand', name: BUSINESS.name },
+  url: canonical,
+  ...(products.length > 0 && {
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'THB',
+      lowPrice: startingPrice,
+      highPrice: highestPrice,
+      offerCount: products.length,
+      availability: 'https://schema.org/InStock',
+      seller: { '@id': `${SITE_URL}/#organization` },
+    },
+  }),
+};
+
+const FEATURES = [
+  {
+    heading: 'การสกัดความร้อนสูงสุด',
+    body: 'สกัดกั้นอินฟราเรดและความร้อนรังสีโซลาร์อย่างเต็มเปี่ยม ช่วยลดอุณหภูมิผิวสัมผัสกระจกภายในอาคารและประหยัดพลังงานแอร์ได้อย่างชัดเจน',
+  },
+  {
+    heading: 'ป้องกันรังสี UV 99.9%',
+    body: 'ปกป้องดูแลครอบครัวของคุณจากโรคผิวหนัง และยับยั้งการซีดจางเสียสภาพของชิ้นงานศิลปะ ตลอดจนเฟอร์นิเจอร์ไม้ราคาแพงในบ้าน',
+  },
+  {
+    heading: 'ไม่กวนคลื่นสัญญาณดิจิทัล',
+    body: 'โครงสร้างฟิล์มผ่านการสังเคราะห์ทางวิศวกรรม ช่วยให้คลื่นวิทยุ สัญญาณ 5G สัญญาณ Wi-Fi และเครื่องส่งสัญญาณ EasyPass ผ่านได้ 100% ไร้กังวล',
+  },
+];
+---
+
+<Layout title={title} description={description}>
+  <JsonLd schema={productSchema} />
+  <JsonLd schema={buildBreadcrumbSchema(breadcrumb)} />
+
+  <TopNavBar client:idle />
+
+  <main class="flex-grow pt-28 pb-24 font-body">
+    <nav aria-label="breadcrumb" class="max-w-7xl mx-auto px-6 mb-6">
+      <ol class="flex flex-wrap items-center gap-2 text-sm text-on-surface-variant">
+        {breadcrumb.slice(0, -1).map((crumb) => (
+          <li class="flex items-center gap-2">
+            <a href={crumb.url} class="hover:text-primary transition-colors">{crumb.name}</a>
+            <span aria-hidden="true">/</span>
+          </li>
+        ))}
+        <li aria-current="page" class="text-on-surface-variant/60">{series.displayName}</li>
+      </ol>
+    </nav>
+
+    <section class={`bg-gradient-to-br ${series.bannerBg} py-20 px-8 mb-20`}>
+      <div class="max-w-7xl mx-auto space-y-6">
+        <a
+          href="/products"
+          class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider opacity-80 hover:opacity-100 transition-opacity"
+        >
+          ← กลับสู่หน้าสินค้าทั้งหมด
+        </a>
+
+        <div class="space-y-4 max-w-4xl">
+          <span class="inline-block bg-white/10 px-3.5 py-1 rounded-full text-xs font-bold font-headline tracking-widest uppercase">
+            {series.tag}
+          </span>
+          <h1 class="text-4xl md:text-6xl font-extrabold font-headline tracking-tighter leading-tight">
+            {series.displayName}
+          </h1>
+          <p class="text-lg md:text-xl font-light opacity-90 max-w-3xl leading-relaxed">
+            {series.subtitle}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 mb-24 grid grid-cols-1 md:grid-cols-3 gap-8">
+      {FEATURES.map((feature) => (
+        <div class="bg-surface-container-low p-8 rounded-3xl border border-outline-variant/10 space-y-4">
+          <h2 class="text-xl font-bold font-headline text-primary">{feature.heading}</h2>
+          <p class="text-on-surface-variant text-sm font-light leading-relaxed">{feature.body}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 mb-28 space-y-6 max-w-3xl">
+      <h2 class="text-3xl md:text-4xl font-bold font-headline text-primary">
+        นวัตกรรมการลดอุณหภูมิอย่างชาญฉลาด
+      </h2>
+      <p class="text-on-surface-variant text-base leading-relaxed font-light">
+        {series.description}
+      </p>
+      <div class="bg-primary/5 p-6 rounded-2xl border-l-4 border-primary space-y-2">
+        <h3 class="font-headline font-bold text-primary text-sm">ประเมินราคาคุ้มค่าคุ้มราคา</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางเมตร</strong>
+          (คิดตามพื้นที่กระจกจริง) พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
+        </p>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 mb-28">
+      <h2 class="text-3xl font-bold font-headline text-primary mb-8 text-center md:text-left">
+        ตารางข้อมูลสเปกแต่ละความทึบ (Performance Matrix)
+      </h2>
+
+      {products.length === 0 ? (
+        <p class="text-on-surface-variant">ยังไม่มีข้อมูลสเปกของซีรีส์นี้</p>
+      ) : (
+        <div class="overflow-x-auto rounded-3xl border border-outline-variant/10 shadow-lg bg-surface-container-lowest">
+          <table class="w-full text-left border-collapse min-w-[900px]">
+            <caption class="sr-only">
+              ตารางเปรียบเทียบสเปก {series.displayName} ทุกระดับความทึบ
+            </caption>
+            <thead>
+              <tr class="bg-primary text-white text-xs md:text-sm font-headline">
+                <th scope="col" class="p-4 md:p-6 font-bold">ชื่อรุ่นผลิตภัณฑ์</th>
+                <th scope="col" class="p-4 md:p-6 font-bold">เทคโนโลยี</th>
+                <th scope="col" class="p-4 md:p-6 font-bold text-center">VLT (แสงส่องผ่าน)</th>
+                <th scope="col" class="p-4 md:p-6 font-bold text-center">IRR (900-1000nm)</th>
+                <th scope="col" class="p-4 md:p-6 font-bold text-center">IRR (1000-1700nm)</th>
+                <th scope="col" class="p-4 md:p-6 font-bold text-center">UVR (ป้องกันรังสี UV)</th>
+                <th scope="col" class="p-4 md:p-6 font-bold text-center">TSER (ลดความร้อนรวม)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 text-xs md:text-sm font-medium text-on-surface-variant">
+              {products.map((product, idx) => (
+                <tr class={idx % 2 === 1 ? 'bg-surface-container-low/30' : 'bg-white'}>
+                  <th scope="row" class="p-4 md:p-6 font-bold text-primary text-left">{product.name}</th>
+                  <td class="p-4 md:p-6">{product.technology || 'Ceramic Film'}</td>
+                  <td class="p-4 md:p-6 text-center font-mono">{product.vlt}</td>
+                  <td class="p-4 md:p-6 text-center font-mono">{product.irr}</td>
+                  <td class="p-4 md:p-6 text-center font-mono">{product.irr2 || '75%'}</td>
+                  <td class="p-4 md:p-6 text-center font-mono">{product.uvr}</td>
+                  <td class="p-4 md:p-6 text-center font-mono">{product.tser}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 mb-28">
+      <PriceEstimator client:visible />
+    </section>
+
+    <section class="max-w-4xl mx-auto px-6 text-center bg-surface-container-low p-12 rounded-3xl border border-outline-variant/10 space-y-6">
+      <h2 class="text-3xl font-bold font-headline text-primary">
+        สนใจติดตั้ง หรือประเมินราคาหน้างานฟรี?
+      </h2>
+      <p class="text-sm text-on-surface-variant font-light max-w-xl mx-auto">
+        ทีมวิศวกรผู้เชี่ยวชาญ LUMAGUARD พร้อมให้คำแนะนำเลือกรุ่นฟิล์มที่ตรงกับความท้าทายความร้อนของกระจกอาคารคุณ
+        พร้อมประเมินราคาฟรีไม่มีค่าใช้จ่าย
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          href="/contact"
+          class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-semibold text-on-primary transition-opacity hover:opacity-90"
+          data-gtm-event="cta_click"
+        >
+          ขอใบเสนอราคาฟรี
+        </a>
+        <a
+          href={BUSINESS.lineUrl}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center justify-center rounded-lg border border-outline-variant px-6 py-3 font-semibold text-primary transition-colors hover:bg-surface-container"
+          data-gtm-event="click_line"
+        >
+          สอบถามทาง LINE {BUSINESS.lineOfficialAccount}
+        </a>
+      </div>
+    </section>
+
+    <nav aria-label="ซีรีส์อื่น" class="max-w-7xl mx-auto px-6 mt-24 space-y-5">
+      <h2 class="text-2xl font-bold font-headline text-primary">ดูซีรีส์อื่น</h2>
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {SERIES.filter((s) => s.slug !== series.slug).map((other) => (
+          <li>
+            <a
+              href={`/products/${other.slug}`}
+              class="block h-full rounded-2xl border border-outline-variant/20 p-5 transition-shadow hover:shadow-md"
+            >
+              <span class="text-xs font-bold tracking-widest text-on-surface-variant/70">{other.tag}</span>
+              <h3 class="mt-1 font-bold font-headline text-primary">{other.displayName}</h3>
+              <p class="mt-2 text-sm text-on-surface-variant line-clamp-2">{other.subtitle}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </main>
+
+  <Footer client:visible />
+</Layout>
