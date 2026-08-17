@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { prisma } from '@/lib/db';
 import { z } from 'astro/zod';
+import { checkRateLimit } from '@/lib/ratelimit';
+import { notifyNewLead } from '@/lib/notify';
 
 // Force server rendering for this API route
 export const prerender = false;
@@ -25,8 +27,18 @@ const leadValidation = z.object({
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    // 0. Rate limit — honeypot กันได้แค่บอทที่กรอกทุกช่อง
+    //    ตัวที่ยิงตรงมาที่ endpoint ต้องกันด้วย rate limit
+    const { success: withinLimit } = await checkRateLimit(request, 'lead');
+    if (!withinLimit) {
+      return new Response(
+        JSON.stringify({ error: 'ส่งคำขอบ่อยเกินไป กรุณาลองใหม่อีกครั้งในภายหลัง' }),
+        { status: 429, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     const body = await request.json();
-    
+
     // 1. Zod Validation
     const parsed = leadValidation.safeParse(body);
     if (!parsed.success) {
@@ -73,17 +85,19 @@ export const POST: APIRoute = async ({ request }) => {
       console.error('[DB SAVE WARNING] Could not insert to database, falling back:', dbErr);
     }
 
-    // 4. Forward to sGTM (wrapped in Promise.allSettled)
+    // 4. ส่งต่อไปยัง sGTM และแจ้งเตือนทีมขาย
+    //
+    //    ต้อง await ให้เสร็จก่อนคืน response — บน serverless งานที่ยังค้างอยู่
+    //    หลังส่ง response แล้วอาจถูกตัดกลางคัน ทำให้ทั้ง tracking และ
+    //    การแจ้งเตือนหายไปเงียบ ๆ
+    const sideEffects: Promise<unknown>[] = [];
+
     const sgtmUrl = import.meta.env.SGTM_URL;
     if (sgtmUrl) {
-      const clientIp = request.headers.get('x-forwarded-for') || '';
-      const userAgent = request.headers.get('user-agent') || '';
       const gtmPreviewHeader = request.headers.get('x-gtm-server-preview') || '';
-      const eventId = data.eventId || (lead ? lead.id : `lead_${Date.now()}`);
-
       const sGtmPayload = {
         event_name: 'Lead',
-        event_id: eventId,
+        event_id: data.eventId || (lead ? lead.id : `lead_${Date.now()}`),
         user_data: {
           phone: data.phone.trim().replace(/^0/, '66'),
           name: data.name.trim()
@@ -94,11 +108,11 @@ export const POST: APIRoute = async ({ request }) => {
           recommended_film: data.recommendedFilm,
           gclid: data.gclid
         },
-        client_ip_address: clientIp,
-        client_user_agent: userAgent
+        client_ip_address: request.headers.get('x-forwarded-for') || '',
+        client_user_agent: request.headers.get('user-agent') || ''
       };
 
-      Promise.allSettled([
+      sideEffects.push(
         fetch(sgtmUrl, {
           method: 'POST',
           headers: {
@@ -107,16 +121,31 @@ export const POST: APIRoute = async ({ request }) => {
           },
           body: JSON.stringify(sGtmPayload)
         })
-      ]).then((results) => {
-        results.forEach((res) => {
-          if (res.status === 'rejected') {
-            console.error('[sGTM Dispatch Failed]', res.reason);
-          } else {
-            console.log('[sGTM Dispatch Success]', res.value.status);
-          }
-        });
-      });
+      );
     }
+
+    // แจ้งเตือนทำงานแม้บันทึก DB ไม่สำเร็จ — เดิมกรณีนั้นลีดจะหายไป
+    // เหลือแค่ console.error โดยไม่มีใครรู้ว่ามีลูกค้าติดต่อเข้ามา
+    sideEffects.push(
+      notifyNewLead({
+        name: data.name,
+        phone: data.phone,
+        district: data.district,
+        propertyType: data.propertyType,
+        areaSize: data.areaSize ? parseFloat(String(data.areaSize)) : null,
+        recommendedFilm: data.recommendedFilm,
+        utmSource: data.utmSource,
+        utmCampaign: data.utmCampaign,
+        gclid: data.gclid,
+        landingPage: data.landingPage,
+        savedToDatabase: lead !== null
+      })
+    );
+
+    const settled = await Promise.allSettled(sideEffects);
+    settled.forEach((res) => {
+      if (res.status === 'rejected') console.error('[lead] side effect failed:', res.reason);
+    });
 
     return new Response(
       JSON.stringify({ success: true, lead }),
