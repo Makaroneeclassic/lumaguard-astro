@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import SearchDialog from "@/components/SearchDialog";
 import { initializeTrafficSourceTracker } from "@/lib/utmTracker";
 
 export default function TopNavBar() {
@@ -61,14 +62,7 @@ export default function TopNavBar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
-          {/* TODO: ปุ่มนี้ยังไม่มี onClick — ยังไม่มีระบบค้นหาในเว็บ */}
-          <button
-            type="button"
-            aria-label="ค้นหา"
-            className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
-          >
-            <Search className="w-5 h-5" aria-hidden="true" />
-          </button>
+          <SearchDialog />
           <a
             href="/contact"
             onClick={() => {
@@ -84,14 +78,7 @@ export default function TopNavBar() {
 
         {/* Mobile menu button */}
         <div className="md:hidden flex items-center gap-4">
-          {/* TODO: ปุ่มนี้ยังไม่มี onClick — ยังไม่มีระบบค้นหาในเว็บ */}
-          <button
-            type="button"
-            aria-label="ค้นหา"
-            className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
-          >
-            <Search className="w-5 h-5" aria-hidden="true" />
-          </button>
+          <SearchDialog />
           <button
             type="button"
             aria-label={mobileMenuOpen ? "ปิดเมนู" : "เปิดเมนู"}

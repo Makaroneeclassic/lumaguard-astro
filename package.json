@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site .vercel/output/static",
     "preview": "astro preview",
     "astro": "astro",
     "db:push": "prisma db push",
@@ -40,6 +40,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/pg": "^8.21.0",
     "dotenv": "^17.4.2",
+    "pagefind": "^1.5.2",
     "prisma": "^7.9.1",
     "tsx": "^4.23.12"
   }
