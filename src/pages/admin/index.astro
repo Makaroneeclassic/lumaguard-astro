@@ -1,8 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import AtAGlance from '@/components/admin/AtAGlance';
-import LeadDashboard from '@/components/admin/LeadDashboard';
-import DbErrorBanner from '@/components/admin/DbErrorBanner';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 import { prisma } from '@/lib/db';
 import { getCollection } from 'astro:content';
 
@@ -65,13 +63,7 @@ try {
         </div>
       </div>
 
-      {dbError && <DbErrorBanner client:load context="โหลดแดชบอร์ด" />}
-      {!dbError && <AtAGlance client:load stats={stats} />}
-
-      <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
-        <h2 class="text-xl font-bold text-white mb-4">รายการสอบถาม (Leads) ล่าสุด</h2>
-        <LeadDashboard client:load initialLeads={leads} />
-      </div>
+      <AdminDashboard client:load stats={stats} leads={leads} dbError={dbError} />
     </div>
   </div>
 </Layout>
