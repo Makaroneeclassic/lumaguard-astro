@@ -79,78 +79,80 @@ async function main() {
     {
       routePath: "/",
       pageName: "Home Page",
-      title: "LUMAGUARD | Advanced Window Film Solutions Bangkok",
-      description: "Enjoy natural light without the intense heat. Reduce indoor temperature by up to 12°C with our advanced nano-ceramic window films.",
-      keywords: "window film, solar control, heat rejection, uv protection, bangkok window film, ceramic film",
-      ogTitle: "LUMAGUARD | Advanced Window Film Solutions",
-      ogDescription: "Enjoy natural light without the intense heat. Reduce indoor temperature by up to 12°C with our advanced nano-ceramic window films.",
+      title: "ฟิล์มกรองแสงอาคาร บ้าน คอนโด นาโนเซรามิก | LUMAGUARD",
+      description: "ติดฟิล์มกรองแสงบ้านและคอนโด ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก LUMAGUARD ประเมินราคาหน้างานฟรี",
+      keywords: "ฟิล์มกรองแสงบ้าน, ฟิล์มติดกระจกบ้าน, ฟิล์มกรองแสงคอนโด, ฟิล์มกันความร้อน, ฟิล์มนาโนเซรามิก",
+      ogTitle: "ฟิล์มกรองแสงอาคาร บ้าน คอนโด | LUMAGUARD",
+      ogDescription: "ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก ประเมินราคาหน้างานฟรี",
     },
     {
       routePath: "/products",
       pageName: "Products Page",
-      title: "Product Comparison & Specs | LUMAGUARD Window Films",
-      description: "Compare our window film series: Element Carbon, Guardian Ceramic, and Apex Multi-Layer Sputtered. Find the perfect fit for your home or office.",
-      keywords: "element carbon, guardian ceramic, apex sputter, window film specs, tser, irr",
-      ogTitle: "Product Comparison & Performance Matrix | LUMAGUARD",
-      ogDescription: "Compare our window film series: Element Carbon, Guardian Ceramic, and Apex Sputtered. Detailed technical data sheets.",
+      title: "เทียบสเปกฟิล์มกรองแสง 18 รุ่น 6 ซีรีส์ | LUMAGUARD",
+      description: "เปรียบเทียบค่า VLT, IRR, UVR และ TSER ของฟิล์มกรองแสงอาคารครบ 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex และ Guardian เลือกรุ่นที่เหมาะกับบ้านคุณ",
+      keywords: "สเปกฟิล์มกรองแสง, ค่า TSER, ค่า VLT, เปรียบเทียบฟิล์มกรองแสง, ฟิล์มเซรามิก",
+      ogTitle: "เทียบสเปกฟิล์มกรองแสงครบ 18 รุ่น | LUMAGUARD",
+      ogDescription: "เปรียบเทียบค่า VLT, IRR, UVR และ TSER ฟิล์มกรองแสงอาคารทั้ง 6 ซีรีส์ พร้อมตารางสเปกละเอียด",
     },
     {
       routePath: "/services",
       pageName: "Services & Installation Process",
-      title: "Our Services & Precision Installation Process | LUMAGUARD",
-      description: "Learn about our professional installation workflow, from site survey and laser measurements to dust-controlled application and digital warranty.",
-      keywords: "installation process, site survey, laser measurement, digital warranty, window film service",
-      ogTitle: "Professional Window Film Installation Process | LUMAGUARD",
-      ogDescription: "Learn about our professional installation workflow, from site survey and laser measurements to dust-controlled application.",
+      title: "บริการติดตั้งฟิล์มกรองแสง ขั้นตอนงานติดตั้ง | LUMAGUARD",
+      description: "ขั้นตอนการติดตั้งฟิล์มกรองแสงอาคารโดยทีมช่างมืออาชีพ ตั้งแต่สำรวจหน้างาน วัดขนาดกระจก ติดตั้งในพื้นที่ควบคุมฝุ่น พร้อมรับประกันคุณภาพงานติดตั้ง",
+      keywords: "ติดตั้งฟิล์มกรองแสง, ช่างติดฟิล์มกระจกบ้าน, ขั้นตอนติดฟิล์ม, รับติดฟิล์มอาคาร",
+      ogTitle: "บริการติดตั้งฟิล์มกรองแสงโดยทีมมืออาชีพ | LUMAGUARD",
+      ogDescription: "ตั้งแต่สำรวจหน้างาน วัดขนาดกระจก จนถึงติดตั้งในพื้นที่ควบคุมฝุ่น พร้อมรับประกันคุณภาพ",
     },
     {
       routePath: "/portfolio",
       pageName: "Portfolio Page",
-      title: "Bangkok Project Portfolio | LUMAGUARD Window Films",
-      description: "Explore our premium window film installations across Bangkok's finest residences, condos in Sukhumvit, and commercial offices.",
-      keywords: "portfolio, bangkok condo installation, luxury estate tinting, window film case studies",
-      ogTitle: "Bangkok Project Portfolio | LUMAGUARD",
-      ogDescription: "Explore our premium window film installations across Bangkok's finest residences, condos, and commercial offices.",
+      title: "ผลงานติดฟิล์มกรองแสง บ้านและคอนโดในกรุงเทพฯ | LUMAGUARD",
+      description: "รวมผลงานติดตั้งฟิล์มกรองแสงอาคาร บ้านเดี่ยว คอนโดมิเนียม และอาคารสำนักงานในกรุงเทพฯ ดูภาพงานจริงพร้อมรุ่นฟิล์มที่เลือกใช้ในแต่ละโครงการ",
+      keywords: "ผลงานติดฟิล์ม, ติดฟิล์มคอนโด กรุงเทพ, ติดฟิล์มบ้าน, ตัวอย่างงานติดฟิล์ม",
+      ogTitle: "ผลงานติดฟิล์มกรองแสงในกรุงเทพฯ | LUMAGUARD",
+      ogDescription: "ภาพงานติดตั้งจริงในบ้านเดี่ยว คอนโด และอาคารสำนักงานทั่วกรุงเทพฯ",
     },
     {
       routePath: "/contact",
       pageName: "Contact Us & FAQ Page",
-      title: "Contact & FAQ Support | LUMAGUARD Window Films",
-      description: "Get a free quote and on-site demonstration in Bangkok. Find answers to common questions about window film maintenance, warranty, and tech specs.",
-      keywords: "contact lumaguard, free quote bangkok, window film faq, warranty, window film care",
-      ogTitle: "Contact & Technical FAQ Support | LUMAGUARD",
-      ogDescription: "Get a free quote and on-site demonstration in Bangkok. Find answers to common questions about window film maintenance and warranty.",
+      title: "ติดต่อเรา ขอใบเสนอราคาฟรี | LUMAGUARD",
+      description: "ขอใบเสนอราคาติดฟิล์มกรองแสงบ้านและคอนโดฟรี พร้อมบริการประเมินหน้างานในกรุงเทพฯ และปริมณฑล ติดต่อทางโทรศัพท์หรือ LINE @LUMAGUARD ได้ทุกวัน",
+      keywords: "ขอใบเสนอราคาฟิล์มกรองแสง, ติดต่อ LUMAGUARD, ประเมินราคาติดฟิล์มฟรี",
+      ogTitle: "ติดต่อเรา ขอใบเสนอราคาฟรี | LUMAGUARD",
+      ogDescription: "ประเมินหน้างานและเสนอราคาฟรีในกรุงเทพฯ และปริมณฑล ติดต่อทางโทรศัพท์หรือ LINE",
     },
     {
       routePath: "/blog",
       pageName: "Blog Listing Page",
-      title: "Insights & Energy Efficiency Blog | LUMAGUARD",
-      description: "Read our latest articles on home comfort, solar heat reduction science, energy savings, privacy technology, and modern architecture.",
-      keywords: "blog, energy saving tips, window tinting guide, home comfort, uv protection insights",
-      ogTitle: "Insights & Energy Efficiency Blog | LUMAGUARD",
-      ogDescription: "Read our latest articles on home comfort, solar heat reduction science, energy savings, privacy technology, and modern architecture.",
+      title: "บทความฟิล์มกรองแสงอาคาร บ้าน และคอนโด | LUMAGUARD",
+      description: "รวมบทความและคู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง เทคนิคประหยัดค่าไฟ ฟิล์มนิรภัย และความรู้เรื่องฟิล์มนาโนเซรามิกจากทีมวิศวกร",
+      keywords: "บทความฟิล์มกรองแสง, วิธีเลือกฟิล์มกรองแสง, ลดความร้อนในบ้าน, ประหยัดค่าแอร์",
+      ogTitle: "บทความและคู่มือเลือกฟิล์มกรองแสง | LUMAGUARD",
+      ogDescription: "คู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง และเทคนิคประหยัดค่าไฟ",
     },
   ];
 
+  // ใช้ upsert เพื่อให้รัน seed ซ้ำแล้วค่า SEO อัปเดตตามไฟล์นี้ได้
+  // เดิมสร้างเฉพาะตอนยังไม่มีแถว ทำให้แก้ข้อความในไฟล์แล้วรันซ้ำก็ไม่มีผล
+  //
+  // ข้อควรระวัง: ถ้าภายหลังแก้ค่า SEO ผ่านหน้า /admin แล้วมารัน seed ซ้ำ
+  // ค่าที่แก้ไว้จะถูกเขียนทับด้วยค่าในไฟล์นี้
   for (const page of pagesSeo) {
-    const existingPageSeo = await prisma.seoPage.findUnique({
-      where: { routePath: page.routePath },
-    });
+    const data = {
+      pageName: page.pageName,
+      title: page.title,
+      description: page.description,
+      keywords: page.keywords,
+      ogTitle: page.ogTitle,
+      ogDescription: page.ogDescription,
+    };
 
-    if (!existingPageSeo) {
-      await prisma.seoPage.create({
-        data: {
-          routePath: page.routePath,
-          pageName: page.pageName,
-          title: page.title,
-          description: page.description,
-          keywords: page.keywords,
-          ogTitle: page.ogTitle,
-          ogDescription: page.ogDescription,
-        },
-      });
-      console.log(`Page SEO settings seeded for: ${page.routePath}`);
-    }
+    await prisma.seoPage.upsert({
+      where: { routePath: page.routePath },
+      update: data,
+      create: { routePath: page.routePath, ...data },
+    });
+    console.log(`Page SEO settings seeded/updated: ${page.routePath}`);
   }
 
   // (บล็อกย้ายไปเก็บเป็น MDX ใน src/content/blog/ แล้ว ไม่ต้อง seed)

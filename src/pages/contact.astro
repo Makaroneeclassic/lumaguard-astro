@@ -7,6 +7,7 @@ import PriceEstimator from '@/components/PriceEstimator';
 import { prisma } from '@/lib/db';
 import { MapPin, Phone, MessageSquare } from 'lucide-react';
 
+import { getPageSeo } from '@/lib/pageSeo';
 let globalSettings: any = null;
 try {
   globalSettings = await prisma.seoGlobal.findUnique({
@@ -35,8 +36,11 @@ const faqItems = [
   }
 ];
 
-const title = "ติดต่อเรา & FAQ | LUMAGUARD";
-const description = "ติดต่อทีมงานผู้เชี่ยวชาญ LUMAGUARD เพื่อขอรับคำปรึกษา การวัดขนาดพื้นที่กระจกฟรี หรือขอใบเสนอราคาฟิล์มติดบ้าน คอนโด";
+const seo = await getPageSeo('/contact', {
+  title: "ติดต่อเรา & FAQ | LUMAGUARD",
+  description: "ติดต่อทีมงานผู้เชี่ยวชาญ LUMAGUARD เพื่อขอรับคำปรึกษา การวัดขนาดพื้นที่กระจกฟรี หรือขอใบเสนอราคาฟิล์มติดบ้าน คอนโด",
+});
+const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>

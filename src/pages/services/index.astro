@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import PriceEstimator from '@/components/PriceEstimator';
 import LeadForm from '@/components/LeadForm';
 
+import { getPageSeo } from '@/lib/pageSeo';
 const processSteps = [
   {
     stepNo: "01",
@@ -28,8 +29,11 @@ const processSteps = [
   }
 ];
 
-const title = "ขั้นตอนการบริการมาตรฐานสากล | LUMAGUARD";
-const description = "ขั้นตอนการให้บริการและติดตั้งฟิล์มกรองแสงมาตรฐานระดับมืออาชีพ วัดพื้นที่ฟรี การเตรียมพื้นที่ และรับประกันดิจิทัล";
+const seo = await getPageSeo('/services', {
+  title: "ขั้นตอนการบริการมาตรฐานสากล | LUMAGUARD",
+  description: "ขั้นตอนการให้บริการและติดตั้งฟิล์มกรองแสงมาตรฐานระดับมืออาชีพ วัดพื้นที่ฟรี การเตรียมพื้นที่ และรับประกันดิจิทัล",
+});
+const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>

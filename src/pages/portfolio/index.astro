@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import PortfolioList from '@/components/PortfolioList';
 import { prisma } from '@/lib/db';
 
+import { getPageSeo } from '@/lib/pageSeo';
 let items: any[] = [];
 try {
   items = await prisma.portfolioItem.findMany({
@@ -41,8 +42,11 @@ if (items.length === 0) {
   ];
 }
 
-const title = "ผลงานการติดตั้งฟิล์มจริง คอนโดและบ้านหรู | LUMAGUARD";
-const description = "ชมภาพผลงานการติดตั้งฟิล์มกรองแสงบ้าน คอนโดมิเนียม และอาคารสำนักงานจริงทั่วกรุงเทพฯ และปริมณฑล โดยช่างผู้เชี่ยวชาญ LUMAGUARD";
+const seo = await getPageSeo('/portfolio', {
+  title: "ผลงานการติดตั้งฟิล์มจริง คอนโดและบ้านหรู | LUMAGUARD",
+  description: "ชมภาพผลงานการติดตั้งฟิล์มกรองแสงบ้าน คอนโดมิเนียม และอาคารสำนักงานจริงทั่วกรุงเทพฯ และปริมณฑล โดยช่างผู้เชี่ยวชาญ LUMAGUARD",
+});
+const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>

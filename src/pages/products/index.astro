@@ -7,6 +7,7 @@ import FilmSelector from '@/components/FilmSelector';
 import PriceEstimator from '@/components/PriceEstimator';
 import { prisma } from '@/lib/db';
 
+import { getPageSeo } from '@/lib/pageSeo';
 let products: any[] = [];
 try {
   products = await prisma.product.findMany({
@@ -20,8 +21,11 @@ if (products.length === 0) {
   products = ALL_PRODUCTS_DATA;
 }
 
-const title = "รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก 18 รุ่น | LUMAGUARD";
-const description = "สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสงบ้านและคอนโด LUMAGUARD ครบทั้ง 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex, Guardian เพื่อการกันความร้อนสูงสุด";
+const seo = await getPageSeo('/products', {
+  title: "รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก 18 รุ่น | LUMAGUARD",
+  description: "สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสงบ้านและคอนโด LUMAGUARD ครบทั้ง 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex, Guardian เพื่อการกันความร้อนสูงสุด",
+});
+const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>
