@@ -1,0 +1,50 @@
+---
+import { BUSINESS } from '@/lib/site';
+
+interface Props {
+  /** หน้าปลายทาง มาจาก relatedServiceUrl ใน frontmatter */
+  href: string;
+  heading?: string;
+  body?: string;
+  /** ใช้แยก event ใน GA4 ว่า CTA ตัวไหนสร้างลีด */
+  position?: 'inline' | 'end';
+}
+
+const {
+  href,
+  heading = 'อยากรู้ว่าบ้านคุณเหมาะกับฟิล์มรุ่นไหน?',
+  body = 'ทีมงานประเมินหน้างานและเสนอราคาให้ฟรี ไม่มีค่าใช้จ่าย',
+  position = 'end',
+} = Astro.props;
+---
+
+<aside
+  class="not-prose my-10 rounded-2xl border border-sky-200 bg-sky-50/70 p-6 md:p-8 space-y-4"
+  data-cta-position={position}
+>
+  <div class="space-y-2">
+    <h2 class="text-xl md:text-2xl font-bold text-slate-900">{heading}</h2>
+    <p class="text-slate-600 leading-relaxed">{body}</p>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-3">
+    <a
+      href={href}
+      class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-5 py-3 font-semibold text-white transition-colors hover:bg-slate-800"
+      data-gtm-event="cta_click"
+      data-cta-position={position}
+    >
+      ขอใบเสนอราคาฟรี
+    </a>
+    <a
+      href={BUSINESS.lineUrl}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+      data-gtm-event="click_line"
+      data-cta-position={position}
+    >
+      สอบถามทาง LINE {BUSINESS.lineOfficialAccount}
+    </a>
+  </div>
+</aside>

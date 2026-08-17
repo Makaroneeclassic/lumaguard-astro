@@ -1,6 +1,7 @@
 ---
 import SEO from '../components/SEO.astro';
 import JsonLd from '../components/JsonLd.astro';
+import { buildSiteSchema } from '@/lib/schema';
 import '../styles/global.css';
 
 interface Props {
@@ -25,11 +26,22 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <!-- Google Fonts & Material Symbols -->
+    <!--
+      โหลดเฉพาะ Noto Sans Thai เท่านั้น
+
+      Manrope กับ Inter เคยถูกโหลดด้วย แต่ใน global.css ทั้งคู่อยู่หลัง
+      "Noto Sans Thai" ในลำดับ fallback และ Noto Sans Thai มีกลุ่มอักษรละติน
+      ครบอยู่แล้ว ทั้งสองจึงไม่มีวันถูกใช้เรนเดอร์ — เป็นการดาวน์โหลดเปล่า 8 น้ำหนัก
+      ส่วน Material Symbols มีแค่คลาสใน global.css ไม่มี markup ไหนเรียกใช้
+
+      น้ำหนัก 300-900 คงไว้ทั้งหมดเพราะถูกใช้จริงทุกตัวในหน้าเว็บ
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     
     <SEO 
       title={title} 
@@ -41,6 +53,8 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
       noindex={noindex} 
     />
     
+    <!-- Organization + WebSite + LocalBusiness ผูกกันด้วย @id ใส่ทุกหน้า -->
+    <JsonLd schema={buildSiteSchema()} />
     {schema && <JsonLd schema={schema} />}
     
     <!-- Consent Mode v2 Default Settings -->

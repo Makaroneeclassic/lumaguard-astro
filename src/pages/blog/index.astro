@@ -1,98 +1,87 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar';
 import Footer from '@/components/Footer';
-import { prisma } from '@/lib/db';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import JsonLd from '@/components/JsonLd.astro';
+import { getPublishedPosts } from '@/lib/blog';
+import { buildBreadcrumbSchema } from '@/lib/schema';
 
-let posts: any[] = [];
-try {
-  posts = await prisma.blogPost.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' },
-  });
-} catch (e) {
-  console.warn("Database connection failed for blog listing, using fallbacks.");
-}
+const posts = await getPublishedPosts();
 
-if (posts.length === 0) {
-  posts = [
-    {
-      id: "1",
-      title: "วิธีลดอุณหภูมิบ้านลงสูงสุด 12°C ช่วงหน้าร้อนด้วยฟิล์มนาโนเซรามิค",
-      slug: "keep-home-cooler-nano-ceramic-film",
-      excerpt: "เจาะลึกวิทยาศาสตร์เบื้องหลังฟิล์มนาโนเซรามิกระดับพรีเมียม วิธีลดอุณหภูมิห้องลงอย่างเห็นได้ชัดและประหยัดค่าไฟทันที",
-      coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuCtRl__yxJ6Fs5rzjxxFoGNYt8SZbMncfyQnx5m7KHY06IiClHr1HazLSVAa8Tzutg4o0HZ4mdHZxnycwarQMVSHeOGVnpDM8xb6JV4avzMJSaTyEZzeNfgjZWzSV12AG3A0eC3tFT4vUJgCFx01YEBg98SznHzSVzN-vFzde3NPFzGbcvKsVBx_FW6x6L8DtNKake2QrT6PGShJQ1_2dsw76aR20Y2GFh037q-TxD5iXPJuUZbiXTVj4QtcLCRYn_ykcacTzLVFiDN",
-      category: "Energy Efficiency",
-      readingTime: "8 min read",
-      createdAt: new Date("2026-06-12"),
-    },
-    {
-      id: "2",
-      title: "ไขข้อข้องใจ: ฟิล์มติดอาคารต่างจากฟิล์มติดรถยนต์อย่างไร?",
-      slug: "architectural-vs-automotive-window-film",
-      excerpt: "ทำไมไม่ควรเอาฟิล์มรถยนต์มาติดกระจกบ้าน ความแตกต่างของชั้นกาว ค่าการอมความร้อน และกาวพิเศษที่ไม่ส่งผลต่อกระจกอาคาร",
-      coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuCj3aBLG7sUb1FGlWSBzeQnmaSBjM2NzPffLQXB-ShkHLTdDVhvbCP2mUDtdJ6mZP3bjqSTzinczicYlea97m43CFG1MzlsLfjRJwOHjey3h6pJzeOiUpAngYd7JMAkFCxg1GDO1GKzU4EyZxK51rFewo9skCoHVBRAycVXLdgpPUzLOG0eUvdOATl4mQZ9r5kBIyIyvRfs4B9Oruxe-h-E6IxQI1IvYYWumILmNWizIB7nETJV_i7GxEuWtqOZoN6Vs0Z-gSHg6gYm",
-      category: "Guide",
-      readingTime: "5 min read",
-      createdAt: new Date("2026-05-20"),
-    }
-  ];
-}
+const title = 'บทความน่ารู้เกี่ยวกับฟิล์มกรองแสงอาคาร บ้าน และคอนโด | LUMAGUARD';
+const description =
+  'รวมคู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง เทคนิคประหยัดค่าไฟ ฟิล์มนิรภัย และความรู้เรื่องฟิล์มนาโนเซรามิกจากทีมวิศวกร LUMAGUARD';
 
-const title = "บทความน่ารู้เกี่ยวกับฟิล์มกรองแสงบ้านและคอนโด | LUMAGUARD";
-const description = "รวมคู่มือ ความรู้การเลือกฟิล์มกรองแสง การลดอุณหภูมิห้อง เทคนิคการประหยัดพลังงาน และข่าวสารล่าสุดจาก LUMAGUARD";
+const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:load />
+  <JsonLd
+    schema={buildBreadcrumbSchema([
+      { name: 'หน้าแรก', url: '/' },
+      { name: 'บทความ', url: '/blog' },
+    ])}
+  />
 
-  <main class="min-h-screen pt-24 pb-16 px-6 max-w-[1440px] mx-auto space-y-16">
-    <div class="text-center max-w-3xl mx-auto space-y-4">
+  <TopNavBar client:idle />
+
+  <main class="min-h-screen pt-24 pb-16 px-6 max-w-[1200px] mx-auto space-y-12">
+    <header class="text-center max-w-3xl mx-auto space-y-4">
       <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-        บทความ & คู่มือเลือกฟิล์มกรองแสง
+        บทความ &amp; คู่มือเลือกฟิล์มกรองแสง
       </h1>
-      <p class="text-slate-600 text-base leading-relaxed">
-        สาระน่ารู้เกี่ยวกับฟิล์มกรองแสงอาคาร นวัตกรรมนาโนเซรามิค การประหยัดพลังงานไฟ และเทคนิคดูแลกระจกบ้าน
+      <p class="text-slate-600 leading-relaxed">
+        สาระน่ารู้เรื่องฟิล์มกรองแสงอาคาร นวัตกรรมนาโนเซรามิก การประหยัดพลังงาน
+        และเทคนิคดูแลกระจกบ้าน จากทีมวิศวกรของเรา
       </p>
-    </div>
+    </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {posts.map((post) => (
-        <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col">
-          {post.coverImage && (
-            <div class="h-48 overflow-hidden">
-              <img src={post.coverImage} alt={post.title} class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-            </div>
-          )}
-          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
-            <div class="space-y-3">
-              <span class="inline-block px-3 py-1 bg-sky-100 text-sky-700 font-semibold text-xs rounded-full">
-                {post.category}
-              </span>
-              <h2 class="text-xl font-bold text-slate-900 line-clamp-2 leading-snug">
-                <a href={`/blog/${post.slug}`} class="hover:text-sky-600 transition-colors">
-                  {post.title}
+    {
+      posts.length === 0 ? (
+        <p class="text-center text-slate-500 py-16">ยังไม่มีบทความเผยแพร่ในขณะนี้</p>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post, index) => (
+            <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+              {post.data.heroImage && (
+                <a href={`/blog/${post.id}`} class="block overflow-hidden">
+                  <Image
+                    src={post.data.heroImage}
+                    alt={post.data.heroAlt ?? ''}
+                    widths={[400, 800]}
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    class="h-48 w-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
                 </a>
-              </h2>
-              <p class="text-slate-600 text-sm line-clamp-3 leading-relaxed">
-                {post.excerpt}
-              </p>
-            </div>
+              )}
+              <div class="p-6 flex-1 flex flex-col justify-between gap-4">
+                <div class="space-y-3">
+                  <h2 class="text-xl font-bold text-slate-900 leading-snug">
+                    <a href={`/blog/${post.id}`} class="hover:text-sky-600 transition-colors">
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  <p class="text-slate-600 text-sm line-clamp-3 leading-relaxed">
+                    {post.data.description}
+                  </p>
+                </div>
 
-            <div class="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
-              <span class="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {post.readingTime || "5 min read"}
-              </span>
-              <a href={`/blog/${post.slug}`} class="text-sky-600 font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                อ่านต่อ <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
+                <div class="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {dateFormatter.format(post.data.pubDate)}
+                  </time>
+                  <a href={`/blog/${post.id}`} class="text-sky-600 font-bold hover:underline">
+                    อ่านต่อ →
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )
+    }
   </main>
 
   <Footer client:visible />

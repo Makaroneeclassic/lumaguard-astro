@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export const prerender = false;
+
+const errorCode = Astro.url.searchParams.get('error');
+const errorMessages: Record<string, string> = {
+  invalid: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+  missing: 'กรุณากรอกอีเมลและรหัสผ่าน',
+  ratelimit: 'พยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่',
+  server: 'ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง',
+};
+const errorMessage = errorCode ? (errorMessages[errorCode] ?? errorMessages.invalid) : null;
+---
+
+<Layout
+  title="เข้าสู่ระบบ | LUMAGUARD"
+  description="หน้าเข้าสู่ระบบสำหรับผู้ดูแลเว็บไซต์ LUMAGUARD"
+  noindex={true}
+>
+  <div class="min-h-screen bg-slate-900 flex items-center justify-center px-6">
+    <div class="w-full max-w-sm space-y-8">
+      <div class="text-center space-y-2">
+        <h1 class="text-2xl font-bold text-white tracking-tight">LUMAGUARD Admin</h1>
+        <p class="text-slate-400 text-sm">เข้าสู่ระบบเพื่อจัดการเว็บไซต์</p>
+      </div>
+
+      {errorMessage && (
+        <div role="alert" class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg px-4 py-3">
+          {errorMessage}
+        </div>
+      )}
+
+      <form method="POST" action="/api/auth/login" class="space-y-4">
+        <div class="space-y-1.5">
+          <label for="email" class="block text-sm font-medium text-slate-300">อีเมล</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autocomplete="username"
+            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="password" class="block text-sm font-medium text-slate-300">รหัสผ่าน</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-lg px-4 py-2.5 transition-colors"
+        >
+          เข้าสู่ระบบ
+        </button>
+      </form>
+
+      <p class="text-center text-xs text-slate-500">
+        <a href="/" class="hover:text-slate-300 transition-colors">← กลับหน้าเว็บไซต์</a>
+      </p>
+    </div>
+  </div>
+</Layout>

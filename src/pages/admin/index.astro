@@ -4,6 +4,7 @@ import AtAGlance from '@/components/admin/AtAGlance';
 import LeadDashboard from '@/components/admin/LeadDashboard';
 import DbErrorBanner from '@/components/admin/DbErrorBanner';
 import { prisma } from '@/lib/db';
+import { getCollection } from 'astro:content';
 
 export const prerender = false;
 
@@ -12,18 +13,19 @@ let dbError = false;
 
 const stats = { leadsNew: 0, leadsTotal: 0, posts: 0, products: 0, portfolio: 0 };
 
+// บทความอยู่ใน git เป็น MDX แล้ว ไม่ได้อยู่ใน DB — นับจาก content collection
+stats.posts = (await getCollection('blog', ({ data }) => !data.draft)).length;
+
 try {
-  const [leadList, leadsNew, posts, products, portfolio] = await Promise.all([
+  const [leadList, leadsNew, products, portfolio] = await Promise.all([
     prisma.lead.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.lead.count({ where: { status: 'new' } }),
-    prisma.blogPost.count(),
     prisma.product.count(),
     prisma.portfolioItem.count(),
   ]);
   leads = leadList;
   stats.leadsTotal = leadList.length;
   stats.leadsNew = leadsNew;
-  stats.posts = posts;
   stats.products = products;
   stats.portfolio = portfolio;
 } catch (e) {
@@ -32,7 +34,11 @@ try {
 }
 ---
 
-<Layout title="Admin Dashboard | LUMAGUARD" description="LUMAGUARD Admin Dashboard">
+<Layout
+  title="Admin Dashboard | LUMAGUARD"
+  description="LUMAGUARD Admin Dashboard"
+  noindex={true}
+>
   <div class="min-h-screen bg-slate-900 text-slate-100 p-8 space-y-8">
     <div class="max-w-[1440px] mx-auto space-y-8">
       <div class="flex items-center justify-between border-b border-slate-800 pb-6">
@@ -40,9 +46,17 @@ try {
           <h1 class="text-3xl font-bold text-white tracking-tight">LUMAGUARD Admin Portal</h1>
           <p class="text-slate-400 text-sm mt-1">จัดการภาพรวมระบบ ข้อมูล Lead รายชื่อสินค้า บทความ และงานติดตั้ง</p>
         </div>
-        <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
-          ← กลับหน้าหลักเว็บไซต์
-        </a>
+        <div class="flex items-center gap-3">
+          <span class="text-slate-400 text-sm hidden md:inline">{Astro.locals.session?.email}</span>
+          <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
+            ← กลับหน้าเว็บไซต์
+          </a>
+          <form method="POST" action="/api/auth/logout">
+            <button type="submit" class="bg-slate-800 hover:bg-red-600/80 text-slate-200 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
+              ออกจากระบบ
+            </button>
+          </form>
+        </div>
       </div>
 
       {dbError && <DbErrorBanner client:load context="โหลดแดชบอร์ด" />}

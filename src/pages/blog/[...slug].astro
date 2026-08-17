@@ -1,106 +1,134 @@
 ---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import JsonLd from '@/components/JsonLd.astro';
-import { prisma } from '@/lib/db';
+import ArticleCta from '@/components/blog/ArticleCta.astro';
+import FaqSection from '@/components/blog/FaqSection.astro';
+import { getPublishedPosts, getRelatedPosts } from '@/lib/blog';
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
+import { absoluteUrl } from '@/lib/site';
 
 export async function getStaticPaths() {
-  let posts: any[] = [];
-  try {
-    posts = await prisma.blogPost.findMany({
-      where: { published: true }
-    });
-  } catch (e) {
-    console.warn("DB connection for getStaticPaths fallback");
-  }
-
-  if (posts.length === 0) {
-    return [
-      { params: { slug: 'keep-home-cooler-nano-ceramic-film' } },
-      { params: { slug: 'architectural-vs-automotive-window-film' } },
-      { params: { slug: 'first-post' } }
-    ];
-  }
-
+  const posts = await getPublishedPosts();
   return posts.map((post) => ({
-    params: { slug: post.slug }
+    params: { slug: post.id },
+    props: { post, posts },
   }));
 }
 
-const { slug } = Astro.params;
+const { post, posts } = Astro.props;
+const { Content } = await render(post);
 
-let post: any = null;
-try {
-  post = await prisma.blogPost.findUnique({
-    where: { slug: slug || '' },
-  });
-} catch (e) {
-  console.warn("DB query failed for blog post slug:", slug);
-}
+const related = getRelatedPosts(post, posts);
+const canonical = absoluteUrl(`/blog/${post.id}`);
 
-if (!post) {
-  post = {
-    title: "วิธีลดอุณหภูมิบ้านลงสูงสุด 12°C ช่วงหน้าร้อนด้วยฟิล์มนาโนเซรามิก",
-    slug: slug || "keep-home-cooler-nano-ceramic-film",
-    excerpt: "เจาะลึกวิทยาศาสตร์เบื้องหลังฟิล์มนาโนเซรามิกระดับพรีเมียม วิธีลดอุณหภูมิห้องลงอย่างเห็นได้ชัดและประหยัดค่าไฟทันที",
-    content: "<p>การเลือกติดตั้งฟิล์มกรองแสงอาคาร นาโนเซรามิกพรีเมียม ช่วยตัดรังสีความร้อนอินฟราเรดได้สูงสุดถึง 98% โดยไม่บดบังทัศนียภาพที่สว่างใสจากภายในบ้าน...</p>",
-    coverImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuCtRl__yxJ6Fs5rzjxxFoGNYt8SZbMncfyQnx5m7KHY06IiClHr1HazLSVAa8Tzutg4o0HZ4mdHZxnycwarQMVSHeOGVnpDM8xb6JV4avzMJSaTyEZzeNfgjZWzSV12AG3A0eC3tFT4vUJgCFx01YEBg98SznHzSVzN-vFzde3NPFzGbcvKsVBx_FW6x6L8DtNKake2QrT6PGShJQ1_2dsw76aR20Y2GFh037q-TxD5iXPJuUZbiXTVj4QtcLCRYn_ykcacTzLVFiDN",
-    category: "Energy Efficiency",
-    readingTime: "8 min read",
-    authorName: "ทีมงานวิศวกร LUMAGUARD",
-    createdAt: new Date(),
-  };
-}
+const breadcrumb = [
+  { name: 'หน้าแรก', url: '/' },
+  { name: 'บทความ', url: '/blog' },
+  { name: post.data.title, url: `/blog/${post.id}` },
+];
 
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": post.title,
-  "description": post.excerpt,
-  "image": [post.coverImage],
-  "author": {
-    "@type": "Person",
-    "name": post.authorName || "LUMAGUARD Team"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "LUMAGUARD",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://lumaguard.com/logo.png"
-    }
-  }
-};
+const articleSchema = buildArticleSchema({
+  title: post.data.title,
+  description: post.data.description,
+  canonical,
+  image: post.data.heroImage?.src ? absoluteUrl(post.data.heroImage.src) : undefined,
+  author: post.data.author,
+  publishedAt: post.data.pubDate,
+  modifiedAt: post.data.updatedDate,
+});
+
+const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
 ---
 
-<Layout title={`${post.title} | LUMAGUARD`} description={post.excerpt}>
+<Layout
+  title={`${post.data.title} | LUMAGUARD`}
+  description={post.data.description}
+  type="article"
+  image={post.data.heroImage?.src}
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate ?? post.data.pubDate}
+  noindex={post.data.noindex}
+>
   <JsonLd schema={articleSchema} />
-  <TopNavBar client:load />
+  <JsonLd schema={buildBreadcrumbSchema(breadcrumb)} />
+  {post.data.faq && post.data.faq.length > 0 && <JsonLd schema={buildFaqSchema(post.data.faq)} />}
 
-  <article class="min-h-screen pt-24 pb-16 px-6 max-w-4xl mx-auto space-y-8">
-    <div class="space-y-4 text-center">
-      <span class="inline-block px-3 py-1 bg-sky-100 text-sky-700 font-semibold text-xs rounded-full">
-        {post.category}
-      </span>
-      <h1 class="text-3xl md:text-5xl font-black text-slate-900 leading-tight">
-        {post.title}
+  <TopNavBar client:idle />
+
+  <article class="min-h-screen pt-24 pb-16 px-6 max-w-3xl mx-auto">
+    <nav aria-label="breadcrumb" class="mb-6">
+      <ol class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+        {breadcrumb.slice(0, -1).map((crumb) => (
+          <li class="flex items-center gap-2">
+            <a href={crumb.url} class="hover:text-sky-600 transition-colors">{crumb.name}</a>
+            <span aria-hidden="true">/</span>
+          </li>
+        ))}
+        <li aria-current="page" class="text-slate-400 truncate max-w-[16rem]">{post.data.title}</li>
+      </ol>
+    </nav>
+
+    <header class="space-y-4">
+      <h1 class="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
+        {post.data.title}
       </h1>
       <p class="text-slate-500 text-sm">
-        {post.authorName} • {post.readingTime}
+        {post.data.author}
+        <span aria-hidden="true"> • </span>
+        <time datetime={post.data.pubDate.toISOString()}>
+          {dateFormatter.format(post.data.pubDate)}
+        </time>
+        {post.data.updatedDate && (
+          <span> • อัปเดต {dateFormatter.format(post.data.updatedDate)}</span>
+        )}
       </p>
-    </div>
+    </header>
 
-    {post.coverImage && (
-      <div class="rounded-2xl overflow-hidden shadow-lg border border-slate-200">
-        <img src={post.coverImage} alt={post.title} class="w-full h-[400px] object-cover" />
-      </div>
+    {post.data.heroImage && (
+      <Image
+        src={post.data.heroImage}
+        alt={post.data.heroAlt ?? ''}
+        widths={[400, 800, 1200]}
+        sizes="(max-width: 768px) 100vw, 768px"
+        loading="eager"
+        fetchpriority="high"
+        class="mt-8 rounded-2xl border border-slate-200 shadow-sm"
+      />
     )}
 
-    <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed font-light space-y-6" set:html={post.content} />
+    <div class="prose prose-lg prose-slate max-w-none mt-8">
+      <Content components={{ ArticleCta }} />
+    </div>
 
-    <div class="pt-16 border-t border-slate-200">
+    {post.data.faq && <FaqSection faq={post.data.faq} />}
+
+    <ArticleCta href={post.data.relatedServiceUrl} position="end" />
+
+    {related.length > 0 && (
+      <section class="mt-16 pt-10 border-t border-slate-200 space-y-6">
+        <h2 class="text-2xl font-bold text-slate-900">บทความที่เกี่ยวข้อง</h2>
+        <ul class="grid gap-4 sm:grid-cols-2">
+          {related.map((item) => (
+            <li>
+              <a
+                href={`/blog/${item.id}`}
+                class="block h-full rounded-xl border border-slate-200 p-5 transition-shadow hover:shadow-md"
+              >
+                <h3 class="font-bold text-slate-900 leading-snug">{item.data.title}</h3>
+                <p class="mt-2 text-sm text-slate-600 line-clamp-2">{item.data.description}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <div class="pt-16 border-t border-slate-200 mt-16">
       <LeadForm client:visible />
     </div>
   </article>
