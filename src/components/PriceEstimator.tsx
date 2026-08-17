@@ -30,7 +30,7 @@ export default function PriceEstimator() {
             <Calculator className="w-4 h-4" />
             เครื่องคำนวณงบประมาณ
           </div>
-          <h4 className="text-xl font-headline font-bold text-slate-900 dark:text-white">เครื่องประเมินราคาอัจฉริยะ</h4>
+          <h2 className="text-xl font-headline font-bold text-slate-900 dark:text-white">เครื่องประเมินราคาอัจฉริยะ</h2>
           <p className="text-slate-500 text-xs md:text-sm max-w-xs">
             เลื่อนแถบพื้นที่ตารางเมตรเพื่อรับการประมาณการค่าบริการติดตั้งและผลิตภัณฑ์ในทันที
           </p>
@@ -104,7 +104,7 @@ export default function PriceEstimator() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Element Series */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center space-y-2">
-          <h5 className="font-headline font-bold text-slate-600 text-sm">Element (Carbon)</h5>
+          <h3 className="font-headline font-bold text-slate-600 text-sm">Element (Carbon)</h3>
           <p className="text-2xl font-headline font-black text-slate-900">{formatPrice(area * elementRate)}</p>
           <span className="text-xs text-slate-500 block font-light">ฟิล์มคาร์บอนระดับเริ่มต้น ดำเข้ม สวยงาม</span>
         </div>
@@ -114,14 +114,14 @@ export default function PriceEstimator() {
           <div className="absolute top-0 right-0 bg-sky-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-lg font-headline">
             รุ่นยอดนิยม
           </div>
-          <h5 className="font-headline font-bold text-sky-900 text-sm">Guardian (Ceramic)</h5>
+          <h3 className="font-headline font-bold text-sky-900 text-sm">Guardian (Ceramic)</h3>
           <p className="text-2xl font-headline font-black text-sky-700">{formatPrice(area * guardianRate)}</p>
           <span className="text-xs text-sky-800 block font-medium">ฟิล์มเซรามิกระดับกลาง กันความร้อนดีเยี่ยม</span>
         </div>
 
         {/* Apex Series */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center space-y-2">
-          <h5 className="font-headline font-bold text-slate-600 text-sm">Apex (Sputtered)</h5>
+          <h3 className="font-headline font-bold text-slate-600 text-sm">Apex (Sputtered)</h3>
           <p className="text-2xl font-headline font-black text-slate-900">{formatPrice(area * apexRate)}</p>
           <span className="text-xs text-slate-500 block font-light">สปัตเตอร์ฟิล์มระดับท็อป สะท้อนความร้อนสูงสุด</span>
         </div>
