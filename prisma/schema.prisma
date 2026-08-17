@@ -52,28 +52,9 @@ model SeoPage {
   updatedAt     DateTime @updatedAt
 }
 
-model BlogPost {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  excerpt     String   @db.Text
-  content     String   @db.Text
-  coverImage  String   @db.Text
-  authorName  String
-  authorImage String?  @db.Text
-  category    String
-  published   Boolean  @default(true)
-  readingTime String   @default("5 min read")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  seoTitle    String?  @db.Text
-  seoDesc     String?  @db.Text
-  seoKeywords String?  @db.Text
-  noindex     Boolean  @default(false)
-  ogImage     String?  @db.Text
-  faq         String?  @db.Text
-}
+// หมายเหตุ: model BlogPost ถูกถอดออกแล้ว บทความย้ายไปเก็บเป็น MDX ใน git
+// ที่ src/content/blog/ เพื่อให้มี version history, บังคับกติกา SEO ตอน build
+// และฝัง component ในบทความได้ ดู src/content.config.ts และ src/lib/blog.ts
 
 model Lead {
   id           String   @id @default(uuid())

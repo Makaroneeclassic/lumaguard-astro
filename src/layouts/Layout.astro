@@ -1,6 +1,7 @@
 ---
 import SEO from '../components/SEO.astro';
 import JsonLd from '../components/JsonLd.astro';
+import { buildSiteSchema } from '@/lib/schema';
 import '../styles/global.css';
 
 interface Props {
@@ -41,6 +42,8 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
       noindex={noindex} 
     />
     
+    <!-- Organization + WebSite + LocalBusiness ผูกกันด้วย @id ใส่ทุกหน้า -->
+    <JsonLd schema={buildSiteSchema()} />
     {schema && <JsonLd schema={schema} />}
     
     <!-- Consent Mode v2 Default Settings -->
