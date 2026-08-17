@@ -1,0 +1,324 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar';
+import Footer from '@/components/Footer';
+import LeadForm from '@/components/LeadForm';
+import FilmSelector from '@/components/FilmSelector';
+import ProductMatrix, { ALL_PRODUCTS_DATA } from '@/components/ProductMatrix';
+import PortfolioList from '@/components/PortfolioList';
+import TestimonialSlider from '@/components/TestimonialSlider';
+import { ShieldCheck, Thermometer, Eye } from 'lucide-react';
+import { prisma } from '@/lib/db';
+
+// Fetch SEO data
+let pageSeo = null;
+try {
+  pageSeo = await prisma.seoPage.findUnique({ where: { routePath: '/' } });
+} catch (e) {
+  console.warn("DB connection for SEO fallback");
+}
+
+const title = pageSeo?.title || "LUMAGUARD | ฟิล์มกรองแสงบ้านและคอนโดพรีเมียม";
+const description = pageSeo?.description || "ฟิล์มกรองแสงระดับนาโนเซรามิกและสปัตเตอร์สะท้อนความร้อนสูง ป้องกันความร้อนสูงสุด 98% รับประกัน 10-15 ปี";
+
+let products: any[] = [];
+try {
+  products = await prisma.product.findMany({ where: { showOnHomepage: true }, orderBy: { createdAt: 'asc' } });
+} catch (e) {}
+
+const homepageFeaturedProducts = [
+  // Shield Series (ตัวกลาง: IR2090 HD)
+  { id: "s2", name: "IR2090 HD", series: "Shield", technology: "Nano Ceramic film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "90%", tser: "62%", price: "1500" },
+  // Apex Series (ตัวกลาง: VSN20HD)
+  { id: "a2", name: "VSN20HD", series: "Apex", technology: "Nano Sputtering Film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "95%", tser: "76%", price: "2500" },
+  // Guardian Series (ตัวกลาง: DSP 15 UHD PRO)
+  { id: "g2", name: "DSP 15 UHD PRO", series: "Guardian", technology: "UHD Ceramic", vlt: "15%", uvr: "100%", irr: "80%", irr2: "85%", tser: "78%", price: "2800" },
+];
+
+if (products.length === 0) {
+  products = homepageFeaturedProducts;
+}
+
+let portfolioItems: any[] = [];
+try {
+  portfolioItems = await prisma.portfolioItem.findMany({ take: 2, orderBy: { createdAt: 'desc' } });
+} catch (e) {}
+
+if (portfolioItems.length === 0) {
+  portfolioItems = [
+    {
+      id: "1",
+      title: "The Monument Thong Lo",
+      location: "ทองหล่อ, กรุงเทพฯ",
+      category: "condo",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCj3aBLG7sUb1FGlWSBzeQnmaSBjM2NzPffLQXB-ShkHLTdDVhvbCP2mUDtdJ6mZP3bjqSTzinczicYlea97m43CFG1MzlsLfjRJwOHjey3h6pJzeOiUpAngYd7JMAkFCxg1GDO1GKzU4EyZxK51rFewo9skCoHVBRAycVXLdgpPUzLOG0eUvdOATl4mQZ9r5kBIyIyvRfs4B9Oruxe-h-E6IxQI1IvYYWumILmNWizIB7nETJV_i7GxEuWtqOZoN6Vs0Z-gSHg6gYm",
+      altText: "ห้องรับแขกเพ้นท์เฮ้าส์หรูทองหล่อติดฟิล์มลดความร้อนสะสม",
+      seriesUsed: "Apex Sputter 20",
+      areaSize: "45 ตร.ม.",
+      description: "ติดตั้งฟิล์มกรองแสงชนิดสปัตเตอร์หลายชั้น ป้องกันรังสีความร้อนสูงสุดและช่วยลดแสงแดดจ้าสะท้อนเพื่อถนอมสายตา",
+    },
+    {
+      id: "2",
+      title: "Santi Pura Residence",
+      location: "บางนา, กรุงเทพฯ",
+      category: "house",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCI2UtsVnRDZPeKdjPpuFIqEzlMMvlaqGP8b5BOuvMFNtur0BsilWjUjbhCHZ0FAQRLaz-zWaGUEcLOvBv-APfQtIglErHMvkJKZiBwkwsE647NbZ5ID7qQ0W4IW5y8QOgs4bxNDRQibYQg_FlvKSBS_9WXgjjpffYzg4Ug0cXfxfBvFTSX0EHX3UtZOyprkktNj3o4TOWGdW7vWBwM4YfE_V-AUP8JP30cY2Ii9n2nBdy2Y9dVRDW3QyzQq1o5B4ZRm_-UVxFPRWjj",
+      altText: "บ้านสไตล์โมเดิร์นทรอปิคอลติดฟิล์มกรองแสงเซรามิกใส",
+      seriesUsed: "Guardian Ceramic 70",
+      areaSize: "180 ตร.ม.",
+      description: "ติดตั้งฟิล์มเซรามิคพรีเมียม สบายตา นำความเย็นเข้าสู่บ้าน สบายใจและประหยัดไฟฟ้าตลอดปี",
+    },
+  ];
+}
+
+const processSteps = [
+  {
+    stepNo: "01",
+    title: "ปรึกษาและประเมินหน้างานฟรี",
+    description: "ทีมงานรับฟังความต้องการของคุณ ทั้งเรื่องทิศทางแดด ความเป็นส่วนตัว งบประมาณ และปัญหาความร้อนที่เจอ จากนั้นเข้าวัดพื้นที่กระจกจริงถึงบ้าน เพื่อประเมินราคาที่แม่นยำ — บริการนี้ฟรี ไม่มีค่าใช้จ่าย"
+  },
+  {
+    stepNo: "02",
+    title: "เลือกฟิล์มที่เหมาะกับบ้านคุณ",
+    description: "ช่างผู้เชี่ยวชาญแนะนำฟิล์มที่เหมาะกับการใช้งานจริง ไม่ว่าจะเป็นฟิล์มเซรามิคที่เน้นความใสกันร้อน ฟิล์มปรอทที่ข้างนอกมองไม่เห็น หรือฟิล์มนิรภัยเพื่อความปลอดภัย พร้อมใบเสนอราคาชัดเจนก่อนเริ่มงาน"
+  },
+  {
+    stepNo: "03",
+    title: "ติดตั้งโดยช่างมืออาชีพ",
+    description: "ทีมช่างติดฟิล์มกระจกบ้านที่มากประสบการณ์ลงมือติดตั้งอย่างพิถีพิถัน ทำความสะอาดกระจก ติดฟิล์มให้เรียบเนียน ไร้ฟองอากาศ ไร้ฝุ่น พร้อมดูแลความสะอาดพื้นที่หน้างานตลอดการทำงาน"
+  },
+  {
+    stepNo: "04",
+    title: "ตรวจรับงานและรับประกัน",
+    description: "ตรวจสอบคุณภาพงานติดตั้งร่วมกันจนคุณพอใจ พร้อมมอบการรับประกันทั้งตัวฟิล์มและงานติดตั้ง หากมีปัญหาหลังการใช้งาน ทีมงานพร้อมดูแลคุณต่อเนื่อง"
+  }
+];
+
+const faqItems = [
+  {
+    q: "ฟิล์มกรองแสงคอนโดและบ้านควรใช้แบบไหนดีที่สุด?",
+    a: "สำหรับบ้านและคอนโดที่ต้องการป้องกันความร้อนสูงสุดโดยยังได้แสงสว่างธรรมชาติ แนะนำฟิล์มประเภท **นาโนเซรามิก (Ceramic)** หรือ **ฟิล์มสปัตเตอร์สะท้อนความร้อน (Sputtered)** ครับ เนื่องจากมีเทคโนโลยีป้องกันรังสีอินฟราเรด (IRR) สูง 90% ขึ้นไป และไม่บล็อกสัญญาณมือถือ/GPS"
+  },
+  {
+    q: "การติดตั้งฟิล์มใช้เวลานานเท่าใด และขั้นตอนเป็นอย่างไร?",
+    a: "โดยเฉลี่ยการติดตั้งฟิล์มกระจกบ้านหรือคอนโดจะใช้เวลาประมาณ 3-6 ชั่วโมง ขึ้นอยู่กับจำนวนและขนาดของกระจก ทีมงานช่างมืออาชีพจะเริ่มจากการคลุมผ้าใบกันน้ำทำความสะอาดกระจกอย่างประณีตและทำการติดตั้งโดยไม่มีเศษฝุ่นหรือฟองอากาศแน่นอนครับ"
+  },
+  {
+    q: "ฟิล์มกรองแสงของ LUMAGUARD มีการรับประกันอย่างไร?",
+    a: "ผลิตภัณฑ์ฟิล์มกรองแสงรุ่นพรีเมียมของเรามีการรับประกันคุณภาพสูงสุด **10-15 ปี** ครอบคลุมปัญหากาวแห้งกรอบ ฟิล์มลอกร่อน สีซีดจาง หรือเกิดฟองอากาศ โดยสามารถติดต่อทีมงานเพื่อทำการเปลี่ยนฟิล์มใหม่ได้ทันทีตามเงื่อนไขใบรับประกันครับ"
+  },
+  {
+    q: "ค่าบริการติดฟิล์มประเมินราคาอย่างไร?",
+    a: "การประเมินราคาจะคิดตามขนาดพื้นที่จริงของกระจก (ตารางเมตรหรือตารางฟุต) และประเภทของฟิล์มที่เลือกใช้ โดยฟิล์มเริ่มต้นระดับนาโนคาร์บอนจะมีราคาเริ่มต้นประมาณ 1,100 บาท/ตร.ม. คุณสามารถส่งขนาดกระจกหรือรูปถ่ายให้ทีมงานช่วยประเมินราคาและให้คำแนะนำฟรีไม่มีค่าใช้จ่ายครับ"
+  }
+];
+---
+
+<Layout title={title} description={description}>
+  <TopNavBar client:load />
+  
+  <main class="min-h-screen pt-16 overflow-x-hidden">
+    <!-- Hero Section -->
+    <section class="relative min-h-[600px] sm:min-h-[720px] md:min-h-[850px] flex items-center overflow-hidden py-16">
+      <div class="absolute inset-0 z-0">
+        <img 
+          alt="Modern penthouse interior" 
+          class="w-full h-full object-cover" 
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnVROa8cqtTIq7_9E77pWVQpAtdz9OLYdNAJ7nGW0-Pl85wCkGi0TDT4IRC8o2_losMlkRb5QnegGPx4_u0MVaiAWYYNMwu7tdJnBJELGDzJyglM3_6XRvyCyxsKjhJQqD5s1tnHDHHizvaveh6pLJ9txAywWBsS-P9hkWpsJi2CxLPrzth2GknOhZuPlU5e7EkonPV9LBs8uRncfTOiyFJaMUxuuYgULZyojPqmbtXJxF0zcZthUL4-xXMWwCc3-b2lxVlYYUc-NG" 
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent"></div>
+      </div>
+      <div class="relative z-10 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto w-full text-white">
+        <div class="max-w-2xl space-y-6">
+          <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.05] sm:leading-[0.95]">
+            LUMAGUARD: <br />
+            <span class="text-sky-400">Your Home's Ultimate Shield.</span>
+          </h1>
+          <p class="text-sm sm:text-base md:text-lg text-slate-300 leading-relaxed font-light">
+            สัมผัสแสงธรรมชาติที่สว่างไสวโดยไม่มีความร้อนสะสม เทคโนโลยีฟิล์มกรองแสงเซรามิกระดับนาโนที่สกัดกั้นรังสี UV 99.9% และความร้อนอินฟราเรด
+          </p>
+          <div class="flex flex-wrap gap-3 sm:gap-4 pt-2">
+            <a href="/products" class="bg-sky-500 hover:bg-sky-400 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all shadow-lg text-sm sm:text-base min-h-[48px] flex items-center justify-center">
+              เลือกชมรุ่นฟิล์มกรองแสง
+            </a>
+            <a href="#contact" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all text-sm sm:text-base min-h-[48px] flex items-center justify-center">
+              ประเมินราคาฟรี
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why LUMAGUARD -->
+    <section id="why-us" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <!-- Card 1: ป้องกันรังสี UV 100% -->
+        <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
+          <img 
+            src="/images/why-us/uv-protection.png" 
+            alt="ป้องกันรังสี UV 100%" 
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/40 group-hover:via-slate-900/75 transition-all"></div>
+          
+          <div class="relative z-10 flex items-center justify-start">
+            <div class="w-13 h-13 rounded-2xl bg-sky-500/25 backdrop-blur-md flex items-center justify-center text-sky-400 border border-sky-400/30 shadow-inner shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 shrink-0">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="relative z-10 space-y-2 pt-6 min-h-[110px] flex flex-col justify-end">
+            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white drop-shadow-md leading-snug">ป้องกันรังสี UV 100%</h3>
+            <p class="text-slate-200 text-xs sm:text-sm leading-relaxed font-normal drop-shadow-sm min-h-[42px]">
+              ปกป้องผิวหนังครอบครัวของคุณ และป้องกันเฟอร์นิเจอร์หรู พื้นไม้จริงจากการซีดจาง
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2: ลดอุณหภูมิห้องสูงสุด 12°C -->
+        <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
+          <img 
+            src="/images/why-us/cool-temp.png" 
+            alt="ลดอุณหภูมิห้องสูงสุด 12°C" 
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/40 group-hover:via-slate-900/75 transition-all"></div>
+          
+          <div class="relative z-10 flex items-center justify-start">
+            <div class="w-13 h-13 rounded-2xl bg-sky-500/25 backdrop-blur-md flex items-center justify-center text-sky-400 border border-sky-400/30 shadow-inner shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 shrink-0">
+                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="relative z-10 space-y-2 pt-6 min-h-[110px] flex flex-col justify-end">
+            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white drop-shadow-md leading-snug">ลดอุณหภูมิห้องสูงสุด 12°C</h3>
+            <p class="text-slate-200 text-xs sm:text-sm leading-relaxed font-normal drop-shadow-sm min-h-[42px]">
+              สกัดความร้อนอินฟราเรดได้สูงสุดถึง 98% ช่วยให้บ้านเย็นสบาย ประหยัดค่าไฟทันที
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3: ทัศนียภาพคมชัดระดับ HD -->
+        <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl sm:col-span-2 lg:col-span-1">
+          <img 
+            src="/images/why-us/hd-view.png" 
+            alt="ทัศนียภาพคมชัดระดับ HD" 
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/40 group-hover:via-slate-900/75 transition-all"></div>
+          
+          <div class="relative z-10 flex items-center justify-start">
+            <div class="w-13 h-13 rounded-2xl bg-sky-500/25 backdrop-blur-md flex items-center justify-center text-sky-400 border border-sky-400/30 shadow-inner shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 shrink-0">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="relative z-10 space-y-2 pt-6 min-h-[110px] flex flex-col justify-end">
+            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white drop-shadow-md leading-snug">ทัศนียภาพคมชัดระดับ HD</h3>
+            <p class="text-slate-200 text-xs sm:text-sm leading-relaxed font-normal drop-shadow-sm min-h-[42px]">
+              ลดแสงสะท้อนจ้า ให้ทัศนียภาพที่เคลียร์ สว่างไสว คมชัดทุกมุมมอง
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Consultation / Film Selector Tool Section -->
+    <section id="consultation" class="py-16 md:py-24 px-4 sm:px-8 max-w-[1440px] mx-auto">
+      <FilmSelector client:visible />
+    </section>
+
+    <!-- Product Spec Comparison Matrix Section -->
+    <section id="matrix" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
+      <div class="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <ProductMatrix client:visible products={products} />
+      </div>
+    </section>
+
+    <!-- Process / Service Steps Section -->
+    <section id="process" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
+      <div class="space-y-12 md:space-y-16">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 tracking-tight">
+          ขั้นตอนการบริการมาตรฐานสากล
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {processSteps.map((step) => (
+            <div key={step.stepNo} class="bg-white p-6 rounded-2xl border border-slate-200/80 space-y-4 text-left flex flex-col items-start shadow-sm">
+              <div class="w-14 h-11 rounded-xl bg-slate-100 flex items-center justify-center shadow-inner">
+                <span class="text-slate-800 font-extrabold text-lg">{step.stepNo}</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900">{step.title}</h3>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-light">
+                {step.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio Project Showcase Section -->
+    <section id="portfolio" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
+      <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-16 lg:px-24 space-y-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div class="max-w-2xl space-y-2">
+            <span class="text-amber-700 font-bold tracking-widest text-xs uppercase">
+              ผลงานการติดตั้งจริง (PROJECT SHOWCASE)
+            </span>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+              ผลงานการติดตั้งระดับพรีเมียมของเรา
+            </h2>
+            <p class="text-slate-500 text-xs sm:text-sm font-light">
+              ความไว้วางใจจากโครงการบ้านเดี่ยวและคอนโดมิเนียมหรูชั้นนำทั่วประเทศ
+            </p>
+          </div>
+        </div>
+
+        <PortfolioList client:visible portfolioItems={portfolioItems} showLinkToAll={true} />
+      </div>
+    </section>
+
+    <!-- Testimonials Review Slider Section -->
+    <TestimonialSlider client:visible />
+
+    <!-- FAQ / Q&A Section -->
+    <section id="faq" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
+      <div class="max-w-4xl mx-auto px-4 sm:px-8 space-y-8 sm:space-y-12">
+        <div class="text-center space-y-3">
+          <span class="text-amber-700 font-bold tracking-widest text-xs uppercase">
+            คำถามที่พบบ่อย (FAQS)
+          </span>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+            ไขข้อข้องใจเรื่องการติดฟิล์มกระจกบ้านและคอนโด
+          </h2>
+        </div>
+
+        <div class="space-y-4 sm:space-y-6">
+          {faqItems.map((item, idx) => (
+            <div key={idx} class="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
+              <h3 class="text-sm sm:text-base font-bold text-slate-900">Q: {item.q}</h3>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-light text-justify">
+                A: {item.a}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Lead Form -->
+    <section id="contact" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
+      <LeadForm client:visible />
+    </section>
+  </main>
+
+  <Footer client:visible />
+</Layout>

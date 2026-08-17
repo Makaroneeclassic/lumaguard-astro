@@ -1,0 +1,200 @@
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { getTrafficSourceData } from "@/lib/utmTracker";
+
+export default function LeadForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    district: "",
+    propertyType: "Condo",
+    areaSize: "",
+  });
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.phone || !formData.district) {
+      setStatus("error");
+      setErrorMessage("กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน (ชื่อ, เบอร์โทร, เขตพื้นที่)");
+      return;
+    }
+
+    const marketingData = getTrafficSourceData();
+    let estimatedArea: number | null = null;
+    let recommendedFilm: string | null = null;
+
+    if (typeof window !== "undefined" && window.sessionStorage) {
+      const savedArea = window.sessionStorage.getItem("lg_estimated_area");
+      if (savedArea) {
+        estimatedArea = parseFloat(savedArea);
+      }
+      recommendedFilm = window.sessionStorage.getItem("lg_recommended_film");
+    }
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          areaSize: formData.areaSize ? parseFloat(formData.areaSize) : null,
+          estimatedArea,
+          recommendedFilm,
+          ...marketingData
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง");
+      }
+
+      // GA4 Event Tracking for Lead Submission
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "generate_lead", {
+          form_id: "lead_form",
+          property_type: formData.propertyType,
+          value: 1
+        });
+      }
+
+      setStatus("success");
+      setFormData({
+        name: "",
+        phone: "",
+        district: "",
+        propertyType: "Condo",
+        areaSize: "",
+      });
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMessage(err.message || "เกิดข้อผิดพลาดบางอย่าง");
+    }
+  };
+
+  return (
+    <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto">
+      <h3 className="text-xl sm:text-2xl font-headline font-extrabold mb-6 text-slate-900 dark:text-white tracking-tight text-center md:text-left">
+        จองบริการสำรวจวัดขนาดพื้นที่ฟรี
+      </h3>
+
+      {status === "success" ? (
+        <div className="bg-sky-50 border border-sky-200 p-8 rounded-2xl text-center space-y-4 animate-fade-in">
+          <CheckCircle2 className="w-12 h-12 text-sky-600 mx-auto" />
+          <h4 className="text-lg font-bold font-headline text-slate-900">ส่งคำขอเสร็จสมบูรณ์!</h4>
+          <p className="text-slate-600 text-sm font-light">
+            ขอบคุณสำหรับความสนใจ เจ้าหน้าที่ผู้เชี่ยวชาญจะติดต่อกลับเพื่อประเมินราคาและยืนยันนัดหมายทางโทรศัพท์โดยเร็วที่สุด
+          </p>
+          <button
+            onClick={() => setStatus("idle")}
+            className="bg-sky-600 text-white px-6 py-2.5 rounded-xl font-bold font-headline text-sm hover:bg-sky-700 transition-colors shadow-sm"
+          >
+            ส่งคำขอใหม่
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {status === "error" && (
+            <div className="bg-red-50 text-red-700 border border-red-200 p-4 rounded-xl flex items-start gap-3 text-xs sm:text-sm font-semibold">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="col-span-1 md:col-span-2 space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                ชื่อ-นามสกุล *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="ระบุชื่อของคุณ"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                disabled={status === "submitting"}
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                เบอร์โทรศัพท์ติดต่อ *
+              </label>
+              <input
+                type="tel"
+                required
+                placeholder="08X-XXX-XXXX"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                disabled={status === "submitting"}
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                เขต / อำเภอ (ที่ตั้งอาคาร) *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="เช่น วัฒนา, บางนา"
+                value={formData.district}
+                onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                disabled={status === "submitting"}
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                ประเภทสิ่งปลูกสร้าง
+              </label>
+              <select
+                value={formData.propertyType}
+                onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
+                disabled={status === "submitting"}
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+              >
+                <option value="Condo">คอนโดมิเนียม</option>
+                <option value="House">บ้านเดี่ยว / ทาวน์โฮม</option>
+                <option value="Office">สำนักงาน / ออฟฟิศ</option>
+                <option value="Commercial">ร้านค้า / อาคารพาณิชย์</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                พื้นที่กระจกโดยประมาณ (ตร.ม.)
+              </label>
+              <input
+                type="number"
+                placeholder="เช่น 30, 150"
+                value={formData.areaSize}
+                onChange={(e) => setFormData({ ...formData, areaSize: e.target.value })}
+                disabled={status === "submitting"}
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={status === "submitting"}
+              className="w-full bg-amber-800 hover:bg-amber-700 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 shadow-lg disabled:opacity-50 min-h-[48px]"
+            >
+              {status === "submitting" ? "กำลังประมวลผล..." : "ส่งข้อมูลและขอนัดหมายสำรวจพื้นที่"}
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}

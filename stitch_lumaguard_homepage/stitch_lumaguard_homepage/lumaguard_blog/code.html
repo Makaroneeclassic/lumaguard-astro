@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Blog | LUMAGUARD Precision Films</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#abc7ff",
+              "on-surface-variant": "#424752",
+              "surface-container-high": "#e7e8e9",
+              "surface-bright": "#f8f9fa",
+              "primary-fixed": "#d7e2ff",
+              "error": "#ba1a1a",
+              "primary": "#004692",
+              "tertiary": "#743800",
+              "on-secondary-container": "#55676f",
+              "on-primary-container": "#cbdbff",
+              "on-error": "#ffffff",
+              "primary-container": "#275fae",
+              "surface-container": "#edeeef",
+              "secondary-container": "#d2e6ef",
+              "on-background": "#191c1d",
+              "on-primary-fixed-variant": "#00458f",
+              "on-primary": "#ffffff",
+              "surface-tint": "#255dad",
+              "secondary-fixed": "#d2e6ef",
+              "on-tertiary-fixed": "#311300",
+              "on-secondary": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "tertiary-fixed-dim": "#ffb786",
+              "inverse-on-surface": "#f0f1f2",
+              "on-tertiary-container": "#ffd2b7",
+              "surface": "#f8f9fa",
+              "tertiary-fixed": "#ffdcc6",
+              "tertiary-container": "#984b00",
+              "on-tertiary-fixed-variant": "#723600",
+              "on-secondary-fixed-variant": "#374951",
+              "on-secondary-fixed": "#0b1e24",
+              "secondary-fixed-dim": "#b6cad2",
+              "primary-fixed-dim": "#abc7ff",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-dim": "#d9dadb",
+              "outline": "#727783",
+              "surface-variant": "#e1e3e4",
+              "background": "#f8f9fa",
+              "secondary": "#4f6169",
+              "outline-variant": "#c2c6d4",
+              "on-surface": "#191c1d",
+              "surface-container-low": "#f3f4f5",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#001b3f",
+              "error-container": "#ffdad6",
+              "inverse-surface": "#2e3132"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 dark:bg-[#191c1d]/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(25,28,29,0.04)] transition-colors duration-300">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black tracking-tighter text-[#004692] dark:text-[#d7e2ff] uppercase font-['Manrope']">LUMAGUARD</div>
+<div class="hidden md:flex items-center gap-8 font-['Manrope'] tracking-tight font-bold">
+<a class="text-[#191d1d]/60 dark:text-[#f8f9fa]/60 hover:text-[#004692] transition-all" href="#">Products</a>
+<a class="text-[#191d1d]/60 dark:text-[#f8f9fa]/60 hover:text-[#004692] transition-all" href="#">Case Studies</a>
+<a class="text-[#004692] dark:text-[#d7e2ff] border-b-2 border-[#004692] dark:border-[#d7e2ff] pb-1" href="#">Blog</a>
+<a class="text-[#191d1d]/60 dark:text-[#f8f9fa]/60 hover:text-[#004692] transition-all" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2.5 bg-tertiary-container text-on-tertiary font-bold rounded-xl hover:scale-95 duration-200 ease-in-out">Get a Quote</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 max-w-7xl mx-auto px-8">
+<!-- Featured Post Section -->
+<section class="mb-24">
+<div class="relative w-full aspect-[21/9] rounded-[2rem] overflow-hidden group">
+<img alt="Modern Living Room" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="luxury modern living room with floor-to-ceiling windows showing bright sunlight filtered through architectural glass and minimal furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtRl__yxJ6Fs5rzjxxFoGNYt8SZbMncfyQnx5m7KHY06IiClHr1HazLSVAa8Tzutg4o0HZ4mdHZxnycwarQMVSHeOGVnpDM8xb6JV4avzMJSaTyEZzeNfgjZWzSV12AG3A0eC3tFT4vUJgCFx01YEBg98SznHzSVzN-vFzde3NPFzGbcvKsVBx_FW6x6L8DtNKake2QrT6PGShJQ1_2dsw76aR20Y2GFh037q-TxD5iXPJuUZbiXTVj4QtcLCRYn_ykcacTzLVFiDN"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-12 w-full md:w-2/3 lg:w-1/2">
+<span class="inline-block px-4 py-1 rounded-full bg-tertiary-container text-on-tertiary text-xs font-bold tracking-widest uppercase mb-4">Energy Efficiency</span>
+<h1 class="text-white text-4xl md:text-5xl font-black leading-tight mb-6 tracking-tight">How to Keep Your Home 12°C Cooler This Summer.</h1>
+<p class="text-white/80 text-lg mb-8 font-body leading-relaxed">Discover the science behind nano-ceramic window films and how they can drastically reduce your AC bills while maintaining perfect visibility.</p>
+<a class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-container transition-colors" href="#">
+                        Read Featured Article
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<div class="flex flex-col lg:flex-row gap-16">
+<!-- Sidebar/Filter -->
+<aside class="w-full lg:w-72 flex-shrink-0">
+<div class="sticky top-32 space-y-12">
+<!-- Search -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-lg tracking-tight">Search Articles</h3>
+<div class="relative">
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 focus:ring-2 focus:ring-primary-fixed-dim focus:bg-surface-container-lowest transition-all" placeholder="Keywords..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+</div>
+<!-- Categories -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-lg tracking-tight">Popular Categories</h3>
+<div class="flex flex-wrap lg:flex-col gap-2">
+<button class="flex items-center justify-between px-4 py-3 rounded-xl bg-primary-fixed text-on-primary-fixed-variant font-bold text-sm transition-all text-left">
+                                All Posts
+                                <span class="bg-primary/10 rounded px-2 py-0.5 text-[10px]">24</span>
+</button>
+<button class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-surface-container-low text-on-surface-variant font-medium text-sm transition-all text-left">
+                                Maintenance
+                                <span class="bg-surface-container-highest rounded px-2 py-0.5 text-[10px]">8</span>
+</button>
+<button class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-surface-container-low text-on-surface-variant font-medium text-sm transition-all text-left">
+                                Energy
+                                <span class="bg-surface-container-highest rounded px-2 py-0.5 text-[10px]">12</span>
+</button>
+<button class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-surface-container-low text-on-surface-variant font-medium text-sm transition-all text-left">
+                                Privacy
+                                <span class="bg-surface-container-highest rounded px-2 py-0.5 text-[10px]">5</span>
+</button>
+<button class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-surface-container-low text-on-surface-variant font-medium text-sm transition-all text-left">
+                                Aesthetics
+                                <span class="bg-surface-container-highest rounded px-2 py-0.5 text-[10px]">9</span>
+</button>
+</div>
+</div>
+<!-- Newsletter Sidebar Variant -->
+<div class="p-8 rounded-[2rem] bg-primary-fixed text-on-primary-fixed flex flex-col gap-6 relative overflow-hidden">
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+<h4 class="font-headline font-extrabold text-xl leading-snug relative z-10">Expert Tips in Your Inbox</h4>
+<p class="text-sm opacity-80 leading-relaxed relative z-10">Monthly insights on home comfort and energy saving technology.</p>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-container transition-all relative z-10">Join 5,000+ Readers</button>
+</div>
+</div>
+</aside>
+<!-- Blog Grid -->
+<div class="flex-1">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<!-- Card 1 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Modern house exterior at night with warm interior lighting and architectural windows featuring dark security film" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6XfKzP8x0MdNxhYVPk904PiQtHp3soztCsw24md_pVD27VRql4zFOu9up1jo-KZxRSGW8NkriOsl0SAkf5GBKPL57vheZUvl-H0ol6vn9ZiScU2oLKaobIJox3Whe6NEDplA7mSfXeDPJJ7BagjZRGMteHGGMeObjUsLy8XCgfNlEyv7bXKNzokd2eGjP18FulstfCKQ5GidiHvwyGwHFfojS7mcZXiVeM4y1UArg-hrEecf0Mg8bWyU4JGh4fJ_-CxbjOhKT8bD_"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Home Security</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">Reinforcing Your Glass: A Security Masterclass</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">Learn how safety films provide an invisible barrier against break-ins and accidental impacts.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Interior shot of a sun-drenched minimalist living room with high-end furniture and large clear windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnHJJO0eenAHHdgNQOkyM9AkSbPm1Y-d-E8fM9RgrzoCn0X1OhXVNc-tIDLh32pqEjSbRfz3rtkB7A5QEPmGw_oO6O_g_OtVxDbGrp3rplKQEFP9KFukYVVk2UgnR02gSljn4fqRzyPke3iK5JZv-hopvdJ5lBbKFeOQ70nPVCcvHsDq1NUAlxHcSP7paWEooOGrsEbOiXFfbFD068sooTbYwnuOM5QQLI0_d7dMCoEMzam6wt9GbBxwlzmO9hjlVDFgKq_2kL1Pu1"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Interior Design</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">Preserving Your Artwork from UV Damage</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">UV rays are the silent killers of fine art and upholstery. Here is how to block 99% of them.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Macro close-up of high-tech nano-ceramic film being applied to a clean glass surface with a professional squeegee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs1wchsnA4508DbKCghYuIlTiUoTZNDY5jFPAIj4FSZeW6W5UXhswYoeUEzoN2cQp0B6grRJ4axVLPN6AE02eD8YGiYrxBjJLwhFt5MpdWwH2zHZETU0rkv7DitJXVpdoiFJPMCqU9BooBptFbEVPLjaTtu6JguMNyd_dcAEp01XPlODRrSlDlnGd-ogiKM5_4G2KGAK-2ybams9lSmYo2Tj84Ni3iUzBH7cFyUHwmXwrncyYdkPsE-06B3bju--gaifqoHWX4gEMP"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Product Spotlight</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">The Science of Nano-Ceramic Heat Rejection</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">An deep dive into why ceramic materials outperform traditional metalized window films.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Modern office building with mirrored glass exterior reflecting a blue sky and white clouds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd2uGB8vnKsUPjUnAK6Zzef-OKFxQ834U-1DfX7guzuEjOg9BmXwFT5xtM8_xK3scAOB5yKkn0adiCfSoX59nsaNGRREnDjBBlCh0Aox76Jl2xqRXMWcp1_60_TrWHoKITvuhweMGemNWKNM6fF4o7lFCJqsBNm2Hr9kY77JjZ0eqfBHpOwr_maLujnvHFbmxwFJCFobv1A4TVwcrC1qDU5xWF64oosKepdXSiRgaQMkAJTmOayGfdKrHF99Enl7cybNUa42I7NDTu"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Energy Efficiency</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">Corporate Energy Audits: The Window Factor</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">Commercial buildings lose 30% of their energy through windows. Discover the ROI of film.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close up of modern glass balcony with frosted privacy film overlooking a city skyline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUxF_pyfex6wLP8oe-iUItKkMBIh7BJ0HXA141FZCM2QoWtGWCKW_cGM_t-3Pw6RP-1k4gscmnuDSVdV9Z2Veb45xk6EIVEmYl_0ulmaiQHxfywDIcjAGLnMWdCIT2hmY8c1N82GdrdQ3iT_QCY7P96w3snGf7auwGWuK23Avo5rrF91j-MMD2ve0PSoeXnkm1GwOLYSXdT4XemrXzDwAasGdtJALzU70gUWPicH0l4__OuqhBSA1HCs-55u0_Nzhlf528QPuYPzXo"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Privacy</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">Balancing Natural Light and Total Privacy</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">How to achieve seclution without sacrificing the health benefits of sunshine in your home.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 6 -->
+<article class="group bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(25,28,29,0.02)] hover:shadow-[0_30px_60px_rgba(25,28,29,0.06)] transition-all duration-300">
+<div class="aspect-video overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Minimalist modern conference room with floor-to-ceiling windows and soft diffused light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFEumRHlCkAEU0qb1RuRewufJxpaHRCNWoYMb6nmFmqET1IzZOWUuSO2qxeFCm2EE2GDBjbxaRsNe2t3s17JEqUMLwMbqqiVNCmUeSBPvyXPEF9l1VjqfN4hmX-qGko3Rc8H9tZyYYISAVWUZj86GkyBnQiKQBRUmvvxrx8zInZiW1OHgfJS9xAfyQrgiJ17ocJP2XWb--VF-qfqURMG14f6uUPrZLhsIz7zryRIkCEH9PEiQRdsCK0YakNij55CL-4mXtnROUV360"/>
+</div>
+<div class="p-8">
+<span class="text-[10px] font-black tracking-widest uppercase text-tertiary mb-3 block">Aesthetics</span>
+<h3 class="text-xl font-bold font-headline mb-4 group-hover:text-primary transition-colors leading-tight">The Sleek Aesthetic of Modern Tinting</h3>
+<p class="text-on-surface-variant text-sm mb-6 line-clamp-2 leading-relaxed">Why architects are increasingly choosing low-reflectivity films for high-end residential projects.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-sm" href="#">
+                                Read More
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</article>
+</div>
+<!-- Pagination Placeholder -->
+<div class="mt-16 flex justify-center items-center gap-2">
+<button class="w-10 h-10 rounded-lg bg-primary-fixed text-on-primary-fixed font-bold">1</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-all">2</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-all">3</button>
+<span class="text-outline mx-2">...</span>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Newsletter Opt-in Section -->
+<section class="bg-surface-container-low py-24">
+<div class="max-w-4xl mx-auto px-8 text-center">
+<h2 class="text-3xl md:text-4xl font-black font-headline tracking-tight mb-4">Subscribe to Our Newsletter.</h2>
+<p class="text-on-surface-variant text-lg mb-12 max-w-2xl mx-auto font-body">Get expert tips on home comfort, energy saving, and exclusive early access to LUMAGUARD product launches.</p>
+<form class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto" onsubmit="return false;">
+<input class="flex-1 bg-surface-container-lowest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="Enter your email address" type="email"/>
+<button class="px-8 py-4 bg-tertiary-container text-on-tertiary font-bold rounded-xl hover:scale-95 duration-200 transition-all shadow-lg shadow-tertiary-container/10">Subscribe</button>
+</form>
+<p class="mt-6 text-xs text-on-surface-variant opacity-60">Join over 5,000 homeowners making smarter decisions for their homes.</p>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#f3f4f5] dark:bg-[#191c1d] border-t-0 font-['Inter'] text-sm tracking-wide">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 max-w-7xl mx-auto">
+<div class="flex flex-col gap-2">
+<span class="text-lg font-bold text-[#191c1d] dark:text-[#f8f9fa]">LUMAGUARD</span>
+<p class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70 max-w-xs">Precision engineered window films for the modern digital observatory.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70 hover:text-[#984b00] transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70 hover:text-[#984b00] transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70 hover:text-[#984b00] transition-colors opacity-80 hover:opacity-100" href="#">Installation Guide</a>
+<a class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70 hover:text-[#984b00] transition-colors opacity-80 hover:opacity-100" href="#">Sustainability</a>
+</div>
+<div class="text-[#191c1d]/70 dark:text-[#f8f9fa]/70">
+                © 2024 LUMAGUARD Precision Films. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

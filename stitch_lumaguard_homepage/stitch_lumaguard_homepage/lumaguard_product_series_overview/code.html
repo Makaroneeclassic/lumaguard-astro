@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LUMAGUARD | Product Comparison</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d9dadb",
+              "on-primary-container": "#cbdbff",
+              "on-surface": "#191c1d",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#424752",
+              "on-tertiary-fixed": "#311300",
+              "on-tertiary-container": "#ffd2b7",
+              "surface-container": "#edeeef",
+              "on-primary-fixed": "#001b3f",
+              "on-secondary-fixed": "#0b1e24",
+              "surface-variant": "#e1e3e4",
+              "surface-tint": "#255dad",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#d2e6ef",
+              "primary": "#004692",
+              "outline": "#727783",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#55676f",
+              "secondary-fixed-dim": "#b6cad2",
+              "surface-bright": "#f8f9fa",
+              "primary-container": "#275fae",
+              "inverse-surface": "#2e3132",
+              "on-error": "#ffffff",
+              "primary-fixed": "#d7e2ff",
+              "on-error-container": "#93000a",
+              "tertiary-fixed-dim": "#ffb786",
+              "tertiary-container": "#984b00",
+              "on-secondary-fixed-variant": "#374951",
+              "primary-fixed-dim": "#abc7ff",
+              "on-tertiary-fixed-variant": "#723600",
+              "background": "#f8f9fa",
+              "error-container": "#ffdad6",
+              "surface-container-highest": "#e1e3e4",
+              "secondary": "#4f6169",
+              "inverse-primary": "#abc7ff",
+              "tertiary": "#743800",
+              "surface": "#f8f9fa",
+              "surface-container-low": "#f3f4f5",
+              "secondary-fixed": "#d2e6ef",
+              "outline-variant": "#c2c6d4",
+              "surface-container-high": "#e7e8e9",
+              "inverse-on-surface": "#f0f1f2",
+              "error": "#ba1a1a",
+              "tertiary-fixed": "#ffdcc6",
+              "on-primary-fixed-variant": "#00458f",
+              "on-background": "#191c1d"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-nav {
+            background: rgba(248, 249, 250, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/70 dark:bg-slate-900/70 backdrop-blur-xl transition-all duration-300">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-2xl font-bold tracking-tighter text-blue-900 dark:text-blue-100 font-headline">LUMAGUARD</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-blue-700 dark:text-blue-400 font-bold border-b-2 border-blue-700 dark:border-blue-400 pb-1 font-label" href="#">Products</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 font-label transition-colors duration-300" href="#">Portfolio</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 font-label transition-colors duration-300" href="#">Services</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 font-label transition-colors duration-300" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="hidden lg:block text-on-surface p-2 rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-tertiary-container text-on-tertiary px-6 py-2.5 rounded-xl font-bold hover:scale-95 transition-transform duration-200">
+                    Get a Quote
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24">
+<!-- Hero Section -->
+<header class="max-w-7xl mx-auto px-8 mb-20">
+<div class="flex flex-col md:flex-row justify-between items-end gap-8">
+<div class="max-w-2xl">
+<p class="text-tertiary font-bold tracking-widest text-xs uppercase mb-4 font-headline">Technical Superiority</p>
+<h1 class="text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-primary leading-tight">
+                        Precision Engineered <br/>Light Filtration.
+                    </h1>
+</div>
+<div class="text-on-surface-variant font-body text-lg max-w-sm">
+                    High-performance window films designed for architectural clarity, solar protection, and visual excellence.
+                </div>
+</div>
+</header>
+<!-- Product Series Bento Grid -->
+<section class="max-w-7xl mx-auto px-8 mb-32">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Element Series Card -->
+<div class="md:col-span-8 group relative overflow-hidden rounded-xl bg-surface-container-low p-8 h-[400px] flex flex-col justify-between">
+<div class="z-10">
+<h3 class="text-3xl font-bold font-headline text-primary mb-2">Element Series</h3>
+<p class="text-on-surface-variant max-w-md">Carbon-infused technology for a classic matte finish without signal interference. Perfect for everyday performance.</p>
+</div>
+<div class="z-10 flex gap-4">
+<span class="bg-surface px-3 py-1 rounded-full text-xs font-bold text-primary border border-outline-variant/20">Non-Reflective</span>
+<span class="bg-surface px-3 py-1 rounded-full text-xs font-bold text-primary border border-outline-variant/20">Color Stable</span>
+</div>
+<img alt="" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-multiply group-hover:scale-105 transition-transform duration-700" data-alt="Modern architectural glass facade reflecting a soft blue sky with subtle carbon grey tinting effect on the windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtED2KtoMEXu8uckkts5CH7SbMLtk4vB1MPwQS9VkVLX7D5iteOHJIp2HT__6xAl6p30ILfxJAcNgORf0llM4pCq2FRnOSXLhEcrFjlRr2LPYt8v_ePHT-fZxSerl2RKs8RvakHwivcs7fd2Hp-aPe2SC5Z4G3UJmih1dD1Xiu6gtN1fMsHzV-zWfgQ8tC_tYoraMDaUGzMa7NGAVyJd1IcCOnnl-VkByuFdR9pVUn5YJeHJLAAZAftsn0f2SaX--pY7hVUGv7I4FI"/>
+</div>
+<!-- Guardian Series Card -->
+<div class="md:col-span-4 group relative overflow-hidden rounded-xl bg-primary text-white p-8 flex flex-col justify-between">
+<div class="z-10">
+<h3 class="text-3xl font-bold font-headline mb-2">Guardian</h3>
+<p class="text-primary-fixed/80 text-sm">Ceramic IR layers provide exceptional heat rejection while maintaining maximum visible light transmission.</p>
+</div>
+<div class="z-10">
+<div class="text-5xl font-extrabold font-headline mb-2">88%</div>
+<div class="text-xs uppercase tracking-widest opacity-70">Infrared Rejection</div>
+</div>
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Apex Series Card -->
+<div class="md:col-span-12 group relative overflow-hidden rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-10 flex flex-col md:flex-row items-center gap-12">
+<div class="flex-1">
+<div class="inline-block px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-bold mb-6 font-headline">ULTIMATE PERFORMANCE</div>
+<h3 class="text-4xl font-bold font-headline text-primary mb-4">Apex Multi-Layer Sputter</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-8">The pinnacle of thin-film technology. Using precious metal sputtering, Apex offers unmatched solar energy control and UV protection for premium commercial projects.</p>
+<button class="flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all">
+                            View Technical Data <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-2xl">
+<img alt="" class="w-full h-full object-cover" data-alt="Close-up of a high-tech glass skyscraper with a multi-layered metallic tint reflecting sunlight with precision and clarity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMrHE9eQ0TMgjlBupMwFGJrILqu0OjMeMDQJkVfNLkS6NDqyGAO8UR2C9XE8GwtOYTOrig7L-ebYBbNS5RI_MuSdwhur_Ky3ydp4zl_ETY-GUc0Vu56kkijhM8wPDcf6o7WFPPSfW2M118uwqSp7zTThvQTa8QQzDbTRvLWWi-91xqrNK-e6Or5bfj56gxNVjtBicB8zQcsKt7Eny-4BlNMv6PrlwQWCu-EWmDJAiG1o2LyCVDVFjJrU96R1SdVqgPrfo2XFWkAXp0"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Shading Representation (Visual Slider Mockup) -->
+<section class="bg-surface-container-low py-24 mb-32">
+<div class="max-w-7xl mx-auto px-8">
+<div class="text-center mb-16">
+<h2 class="text-4xl font-bold font-headline text-primary mb-4">Shade Visualizer</h2>
+<p class="text-on-surface-variant">Comparative look at Visible Light Transmission (VLT) percentages.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<!-- Shade 70% -->
+<div class="flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-white relative overflow-hidden mb-4 shadow-sm border border-outline-variant/10">
+<div class="absolute inset-0 bg-slate-900/10"></div>
+<div class="absolute bottom-4 left-4 text-xs font-bold">70% VLT</div>
+</div>
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Ultra Clear</span>
+</div>
+<!-- Shade 50% -->
+<div class="flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-white relative overflow-hidden mb-4 shadow-sm border border-outline-variant/10">
+<div class="absolute inset-0 bg-slate-900/30"></div>
+<div class="absolute bottom-4 left-4 text-xs font-bold text-white/80">50% VLT</div>
+</div>
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Light Tint</span>
+</div>
+<!-- Shade 35% -->
+<div class="flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-white relative overflow-hidden mb-4 shadow-sm border border-outline-variant/10">
+<div class="absolute inset-0 bg-slate-900/50"></div>
+<div class="absolute bottom-4 left-4 text-xs font-bold text-white/80">35% VLT</div>
+</div>
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Medium</span>
+</div>
+<!-- Shade 20% -->
+<div class="flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-white relative overflow-hidden mb-4 shadow-sm border border-outline-variant/10">
+<div class="absolute inset-0 bg-slate-900/75"></div>
+<div class="absolute bottom-4 left-4 text-xs font-bold text-white/80">20% VLT</div>
+</div>
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Privacy</span>
+</div>
+<!-- Shade 05% -->
+<div class="flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-white relative overflow-hidden mb-4 shadow-sm border border-outline-variant/10">
+<div class="absolute inset-0 bg-slate-900/90"></div>
+<div class="absolute bottom-4 left-4 text-xs font-bold text-white/80">05% VLT</div>
+</div>
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Limo Dark</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Specification Comparison Table -->
+<section class="max-w-7xl mx-auto px-8 mb-32">
+<h2 class="text-3xl font-bold font-headline text-primary mb-12">Performance Matrix</h2>
+<div class="overflow-hidden rounded-xl border border-outline-variant/20 shadow-xl shadow-slate-200/50">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary text-white">
+<th class="p-6 font-headline font-bold">Series / Grade</th>
+<th class="p-6 font-headline font-bold">VLT (Visible Light)</th>
+<th class="p-6 font-headline font-bold">IRR (Infrared Rejection)</th>
+<th class="p-6 font-headline font-bold">UVR (UV Protection)</th>
+<th class="p-6 font-headline font-bold">TSER (Heat Energy)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="bg-white hover:bg-surface-container-lowest transition-colors">
+<td class="p-6 font-bold text-primary">Element Carbon 35</td>
+<td class="p-6">38%</td>
+<td class="p-6">45%</td>
+<td class="p-6">99.9%</td>
+<td class="p-6">42%</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-surface-container-lowest transition-colors">
+<td class="p-6 font-bold text-primary">Guardian Ceramic 70</td>
+<td class="p-6">72%</td>
+<td class="p-6">88%</td>
+<td class="p-6">99.9%</td>
+<td class="p-6">54%</td>
+</tr>
+<tr class="bg-white hover:bg-surface-container-lowest transition-colors">
+<td class="p-6 font-bold text-primary">Guardian Ceramic 35</td>
+<td class="p-6">36%</td>
+<td class="p-6">92%</td>
+<td class="p-6">99.9%</td>
+<td class="p-6">62%</td>
+</tr>
+<tr class="bg-surface-container-low/30 hover:bg-surface-container-lowest transition-colors">
+<td class="p-6 font-bold text-primary">Apex Sputter 50</td>
+<td class="p-6">51%</td>
+<td class="p-6">95%</td>
+<td class="p-6">99.9%</td>
+<td class="p-6">68%</td>
+</tr>
+<tr class="bg-white hover:bg-surface-container-lowest transition-colors">
+<td class="p-6 font-bold text-primary">Apex Sputter 20</td>
+<td class="p-6">22%</td>
+<td class="p-6">98%</td>
+<td class="p-6">99.9%</td>
+<td class="p-6">76%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Technical Callout -->
+<section class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="order-2 md:order-1">
+<img alt="" class="rounded-xl shadow-2xl" data-alt="Laboratory clean room environment where precision window film is being tested with specialized laser and light equipment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUPCnHeYFbMbG21Ew6I-Q7H9HNWkAjRg8-SJ6I5kL0FxdLs8o5u5I9TQjHCiMUVvBOtJSRlYJT22o7qcOyaa4KznIoocRc1Z71OKRuKQBwvXAASySdTFvV7ln4i5FhAXxto5KTtcWszbEHGnt6bAcZiBjJ4eNOFKeeCxcsvqKwLWhbDdrCGLk_xIeljlaxy59K-FpMyDzGJgXMr7g0QX4kJ3xh5yeZ5HPHJfoIdSF5mmZcuRVTrjtZR6gSMQvaLU4rvvUiEKHWeKeq"/>
+</div>
+<div class="order-1 md:order-2">
+<h2 class="text-4xl font-bold font-headline text-primary mb-6">Certified Precision</h2>
+<p class="text-on-surface-variant text-lg mb-8">All LUMAGUARD films undergo rigorous ASTM testing to ensure that the technical data sheets (TDS) we provide are consistent with real-world performance. Our Apex series utilizes rare-earth metallic particles to reflect heat rather than absorbing it, setting a new standard for longevity.</p>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<span class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">verified</span>
+</span>
+<span class="font-bold">NFRC Certified Materials</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">shield_with_heart</span>
+</span>
+<span class="font-bold">Lifetime Color Stability Warranty</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full pt-16 pb-8 bg-slate-100 dark:bg-slate-950">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto px-8">
+<div class="col-span-1 md:col-span-1">
+<div class="text-xl font-bold text-blue-900 dark:text-slate-100 font-headline mb-6">LUMAGUARD</div>
+<p class="text-slate-500 text-sm leading-relaxed">
+                    Advanced solar control solutions for automotive, residential, and commercial applications.
+                </p>
+</div>
+<div>
+<h4 class="font-bold font-headline text-sm uppercase tracking-widest text-blue-800 dark:text-blue-300 mb-6">Products</h4>
+<ul class="space-y-4 text-sm font-body">
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Element Carbon</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Guardian Ceramic</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Apex Sputtered</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Safety &amp; Security</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold font-headline text-sm uppercase tracking-widest text-blue-800 dark:text-blue-300 mb-6">Resources</h4>
+<ul class="space-y-4 text-sm font-body">
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Technical Data Sheets</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Care Instructions</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Installation Guide</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Warranty Registry</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold font-headline text-sm uppercase tracking-widest text-blue-800 dark:text-blue-300 mb-6">Company</h4>
+<ul class="space-y-4 text-sm font-body">
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Find a Dealer</a></li>
+<li><a class="text-slate-500 hover:text-blue-600 transition-all" href="#">Support Center</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-outline-variant/10 text-center md:text-left">
+<p class="text-slate-500 text-xs font-body">© 2024 LUMAGUARD Precision Window Films. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

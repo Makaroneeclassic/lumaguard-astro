@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d9dadb",
+              "on-primary-container": "#cbdbff",
+              "on-surface": "#191c1d",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#424752",
+              "on-tertiary-fixed": "#311300",
+              "on-tertiary-container": "#ffd2b7",
+              "surface-container": "#edeeef",
+              "on-primary-fixed": "#001b3f",
+              "on-secondary-fixed": "#0b1e24",
+              "surface-variant": "#e1e3e4",
+              "surface-tint": "#255dad",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#d2e6ef",
+              "primary": "#004692",
+              "outline": "#727783",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#55676f",
+              "secondary-fixed-dim": "#b6cad2",
+              "surface-bright": "#f8f9fa",
+              "primary-container": "#275fae",
+              "inverse-surface": "#2e3132",
+              "on-error": "#ffffff",
+              "primary-fixed": "#d7e2ff",
+              "on-error-container": "#93000a",
+              "tertiary-fixed-dim": "#ffb786",
+              "tertiary-container": "#984b00",
+              "on-secondary-fixed-variant": "#374951",
+              "primary-fixed-dim": "#abc7ff",
+              "on-tertiary-fixed-variant": "#723600",
+              "background": "#f8f9fa",
+              "error-container": "#ffdad6",
+              "surface-container-highest": "#e1e3e4",
+              "secondary": "#4f6169",
+              "inverse-primary": "#abc7ff",
+              "tertiary": "#743800",
+              "surface": "#f8f9fa",
+              "surface-container-low": "#f3f4f5",
+              "secondary-fixed": "#d2e6ef",
+              "outline-variant": "#c2c6d4",
+              "surface-container-high": "#e7e8e9",
+              "inverse-on-surface": "#f0f1f2",
+              "error": "#ba1a1a",
+              "tertiary-fixed": "#ffdcc6",
+              "on-primary-fixed-variant": "#00458f",
+              "on-background": "#191c1d"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .glass-effect { backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/70 dark:bg-slate-900/70 backdrop-blur-xl">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-2xl font-bold tracking-tighter text-blue-900 dark:text-blue-100">LUMAGUARD</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors duration-300" href="#">Products</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors duration-300" href="#">Portfolio</a>
+<a class="text-blue-700 dark:text-blue-400 font-bold border-b-2 border-blue-700 dark:border-blue-400 pb-1 transition-colors duration-300" href="#">Services</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors duration-300" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-surface-container-high rounded-full px-4 py-2">
+<span class="material-symbols-outlined text-outline text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-32 placeholder:text-outline" placeholder="Search..." type="text"/>
+</div>
+<button class="bg-tertiary-container text-on-tertiary px-6 py-2.5 rounded-full font-bold text-sm hover:scale-95 transition-transform duration-200">
+                    Get a Quote
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24">
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-8 mb-24">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="space-y-8">
+<span class="inline-block px-4 py-1.5 rounded-full bg-tertiary text-on-tertiary text-xs font-bold tracking-widest uppercase">Expert Implementation</span>
+<h1 class="text-5xl lg:text-7xl font-extrabold tracking-tight text-primary leading-tight">Precision in Every Layer.</h1>
+<p class="text-lg text-on-surface-variant max-w-xl leading-relaxed">
+                        Window film is more than a product—it's a technical upgrade for your environment. Our certified technicians apply years of aerospace-grade precision to your commercial and residential glass.
+                    </p>
+</div>
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] shadow-2xl">
+<img alt="Professional Installation" class="object-cover w-full h-full" data-alt="Close-up of a professional technician meticulously applying a protective solar film to a large architectural window with high-end tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-yy5HCEkrwOjbfwhp_hS_1h2wo0vMd6VU8v_sPmgvd6ENcQBPqH51irpEpwmbvNmVXPFWHbruyZjZNLyGQGcFpCYqMuuFUxCm1gbphmIPa7zwDxDtvkwxs_TVq0KKO72o6XkyI7OpsvdH6TmCjZg_DqrzuDOeWFRGRfgK_2cXCeM2oZINd-vdHWPzHPtfw0bIrAGE6LBr2vcqv41dlWd-rKyt5GMcr3yOg_v4K45fgoYZ62JDc_VBBxbkUXtt8qwtGMnqzM3PYwkM"/>
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent"></div>
+</div>
+</div>
+</section>
+<!-- Process Section (Horizontal Timeline) -->
+<section class="bg-surface-container-low py-24 mb-24">
+<div class="max-w-7xl mx-auto px-8">
+<div class="mb-16">
+<h2 class="text-3xl font-bold text-primary mb-4">Our Methodology</h2>
+<p class="text-on-surface-variant max-w-2xl">From initial blueprint to the final quality seal, we follow a rigorous 4-step deployment process to ensure perfect optics and durability.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="forum">forum</span>
+</div>
+<div>
+<span class="text-tertiary font-bold text-xs uppercase tracking-widest block mb-2">Step 01</span>
+<h3 class="text-xl font-bold mb-3">Consultation</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Defining thermal requirements, aesthetic goals, and privacy thresholds for your specific space.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="architecture">architecture</span>
+</div>
+<div>
+<span class="text-tertiary font-bold text-xs uppercase tracking-widest block mb-2">Step 02</span>
+<h3 class="text-xl font-bold mb-3">Site Survey</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Laser-precision measurements and glass compatibility analysis by our technical leads.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="handyman">handyman</span>
+</div>
+<div>
+<span class="text-tertiary font-bold text-xs uppercase tracking-widest block mb-2">Step 03</span>
+<h3 class="text-xl font-bold mb-3">Professional Installation</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Dust-controlled application using proprietary filtration tools for a factory-perfect finish.</p>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="verified">verified</span>
+</div>
+<div>
+<span class="text-tertiary font-bold text-xs uppercase tracking-widest block mb-2">Step 04</span>
+<h3 class="text-xl font-bold mb-3">Quality Check &amp; Warranty</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Final clarity inspection and issuance of our 15-year performance guarantee certificate.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Expertise & Certification Section (Asymmetric Bento) -->
+<section class="max-w-7xl mx-auto px-8 py-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-7 bg-primary text-on-primary p-12 rounded-xl flex flex-col justify-between overflow-hidden relative">
+<div class="relative z-10">
+<h2 class="text-4xl font-bold mb-6">Certified Mastery</h2>
+<p class="text-primary-fixed leading-relaxed text-lg max-w-md">
+                            Our team is factory-certified by the IWFA (International Window Film Association) and undergoes biannual recertification in advanced adhesive technologies.
+                        </p>
+</div>
+<div class="mt-12 flex flex-wrap gap-4 relative z-10">
+<div class="px-4 py-2 bg-white/10 rounded-lg border border-white/20 text-xs font-semibold backdrop-blur-md">IWFA Master Accredited</div>
+<div class="px-4 py-2 bg-white/10 rounded-lg border border-white/20 text-xs font-semibold backdrop-blur-md">Safety &amp; Security Certified</div>
+<div class="px-4 py-2 bg-white/10 rounded-lg border border-white/20 text-xs font-semibold backdrop-blur-md">LEED GA Team Members</div>
+</div>
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-primary-container rounded-full blur-3xl opacity-30"></div>
+</div>
+<div class="lg:col-span-5 grid grid-cols-2 gap-8">
+<div class="col-span-2 md:col-span-1 rounded-xl overflow-hidden shadow-lg h-64 lg:h-auto">
+<img alt="Expert Team" class="w-full h-full object-cover" data-alt="Diverse team of professional engineers and installers in branded uniforms discussing technical blueprints in a bright office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAadHCfC8AljvxQhBkfscNYwcS-cbkQro1LkMo6Sj09RYx8h2sBbpkqDJzS_R7t8Fzcw_t3sy-5aI0v09gpSdd_qk-50pRQKEmMnCnoGR0aBQLTfqDy_x_n0rWUKYSz0BJMCscfTRCg3wQvlF0B0Nv1kwhZrME6HiRqjSaHf92FvyLFGd7KDquXBlwjyZoUUVisg_wAlAfJBUAmoBLkzO6Pa9Aehu90_dZrPXaE01Gu9AhaGecKz7a0dkUtPZPH4qYoX8bhtByjRqrB"/>
+</div>
+<div class="col-span-2 md:col-span-1 bg-surface-container-high p-8 rounded-xl flex flex-col justify-center text-center">
+<div class="text-5xl font-extrabold text-primary mb-2">25+</div>
+<div class="text-xs uppercase font-bold tracking-widest text-on-surface-variant">Years of Collective Experience</div>
+</div>
+</div>
+<div class="lg:col-span-4 bg-tertiary-fixed text-on-tertiary-fixed p-8 rounded-xl flex flex-col gap-4">
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="workspace_premium">workspace_premium</span>
+<h3 class="text-xl font-bold">Lifetime Performance</h3>
+<p class="text-sm opacity-80 leading-relaxed">Every installation is backed by our Lumaguard Shield, covering bubbling, peeling, and color shifting for the life of the film.</p>
+</div>
+<div class="lg:col-span-8 rounded-xl overflow-hidden h-64 shadow-xl">
+<img alt="Quality Outcome" class="w-full h-full object-cover" data-alt="Wide shot of a luxury modern residential interior with floor to ceiling windows overlooking a city skyline, showing perfect clarity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeNEbVMaYFbOACk3NTZzbEC8EGsbJVsyVx0bKdXVVureOfaInSKCY_nSp1MMX1wL2jd2wOILlEePjl0jPzyPgOFsP4y3bx79CHlLpNaiSEf6fs4rZ9bigjCHuM-k891QenSUBQ04fHR0MOhc4p5O0zlkfsoMSCgpG2BgqVYDLAvjcch_DwYi2iR37FVqfGL1sU4wFkAOEt3fpmWCDDIA5KzmMv_M4Kwp5Fbkx1F4MWUa1DXhnXxWT51hQbsvF1RX2RbRANxYqAszPH"/>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="max-w-7xl mx-auto px-8 mt-24">
+<div class="bg-surface-container p-12 lg:p-20 rounded-xl flex flex-col lg:flex-row justify-between items-center gap-12 border-l-8 border-tertiary">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-extrabold text-on-surface mb-4">Ready for a site survey?</h2>
+<p class="text-on-surface-variant text-lg">Schedule a technical walkthrough with one of our lead installers today. No obligation, just expert advice.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 shrink-0">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-bold shadow-lg hover:bg-primary-container transition-all">Book Installation</button>
+<button class="bg-surface-container-lowest text-primary px-8 py-4 rounded-full font-bold border border-outline-variant hover:bg-surface-bright transition-all">View Our Portfolio</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-100 dark:bg-slate-950 w-full pt-16 pb-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto px-8">
+<div class="space-y-4">
+<div class="text-xl font-bold text-blue-900 dark:text-slate-100">LUMAGUARD</div>
+<p class="text-sm text-slate-500 leading-relaxed">Precision window films for the modern architectural era. Protecting your clarity since 2004.</p>
+</div>
+<div class="space-y-4">
+<h4 class="text-blue-800 dark:text-blue-300 font-bold text-sm tracking-widest uppercase">Quick Links</h4>
+<ul class="space-y-2">
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Products</a></li>
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Portfolio</a></li>
+<li><a class="text-blue-700 dark:text-blue-400 underline text-sm" href="#">Services</a></li>
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Contact</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-blue-800 dark:text-blue-300 font-bold text-sm tracking-widest uppercase">Resources</h4>
+<ul class="space-y-2">
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Technical Data Sheets</a></li>
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Care Instructions</a></li>
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Warranty Info</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-blue-800 dark:text-blue-300 font-bold text-sm tracking-widest uppercase">Legal</h4>
+<ul class="space-y-2">
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-slate-500 dark:text-slate-500 hover:text-blue-600 text-sm transition-all" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
+<p class="text-xs text-slate-500 text-center">© 2024 LUMAGUARD Precision Window Films. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

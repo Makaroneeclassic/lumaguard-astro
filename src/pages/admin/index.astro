@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AtAGlance from '@/components/admin/AtAGlance';
+import LeadDashboard from '@/components/admin/LeadDashboard';
+import DbErrorBanner from '@/components/admin/DbErrorBanner';
+import { prisma } from '@/lib/db';
+
+export const prerender = false;
+
+let leads: any[] = [];
+let dbError = false;
+
+const stats = { leadsNew: 0, leadsTotal: 0, posts: 0, products: 0, portfolio: 0 };
+
+try {
+  const [leadList, leadsNew, posts, products, portfolio] = await Promise.all([
+    prisma.lead.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.lead.count({ where: { status: 'new' } }),
+    prisma.blogPost.count(),
+    prisma.product.count(),
+    prisma.portfolioItem.count(),
+  ]);
+  leads = leadList;
+  stats.leadsTotal = leadList.length;
+  stats.leadsNew = leadsNew;
+  stats.posts = posts;
+  stats.products = products;
+  stats.portfolio = portfolio;
+} catch (e) {
+  dbError = true;
+  console.error("Database connection failed while fetching admin dashboard data.");
+}
+---
+
+<Layout title="Admin Dashboard | LUMAGUARD" description="LUMAGUARD Admin Dashboard">
+  <div class="min-h-screen bg-slate-900 text-slate-100 p-8 space-y-8">
+    <div class="max-w-[1440px] mx-auto space-y-8">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-white tracking-tight">LUMAGUARD Admin Portal</h1>
+          <p class="text-slate-400 text-sm mt-1">จัดการภาพรวมระบบ ข้อมูล Lead รายชื่อสินค้า บทความ และงานติดตั้ง</p>
+        </div>
+        <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
+          ← กลับหน้าหลักเว็บไซต์
+        </a>
+      </div>
+
+      {dbError && <DbErrorBanner client:load context="โหลดแดชบอร์ด" />}
+      {!dbError && <AtAGlance client:load stats={stats} />}
+
+      <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
+        <h2 class="text-xl font-bold text-white mb-4">รายการสอบถาม (Leads) ล่าสุด</h2>
+        <LeadDashboard client:load initialLeads={leads} />
+      </div>
+    </div>
+  </div>
+</Layout>

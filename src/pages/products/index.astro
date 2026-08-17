@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar';
+import Footer from '@/components/Footer';
+import ProductMatrix, { ALL_PRODUCTS_DATA } from '@/components/ProductMatrix';
+import FilmSelector from '@/components/FilmSelector';
+import PriceEstimator from '@/components/PriceEstimator';
+import { prisma } from '@/lib/db';
+
+let products: any[] = [];
+try {
+  products = await prisma.product.findMany({
+    orderBy: { createdAt: 'asc' },
+  });
+} catch (e) {
+  console.warn("Database connection failed for products page. Using static fallback.");
+}
+
+if (products.length === 0) {
+  products = ALL_PRODUCTS_DATA;
+}
+
+const title = "รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก 18 รุ่น | LUMAGUARD";
+const description = "สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสงบ้านและคอนโด LUMAGUARD ครบทั้ง 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex, Guardian เพื่อการกันความร้อนสูงสุด";
+---
+
+<Layout title={title} description={description}>
+  <TopNavBar client:load />
+
+  <main class="min-h-screen pt-24 pb-20 px-6 max-w-[1440px] mx-auto space-y-20">
+    <div class="text-center max-w-3xl mx-auto space-y-4">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+        เปรียบเทียบสเปกและรุ่นฟิล์มกรองแสง (18 รุ่น)
+      </h1>
+      <p class="text-slate-600 text-base leading-relaxed">
+        คัดสรรเทคโนโลยีฟิล์มกรองแสงที่ดีที่สุดสำหรับบ้านและคอนโด ทั้ง 6 ซีรีส์ (Element, Shield, Zenith, Nexus, Apex, Guardian) ป้องกันความร้อนสูงสุดและถนอมสายตา
+      </p>
+    </div>
+
+    <ProductMatrix client:visible products={products} />
+
+    <section id="consultation" class="pt-8">
+      <FilmSelector client:visible />
+    </section>
+
+    <!-- Price Estimator Section with top spacing -->
+    <section id="estimator" class="mt-20 md:mt-24 pt-8">
+      <PriceEstimator client:visible />
+    </section>
+  </main>
+
+  <Footer client:visible />
+</Layout>

@@ -1,0 +1,118 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar';
+import Footer from '@/components/Footer';
+import LeadForm from '@/components/LeadForm';
+import PriceEstimator from '@/components/PriceEstimator';
+import { prisma } from '@/lib/db';
+import { MapPin, Phone, MessageSquare } from 'lucide-react';
+
+let globalSettings: any = null;
+try {
+  globalSettings = await prisma.seoGlobal.findUnique({
+    where: { id: 'global' },
+  });
+} catch (e) {
+  console.warn("Database connection failed for contact page.");
+}
+
+const faqItems = [
+  {
+    q: "ฟิล์มกรองแสงคอนโดและบ้านควรใช้แบบไหนดีที่สุด?",
+    a: "สำหรับบ้านและคอนโดที่ต้องการป้องกันความร้อนสูงสุดโดยยังได้แสงสว่างธรรมชาติ แนะนำฟิล์มประเภท **นาโนเซรามิก (Ceramic)** หรือ **ฟิล์มสปัตเตอร์สะท้อนความร้อน (Sputtered)** ครับ เนื่องจากมีเทคโนโลยีป้องกันรังสีอินฟราเรด (IRR) สูง 90% ขึ้นไป และไม่บล็อกสัญญาณมือถือ/GPS"
+  },
+  {
+    q: "การติดตั้งฟิล์มใช้เวลานานเท่าใด และขั้นตอนเป็นอย่างไร?",
+    a: "โดยเฉลี่ยการติดตั้งฟิล์มกระจกบ้านหรือคอนโดจะใช้เวลาประมาณ 3-6 ชั่วโมง ขึ้นอยู่กับจำนวนและขนาดของกระจก ทีมงานช่างมืออาชีพจะเริ่มจากการคลุมผ้าใบกันน้ำทำความสะอาดกระจกอย่างประณีตและทำการติดตั้งโดยไม่มีเศษฝุ่นหรือฟองอากาศแน่นอนครับ"
+  },
+  {
+    q: "ฟิล์มกรองแสงของ LUMAGUARD มีการรับประกันอย่างไร?",
+    a: "ผลิตภัณฑ์ฟิล์มกรองแสงรุ่นพรีเมียมของเรามีการรับประกันคุณภาพสูงสุด **10-15 ปี** ครอบคลุมปัญหากาวแห้งกรอบ ฟิล์มลอกร่อน สีซีดจาง หรือเกิดฟองอากาศ โดยสามารถติดต่อทีมงานเพื่อทำการเปลี่ยนฟิล์มใหม่ได้ทันทีตามเงื่อนไขใบรับประกันครับ"
+  },
+  {
+    q: "ค่าบริการติดฟิล์มประเมินราคาอย่างไร?",
+    a: "การประเมินราคาจะคิดตามขนาดพื้นที่จริงของกระจก (ตารางเมตรหรือตารางฟุต) และประเภทของฟิล์มที่เลือกใช้ โดยฟิล์มเริ่มต้นระดับนาโนคาร์บอนจะมีราคาเริ่มต้นประมาณ 1,100 บาท/ตร.ม. คุณสามารถส่งขนาดกระจกหรือรูปถ่ายให้ทีมงานช่วยประเมินราคาและให้คำแนะนำฟรีไม่มีค่าใช้จ่ายครับ"
+  }
+];
+
+const title = "ติดต่อเรา & FAQ | LUMAGUARD";
+const description = "ติดต่อทีมงานผู้เชี่ยวชาญ LUMAGUARD เพื่อขอรับคำปรึกษา การวัดขนาดพื้นที่กระจกฟรี หรือขอใบเสนอราคาฟิล์มติดบ้าน คอนโด";
+---
+
+<Layout title={title} description={description}>
+  <TopNavBar client:load />
+
+  <main class="min-h-screen pt-28 md:pt-36 pb-24 px-4 sm:px-8 max-w-[1440px] mx-auto space-y-20">
+    <!-- Page Title Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-4">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+        ติดต่อเรา & ประเมินราคาฟรี
+      </h1>
+      <p class="text-slate-600 text-base leading-relaxed font-light">
+        ปรึกษาผู้เชี่ยวชาญด้านฟิล์มกรองแสงอาคาร บ้าน และคอนโด พร้อมบริการวัดพื้นที่จริงฟรีทั่วกรุงเทพฯ
+      </p>
+    </div>
+
+    <!-- Contact Info Cards (3 Columns) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+      <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="w-12 h-12 bg-sky-500/10 text-sky-600 rounded-2xl flex items-center justify-center">
+          <Phone className="w-6 h-6" />
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">สายด่วนบริการ</h3>
+        <p class="text-slate-700 text-base font-bold">{globalSettings?.businessPhone || "098-353-9369"}</p>
+      </div>
+
+      <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center">
+          <MessageSquare className="w-6 h-6" />
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">LINE Official Account</h3>
+        <p class="text-slate-700 text-base font-bold">@LUMAGUARD <span class="text-xs font-normal text-slate-500">(ตอบ 24 ชม.)</span></p>
+      </div>
+
+      <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-2xl flex items-center justify-center">
+          <MapPin className="w-6 h-6" />
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">ที่ตั้งสำนักงานใหญ่</h3>
+        <p class="text-slate-700 text-base font-bold">{globalSettings?.businessAddress || "หลักสี่ กรุงเทพฯ"}</p>
+      </div>
+    </div>
+
+    <!-- Interactive Price Estimator Section -->
+    <section id="estimator" class="pt-8">
+      <PriceEstimator client:visible />
+    </section>
+
+    <!-- Lead Form Request Section -->
+    <section id="contact-form" class="pt-8">
+      <LeadForm client:visible />
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-12 bg-slate-50 rounded-3xl p-6 sm:p-10 border border-slate-200 space-y-8 shadow-sm">
+      <div class="text-center space-y-2 max-w-xl mx-auto">
+        <span class="text-amber-700 font-bold tracking-widest text-xs uppercase">
+          คำถามที่พบบ่อย (FAQS)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          ไขข้อข้องใจเรื่องการติดฟิล์มกระจกบ้านและคอนโด
+        </h2>
+      </div>
+
+      <div class="space-y-4 max-w-4xl mx-auto">
+        {faqItems.map((item, idx) => (
+          <div key={idx} class="p-6 bg-white rounded-2xl border border-slate-200 space-y-2">
+            <h3 class="text-base font-bold text-slate-900">Q: {item.q}</h3>
+            <p class="text-slate-600 text-sm leading-relaxed font-light text-justify">
+              A: {item.a}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer client:visible />
+</Layout>

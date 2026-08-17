@@ -1,0 +1,149 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model SeoGlobal {
+  id                     String   @id @default("global")
+  siteName               String   @default("LUMAGUARD")
+  titleTemplate          String   @default("%s | LUMAGUARD")
+  defaultDescription     String   @db.Text
+  defaultOgImage         String?  @db.Text
+  googleVerificationCode String?
+  googleAnalyticsId      String?
+  robotsTxtDirectives    String?  @db.Text
+  primaryColor           String   @default("#0f172a")
+  secondaryColor         String   @default("#0284c7")
+  textColor              String   @default("#1e293b")
+  buttonColor            String   @default("#0f172a")
+  buttonTextColor        String   @default("#ffffff")
+  fontFamily             String   @default("Noto Sans Thai")
+  businessAddress        String?  @db.Text
+  businessPhone          String?
+  businessPriceRange     String?
+  businessMapUri         String?  @db.Text
+  updatedAt              DateTime @updatedAt
+}
+
+model SeoPage {
+  id            String   @id @default(uuid())
+  routePath     String   @unique
+  pageName      String
+  title         String   @db.Text
+  description   String   @db.Text
+  keywords      String?  @db.Text
+  canonicalUrl  String?  @db.Text
+  ogTitle       String?  @db.Text
+  ogDescription String?  @db.Text
+  ogImage       String?  @db.Text
+  noindex       Boolean  @default(false)
+  nofollow      Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  coverImage  String   @db.Text
+  authorName  String
+  authorImage String?  @db.Text
+  category    String
+  published   Boolean  @default(true)
+  readingTime String   @default("5 min read")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  seoTitle    String?  @db.Text
+  seoDesc     String?  @db.Text
+  seoKeywords String?  @db.Text
+  noindex     Boolean  @default(false)
+  ogImage     String?  @db.Text
+  faq         String?  @db.Text
+}
+
+model Lead {
+  id           String   @id @default(uuid())
+  name         String
+  phone        String
+  district     String
+  propertyType String
+  areaSize     Float?
+  status          String   @default("new")
+  estimatedArea   Float?
+  recommendedFilm String?
+  trafficSource   String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  gclid           String?
+  landingPage     String?  @db.Text
+  createdAt       DateTime @default(now())
+}
+
+model PortfolioItem {
+  id          String   @id @default(uuid())
+  title       String
+  location    String
+  category    String
+  image       String   @db.Text
+  altText     String   @db.Text
+  seriesUsed  String
+  areaSize    String?
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+}
+
+model Testimonial {
+  id         String   @id @default(uuid())
+  authorName String
+  role       String
+  content    String   @db.Text
+  rating     Int      @default(5)
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  series      String   // "Element", "Guardian", "Apex", "Shield", "Zenith", "Nexus"
+  vlt         String   // e.g. "38%"
+  irr         String   // e.g. "45%" (900-1000nm)
+  irr2        String   @default("75%") // e.g. "75%" (1000-1700nm)
+  uvr         String   // e.g. "99.9%"
+  tser        String   // e.g. "42%"
+  technology  String   @default("Ceramic Film") // e.g. "Ceramic Film"
+  thickness   String   @default("2MIL (50 micron)") // e.g. "2MIL (50 micron)"
+  description String?  @db.Text
+  image       String?  @db.Text
+  price       String?
+  showOnHomepage Boolean  @default(true)
+  isPopular      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HomepageModule {
+  id        String   @id @default(uuid())
+  key       String   @unique // e.g. "hero", "why-us", "products", "process", "estimator", "visualizer", "testimonials", "contact"
+  title     String
+  subtitle  String?  @db.Text
+  content   Json?    // บันทึกเนื้อหารายละเอียดเฉพาะของแต่ละโมดูลในรูปแบบ JSON
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

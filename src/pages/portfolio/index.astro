@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar';
+import Footer from '@/components/Footer';
+import PortfolioList from '@/components/PortfolioList';
+import { prisma } from '@/lib/db';
+
+let items: any[] = [];
+try {
+  items = await prisma.portfolioItem.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+} catch (e) {
+  console.warn("Database connection failed for portfolio, using fallback.");
+}
+
+if (items.length === 0) {
+  items = [
+    {
+      id: "1",
+      title: "The Monument Thong Lo",
+      location: "ทองหล่อ, กรุงเทพฯ",
+      category: "condo",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCj3aBLG7sUb1FGlWSBzeQnmaSBjM2NzPffLQXB-ShkHLTdDVhvbCP2mUDtdJ6mZP3bjqSTzinczicYlea97m43CFG1MzlsLfjRJwOHjey3h6pJzeOiUpAngYd7JMAkFCxg1GDO1GKzU4EyZxK51rFewo9skCoHVBRAycVXLdgpPUzLOG0eUvdOATl4mQZ9r5kBIyIyvRfs4B9Oruxe-h-E6IxQI1IvYYWumILmNWizIB7nETJV_i7GxEuWtqOZoN6Vs0Z-gSHg6gYm",
+      altText: "ห้องรับแขกเพ้นท์เฮ้าส์หรูทองหล่อติดฟิล์มลดความร้อนสะสม",
+      seriesUsed: "Apex Sputter 20",
+      areaSize: "45 ตร.ม.",
+      description: "ติดตั้งฟิล์มกรองแสงชนิดสปัตเตอร์หลายชั้นบนกระจกบานใหญ่พิเศษ ลดความร้อนสะสมและกรองแสงจ้าช่วงเย็น",
+    },
+    {
+      id: "2",
+      title: "Santi Pura Residence",
+      location: "บางนา, กรุงเทพฯ",
+      category: "house",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCI2UtsVnRDZPeKdjPpuFIqEzlMMvlaqGP8b5BOuvMFNtur0BsilWjUjbhCHZ0FAQRLaz-zWaGUEcLOvBv-APfQtIglErHMvkJKZiBwkwsE647NbZ5ID7qQ0W4IW5y8QOgs4bxNDRQibYQg_FlvKSBS_9WXgjjpffYzg4Ug0cXfxfBvFTSX0EHX3UtZOyprkktNj3o4TOWGdW7vWBwM4YfE_V-AUP8JP30cY2Ii9n2nBdy2Y9dVRDW3QyzQq1o5B4ZRm_-UVxFPRWjj",
+      altText: "บ้านสไตล์โมเดิร์นทรอปิคอลติดฟิล์มกรองแสงเซรามิกใส",
+      seriesUsed: "Guardian Ceramic 70",
+      areaSize: "180 ตร.ม.",
+      description: "ติดตั้งฟิล์มเซรามิคพรีเมียม สบายตา นำความเย็นเข้าสู่บ้าน สบายใจและประหยัดไฟฟ้าตลอดปี",
+    },
+  ];
+}
+
+const title = "ผลงานการติดตั้งฟิล์มจริง คอนโดและบ้านหรู | LUMAGUARD";
+const description = "ชมภาพผลงานการติดตั้งฟิล์มกรองแสงบ้าน คอนโดมิเนียม และอาคารสำนักงานจริงทั่วกรุงเทพฯ และปริมณฑล โดยช่างผู้เชี่ยวชาญ LUMAGUARD";
+---
+
+<Layout title={title} description={description}>
+  <TopNavBar client:load />
+
+  <main class="min-h-screen pt-24 pb-16 px-6 max-w-[1440px] mx-auto space-y-12">
+    <div class="text-center max-w-3xl mx-auto space-y-4">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+        ผลงานการติดตั้งจริง
+      </h1>
+      <p class="text-slate-600 text-base leading-relaxed">
+        ความไว้วางใจจากโครงการคอนโดหรู บ้านเดี่ยวชั้นนำ และอาคารสำนักงานทั่วกรุงเทพฯ
+      </p>
+    </div>
+
+    <PortfolioList client:visible portfolioItems={items} />
+  </main>
+
+  <Footer client:visible />
+</Layout>
