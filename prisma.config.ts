@@ -16,15 +16,19 @@ import "dotenv/config";
 const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
 
 if (!url) {
-  throw new Error(
-    "ต้องตั้ง DIRECT_URL หรือ DATABASE_URL ในไฟล์ .env ก่อนรันคำสั่งของ Prisma\n" +
-      "ดู connection string ได้ที่ Supabase → ปุ่ม Connect → แท็บ ORM → Prisma",
+  // ห้าม throw ตรงนี้ — ไฟล์นี้ถูกโหลดตอน `prisma generate` ด้วย ซึ่งรันใน
+  // ขั้น postinstall บน Vercel และไม่ต้องใช้ฐานข้อมูลเลย ถ้า throw จะทำให้
+  // การติดตั้งล้มทั้งที่ยังไม่ได้ต่อ DB
+  // ปล่อยเป็น URL ปลอมแทน คำสั่งที่ต้องต่อจริง (db push, seed) จะฟ้องเอง
+  console.warn(
+    "[prisma] ไม่พบ DIRECT_URL และ DATABASE_URL — คำสั่งที่ต้องต่อฐานข้อมูลจะใช้งานไม่ได้\n" +
+      "         ดู connection string ได้ที่ Supabase → ปุ่ม Connect → แท็บ ORM → Prisma",
   );
 }
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
-  datasource: { url },
+  datasource: { url: url ?? "postgresql://unset:unset@localhost:5432/unset" },
   migrations: {
     seed: "npx tsx prisma/seed.ts",
   },
