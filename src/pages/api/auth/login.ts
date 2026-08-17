@@ -10,7 +10,22 @@ export const prerender = false;
 // เพื่อไม่ให้เวลาตอบสนองบอกได้ว่าอีเมลนี้มีอยู่จริงหรือไม่
 const DUMMY_HASH = "$2a$12$C6UzMDM.H6dfI/f/IKcEe.qcrEXJKrLTvxaFyNyPCUqDwbdBSAdxu";
 
-export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+export const POST: APIRoute = async (context) => {
+  try {
+    return await handleLogin(context);
+  } catch (error) {
+    // ไม่ปล่อยให้ error หลุดออกไป มิฉะนั้นผู้ใช้จะเจอหน้าขาวเปล่า ๆ
+    // โดยไม่รู้ว่าเกิดอะไรขึ้น กรณีที่พบบ่อยที่สุดคือยังไม่ได้ตั้ง AUTH_SECRET
+    // บนเซิร์ฟเวอร์ ซึ่งทำให้การสร้าง session token ล้มทันที
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[auth] เข้าสู่ระบบล้มเหลว:", message);
+
+    const code = message.includes("AUTH_SECRET") ? "config" : "server";
+    return context.redirect(`/admin/login?error=${code}`, 303);
+  }
+};
+
+const handleLogin: APIRoute = async ({ request, cookies, redirect }) => {
   const form = await request.formData();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("password") ?? "");

@@ -14,7 +14,13 @@ let dbError = false;
 const stats = { leadsNew: 0, leadsTotal: 0, posts: 0, products: 0, portfolio: 0 };
 
 // บทความอยู่ใน git เป็น MDX แล้ว ไม่ได้อยู่ใน DB — นับจาก content collection
-stats.posts = (await getCollection('blog', ({ data }) => !data.draft)).length;
+// ครอบ try ไว้เพราะหน้านี้เรนเดอร์ตอนมีรีเควสต์ ถ้าอ่านคอลเลกชันพลาด
+// ทั้งหน้าจะกลายเป็น 500 หน้าขาวทั้งที่แค่ตัวเลขสถิติตัวเดียวหาย
+try {
+  stats.posts = (await getCollection('blog', ({ data }) => !data.draft)).length;
+} catch (e) {
+  console.error('[admin] นับจำนวนบทความไม่สำเร็จ:', e);
+}
 
 try {
   const [leadList, leadsNew, products, portfolio] = await Promise.all([

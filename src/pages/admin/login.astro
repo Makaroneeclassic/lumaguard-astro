@@ -9,6 +9,7 @@ const errorMessages: Record<string, string> = {
   missing: 'กรุณากรอกอีเมลและรหัสผ่าน',
   ratelimit: 'พยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่',
   server: 'ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง',
+  config: 'ระบบยังตั้งค่าไม่ครบ: ยังไม่ได้กำหนด AUTH_SECRET บนเซิร์ฟเวอร์ (ต้องยาวอย่างน้อย 32 ตัวอักษร)',
 };
 const errorMessage = errorCode ? (errorMessages[errorCode] ?? errorMessages.invalid) : null;
 ---
