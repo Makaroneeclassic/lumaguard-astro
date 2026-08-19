@@ -45,9 +45,14 @@ export async function sendGa4Event(
       non_personalized_ads: false,
       events: events.map((e) => ({
         name: e.name,
-        params: Object.fromEntries(
-          Object.entries(e.params ?? {}).filter(([, v]) => v !== undefined && v !== ''),
-        ),
+        params: {
+          ...Object.fromEntries(
+            Object.entries(e.params ?? {}).filter(([, v]) => v !== undefined && v !== ''),
+          ),
+          // เปิด GA4_DEBUG เพื่อให้ event โผล่ใน DebugView ตอนตรวจสอบ
+          // DebugView แสดงเฉพาะ event ที่ติดธงนี้ ไม่ใช่ทราฟฟิกทั่วไป
+          ...(import.meta.env.GA4_DEBUG === 'true' ? { debug_mode: 1 } : {}),
+        },
       })),
     }),
   });
@@ -55,6 +60,17 @@ export async function sendGa4Event(
   // Measurement Protocol ตอบ 204 เสมอแม้ payload ผิด จึงเช็คได้แค่ระดับ transport
   if (!res.ok) throw new Error(`GA4 Measurement Protocol ตอบ ${res.status}`);
   console.log(`[ga4] ส่ง ${events.map((e) => e.name).join(', ')} เข้า ${id} แล้ว`);
+}
+
+/**
+ * สร้าง client id สำรองในรูปแบบที่ GA4 รับ คือ <ตัวเลข>.<เวลาเป็นวินาที>
+ *
+ * ใช้เมื่อยิง event จากเซิร์ฟเวอร์โดยไม่มีคุกกี้ของเบราว์เซอร์ให้อ้างอิง
+ * ถ้าส่งค่ารูปแบบอื่นเช่น UUID ทาง GA4 จะทิ้ง event นั้นเงียบ ๆ เพราะ
+ * Measurement Protocol ตอบ 204 เสมอไม่ว่า payload จะถูกหรือผิด
+ */
+export function fallbackClientId(): string {
+  return `${Math.floor(Math.random() * 1_000_000_000)}.${Math.floor(Date.now() / 1000)}`;
 }
 
 /**

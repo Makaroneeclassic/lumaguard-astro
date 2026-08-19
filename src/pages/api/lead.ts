@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db';
 import { z } from 'astro/zod';
 import { checkRateLimit } from '@/lib/ratelimit';
 import { notifyNewLead } from '@/lib/notify';
-import { sendGa4Event, parseGaClientId } from '@/lib/ga4';
+import { sendGa4Event, parseGaClientId, fallbackClientId } from '@/lib/ga4';
 import { sendTrackingEvent } from '@/lib/tracking';
 
 // Force server rendering for this API route

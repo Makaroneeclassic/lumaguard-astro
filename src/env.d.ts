@@ -20,6 +20,7 @@ interface ImportMetaEnv {
   readonly TRACKING_ENDPOINT_SECRET?: string;
   readonly GA4_MEASUREMENT_ID?: string;
   readonly GA4_API_SECRET?: string;
+  readonly GA4_DEBUG?: string;
   readonly GOOGLE_SITE_VERIFICATION?: string;
   readonly UPSTASH_REDIS_REST_URL?: string;
   readonly UPSTASH_REDIS_REST_TOKEN?: string;
