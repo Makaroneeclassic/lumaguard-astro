@@ -93,7 +93,7 @@ export default function PriceEstimator() {
           </span>
           <a
             href="/contact"
-            className="text-xs text-accent-300 hover:underline font-bold font-headline block"
+            className="text-xs text-slate-400 hover:text-slate-300 hover:underline font-medium font-headline block"
           >
             *อ้างอิงจากราคาเฉลี่ยรุ่น Guardian Ceramic
           </a>
