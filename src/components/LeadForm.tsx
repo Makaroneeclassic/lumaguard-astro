@@ -88,7 +88,25 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
       });
 
       if (!res.ok) {
-        throw new Error("ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง");
+        // เดิมแสดงข้อความเดียวกันหมดไม่ว่าจะล้มเหลวด้วยสาเหตุใด ทำให้ผู้ใช้
+        // ไม่รู้ว่าควรทำอะไรต่อ และเราก็หาสาเหตุไม่ได้เพราะไม่มีข้อมูลอะไรเลย
+        let detail = "";
+        try {
+          const body = await res.json();
+          detail = body?.error ?? "";
+        } catch {
+          /* บางกรณีปลายทางไม่ได้ตอบเป็น JSON */
+        }
+
+        if (res.status === 429) {
+          throw new Error(detail || "ส่งคำขอบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่");
+        }
+        if (res.status === 400) {
+          throw new Error(detail || "ข้อมูลไม่ครบหรือไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง");
+        }
+        throw new Error(
+          `ส่งข้อมูลไม่สำเร็จ (รหัส ${res.status}) กรุณาลองใหม่ หรือติดต่อเราทาง LINE`,
+        );
       }
 
       // GA4 Event Tracking for Lead Submission
