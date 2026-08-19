@@ -8,6 +8,15 @@ import { getTrafficSourceData } from "@/lib/utmTracker";
  * tone="sky" ใช้เมื่อวางฟอร์มต่อจากกล่อง CTA ในบทความ เพื่อให้โทนสีต่อเนื่องกัน
  * ค่าเริ่มต้นคงสีเดิมไว้ เพราะฟอร์มนี้ถูกใช้ในอีกสามหน้าที่พื้นหลังต่างกัน
  */
+/** อ่าน client id ของ GA4 จากคุกกี้ _ga ซึ่งมีรูปแบบ GA1.1.<id ส่วนที่ 1>.<ส่วนที่ 2> */
+function readGaClientId(): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const m = document.cookie.match(/_ga=([^;]+)/);
+  if (!m) return undefined;
+  const parts = m[1].split(".");
+  return parts.length >= 4 ? `${parts[2]}.${parts[3]}` : undefined;
+}
+
 interface LeadFormProps {
   tone?: "default" | "sky";
 }
@@ -69,6 +78,10 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
           areaSize: formData.areaSize ? parseFloat(formData.areaSize) : null,
           estimatedArea,
           recommendedFilm,
+          // ส่ง client id ของ GA4 ไปด้วย เพื่อให้ event ที่ยิงจากเซิร์ฟเวอร์
+          // ผูกกับ session เดียวกับที่ผู้ใช้เข้าชม ไม่งั้น GA4 จะนับเป็นคนละคน
+          // และบอกไม่ได้ว่าลูกค้ารายนี้มาจากช่องทางไหน
+          gaClientId: readGaClientId(),
           ...marketingData
         }),
       });

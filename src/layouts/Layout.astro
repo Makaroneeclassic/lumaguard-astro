@@ -2,6 +2,7 @@
 import SEO from '../components/SEO.astro';
 import JsonLd from '../components/JsonLd.astro';
 import { buildSiteSchema } from '@/lib/schema';
+import ConsentBanner from '@/components/ConsentBanner.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -17,6 +18,10 @@ interface Props {
 
 const { title, description, image, type, publishedTime, modifiedTime, noindex, schema } = Astro.props;
 const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
+
+// วิธียืนยันสิทธิ์ที่ดีกว่าคือใส่ระเบียน TXT ที่ DNS ซึ่งไม่เพิ่มน้ำหนักหน้าเว็บ
+// และครอบคลุมทุกซับโดเมน ตัวนี้เป็นทางสำรองสำหรับกรณีที่แก้ DNS ไม่ได้
+const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
 ---
 
 <!DOCTYPE html>
@@ -29,6 +34,9 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#004692" />
+    {googleVerification && (
+      <meta name="google-site-verification" content={googleVerification} />
+    )}
     
     <!--
       ฟอนต์โฮสต์เองแล้ว ประกาศ @font-face อยู่ใน global.css
@@ -116,6 +124,8 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
       </noscript>
     )}
     
+    <ConsentBanner />
+
     <div class="min-h-screen flex flex-col justify-between">
       <main class="flex-grow">
         <slot />

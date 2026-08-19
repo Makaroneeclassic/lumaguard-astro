@@ -1,0 +1,89 @@
+---
+/**
+ * แบนเนอร์ขอความยินยอมคุกกี้
+ *
+ * จำเป็นสองทาง หนึ่งคือ PDPA กำหนดให้ขอความยินยอมก่อนเก็บข้อมูล และสองคือ
+ * Consent Mode ใน Layout ตั้งค่าเริ่มต้นเป็น denied ทุกตัว ถ้าไม่มีอะไรมา
+ * อัปเดตสถานะ GA4 จะได้รับแต่ ping ไร้คุกกี้ไปตลอด ไม่มี session และ
+ * ไม่มีการเชื่อมโยงว่าโฆษณาตัวไหนทำให้เกิดลูกค้า
+ *
+ * เขียนด้วย JavaScript ล้วนและ inline ไม่ผ่าน React จึงไม่มี hydration
+ * และไม่เพิ่มขนาด bundle
+ */
+---
+
+<div
+  id="consent-banner"
+  role="dialog"
+  aria-live="polite"
+  aria-label="การตั้งค่าคุกกี้"
+  hidden
+  class="fixed inset-x-0 bottom-0 z-[100] border-t border-outline-variant/30 bg-surface/95 backdrop-blur-md p-4 md:p-5 shadow-[0_-4px_24px_rgba(25,28,29,0.08)]"
+>
+  <div class="mx-auto flex max-w-5xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <p class="text-sm leading-relaxed text-on-surface-variant">
+      เราใช้คุกกี้เพื่อวิเคราะห์การใช้งานเว็บไซต์และปรับปรุงบริการให้ดีขึ้น
+      คุณเลือกได้ว่าจะให้เก็บข้อมูลหรือไม่
+      <a href="/privacy-policy" class="font-semibold text-primary underline underline-offset-2">
+        อ่านนโยบายความเป็นส่วนตัว
+      </a>
+    </p>
+
+    <div class="flex shrink-0 gap-2">
+      <button
+        type="button"
+        data-consent="deny"
+        class="rounded-lg border border-outline-variant px-4 py-2.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
+      >
+        ปฏิเสธ
+      </button>
+      <button
+        type="button"
+        data-consent="grant"
+        class="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+      >
+        ยอมรับ
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = 'lg_consent';
+    var el = document.getElementById('consent-banner');
+    if (!el) return;
+
+    function apply(granted) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      var v = granted ? 'granted' : 'denied';
+      gtag('consent', 'update', {
+        ad_storage: v,
+        ad_user_data: v,
+        ad_personalization: v,
+        analytics_storage: v,
+      });
+      window.dataLayer.push({ event: 'consent_' + (granted ? 'granted' : 'denied') });
+    }
+
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+
+    if (saved === 'granted' || saved === 'denied') {
+      apply(saved === 'granted');
+      return;
+    }
+
+    el.hidden = false;
+
+    el.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-consent]');
+      if (!btn) return;
+      var granted = btn.dataset.consent === 'grant';
+      try { localStorage.setItem(KEY, granted ? 'granted' : 'denied'); } catch (err) {}
+      apply(granted);
+      el.hidden = true;
+    });
+  })();
+</script>

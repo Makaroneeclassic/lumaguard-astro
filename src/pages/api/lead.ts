@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { z } from 'astro/zod';
 import { checkRateLimit } from '@/lib/ratelimit';
 import { notifyNewLead } from '@/lib/notify';
+import { sendGa4Event, parseGaClientId } from '@/lib/ga4';
 
 // Force server rendering for this API route
 export const prerender = false;
@@ -21,6 +22,7 @@ const leadValidation = z.object({
   utmMedium: z.string().optional(),
   utmCampaign: z.string().optional(),
   gclid: z.string().optional(),
+  gaClientId: z.string().optional(),
   landingPage: z.string().optional(),
   website_url: z.string().optional() // Honeypot field
 });
@@ -92,7 +94,36 @@ export const POST: APIRoute = async ({ request }) => {
     //    การแจ้งเตือนหายไปเงียบ ๆ
     const sideEffects: Promise<unknown>[] = [];
 
+    // ถ้ายังไม่มีเซิร์ฟเวอร์ sGTM ให้ยิงเข้า GA4 ตรงผ่าน Measurement Protocol
+    // เพื่อไม่ให้เสียข้อมูล conversion ระหว่างที่ยังตั้ง sGTM ไม่เสร็จ
     const sgtmUrl = import.meta.env.SGTM_URL;
+    if (!sgtmUrl) {
+      const clientId =
+        data.gaClientId ||
+        parseGaClientId(
+          request.headers.get('cookie')?.match(/_ga=([^;]+)/)?.[1],
+        ) ||
+        (lead ? lead.id : `srv.${Date.now()}`);
+
+      sideEffects.push(
+        sendGa4Event(
+          clientId,
+          [{
+            name: 'generate_lead',
+            params: {
+              currency: 'THB',
+              district: data.district,
+              property_type: data.propertyType,
+              recommended_film: data.recommendedFilm,
+              source: data.utmSource,
+              campaign: data.utmCampaign,
+            },
+          }],
+          request.headers.get('user-agent') ?? undefined,
+        ),
+      );
+    }
+
     if (sgtmUrl) {
       const gtmPreviewHeader = request.headers.get('x-gtm-server-preview') || '';
       const sGtmPayload = {
