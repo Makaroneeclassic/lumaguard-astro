@@ -97,9 +97,42 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
     setSelectedSeries([]);
   };
 
-  const filteredProducts = selectedSeries.length === 0
-    ? displayProducts
-    : ALL_PRODUCTS_DATA.filter((product) => selectedSeries.includes(product.series));
+  /**
+   * เลือกรุ่นที่มีค่า VLT อยู่ตรงกลางของแต่ละซีรีส์
+   *
+   * ตอนดูภาพรวมการโชว์ทั้ง 18 รุ่นพร้อมกันทำให้ตารางยาวเกินกว่าจะเทียบไหว
+   * จึงเหลือซีรีส์ละรุ่นเป็นตัวแทน แล้วค่อยกดเข้าไปดูครบในแต่ละซีรีส์
+   */
+  const middleOfEachSeries = (list: Product[]) => {
+    const grouped = new Map<string, Product[]>();
+    for (const p of list) {
+      const g = grouped.get(p.series) ?? [];
+      g.push(p);
+      grouped.set(p.series, g);
+    }
+
+    const picked: Product[] = [];
+    // ไล่ตามลำดับใน SERIES_LIST เพื่อให้ตารางเรียงเหมือนกันทุกครั้ง
+    for (const series of SERIES_LIST) {
+      const group = grouped.get(series);
+      if (!group?.length) continue;
+      const sorted = [...group].sort(
+        (a, b) => parseFloat(a.vlt) - parseFloat(b.vlt),
+      );
+      picked.push(sorted[Math.floor((sorted.length - 1) / 2)]);
+    }
+    return picked;
+  };
+
+  // เลือกซีรีส์เดียว = อยากดูรุ่นย่อยทั้งหมดของซีรีส์นั้น
+  // ไม่เลือก หรือเลือกหลายซีรีส์ = กำลังเทียบข้ามซีรีส์ จึงเหลือรุ่นกลางพอ
+  const scoped =
+    selectedSeries.length === 0
+      ? displayProducts
+      : displayProducts.filter((p) => selectedSeries.includes(p.series));
+
+  const filteredProducts =
+    selectedSeries.length === 1 ? scoped : middleOfEachSeries(scoped);
 
   const getSeriesBadgeColor = (seriesName: string) => {
     switch (seriesName) {
@@ -129,9 +162,9 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
             ตารางเปรียบเทียบสเปกทางเทคนิค (Performance Matrix)
           </h2>
           <p className="text-xs md:text-sm text-slate-500 font-light mt-1">
-            {selectedSeries.length === 0
-              ? "เปรียบเทียบสเปกซีรีส์แนะนำ หรือกดเลือกซีรีส์ฟิล์มด้านล่างเพื่อดูสเปกทุกรุ่นได้อย่างละเอียด"
-              : `แสดงผลสเปกฟิล์มทุกรุ่นใน ${selectedSeries.join(", ")} Series (รวม ${filteredProducts.length} รุ่น)`}
+            {selectedSeries.length === 1
+              ? `แสดงสเปกทุกรุ่นใน ${selectedSeries[0]} Series (${filteredProducts.length} รุ่น)`
+              : `เปรียบเทียบรุ่นตัวแทนของแต่ละซีรีส์ (${filteredProducts.length} ซีรีส์) — กดเลือกซีรีส์เพื่อดูสเปกครบทุกรุ่น`}
           </p>
         </div>
 
@@ -160,7 +193,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/60"
           }`}
         >
-          <span>เปรียบเทียบทั้งหมด ({displayProducts.length})</span>
+          <span>ดูภาพรวมทุกซีรีส์</span>
         </button>
 
         <div className="h-5 w-px bg-slate-300 mx-1 hidden sm:block" />
