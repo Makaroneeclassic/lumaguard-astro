@@ -36,7 +36,7 @@ export default function TopNavBar() {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-surface/70 dark:bg-on-background/70 backdrop-blur-xl transition-all duration-300 border-b border-outline-variant/10 shadow-[0_20px_40px_rgba(25,28,29,0.02)]">
+    <nav className="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant/10">
       <div className="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
         {/* Brand Logo */}
         <a href="/" className="text-2xl font-black text-primary tracking-tighter font-headline">
@@ -94,7 +94,7 @@ export default function TopNavBar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="md:hidden bg-surface/95 border-b border-outline-variant/10 px-6 py-8 space-y-4 animate-fade-in">
+        <div id="mobile-menu" className="md:hidden bg-surface border-b border-outline-variant/10 px-6 py-8 space-y-4 animate-fade-in">
           <div className="flex flex-col space-y-4 font-headline font-bold text-lg">
             {navLinks.map((link) => (
               <a
