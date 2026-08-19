@@ -14,6 +14,7 @@ interface ImportMetaEnv {
   readonly AUTH_SECRET: string;
   readonly DATABASE_URL: string;
   readonly PUBLIC_GTM_ID?: string;
+  readonly PUBLIC_GA4_MEASUREMENT_ID?: string;
   readonly SGTM_URL?: string;
   readonly TRACKING_ENDPOINT_URL?: string;
   readonly TRACKING_ENDPOINT_SECRET?: string;

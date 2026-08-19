@@ -19,6 +19,11 @@ interface Props {
 const { title, description, image, type, publishedTime, modifiedTime, noindex, schema } = Astro.props;
 const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
 
+// ถ้ายังไม่ได้ตั้ง GTM แต่มี GA4 ก็โหลด gtag.js ตรงแทน
+// จะได้เริ่มเก็บข้อมูลได้โดยไม่ต้องรอสร้าง container ให้เสร็จก่อน
+// ถ้าตั้ง GTM แล้ว ให้ GA4 ไปอยู่ในนั้นแทน จะได้ไม่โหลดสคริปต์ซ้ำสองตัว
+const ga4Id = !gtmId ? (import.meta.env.PUBLIC_GA4_MEASUREMENT_ID || '') : '';
+
 // วิธียืนยันสิทธิ์ที่ดีกว่าคือใส่ระเบียน TXT ที่ DNS ซึ่งไม่เพิ่มน้ำหนักหน้าเว็บ
 // และครอบคลุมทุกซับโดเมน ตัวนี้เป็นทางสำรองสำหรับกรณีที่แก้ DNS ไม่ได้
 const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
@@ -78,6 +83,32 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
       });
     </script>
     
+    <!--
+      โหลด GA4 ตรงเมื่อยังไม่มี GTM รอจนเบราว์เซอร์ว่างเช่นเดียวกัน
+      Consent Mode ด้านบนทำงานไปแล้ว gtag จึงเคารพสถานะความยินยอมตั้งแต่ต้น
+    -->
+    {ga4Id && (
+      <script is:inline define:vars={{ ga4Id }}>
+        (function (w, d) {
+          function loadGa4() {
+            var s = d.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+            d.head.appendChild(s);
+            w.dataLayer = w.dataLayer || [];
+            function gtag() { w.dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', ga4Id);
+          }
+          if ('requestIdleCallback' in w) {
+            w.requestIdleCallback(loadGa4, { timeout: 3000 });
+          } else {
+            w.addEventListener('load', function () { setTimeout(loadGa4, 1200); });
+          }
+        })(window, document);
+      </script>
+    )}
+
     <!--
       โหลด GTM ตอนเบราว์เซอร์ว่าง ไม่ใช่ทันทีที่เจอแท็ก
 
