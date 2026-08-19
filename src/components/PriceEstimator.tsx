@@ -22,7 +22,7 @@ export default function PriceEstimator() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Main Estimator Input Card */}
-      <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-200/80 shadow-md flex flex-col md:flex-row items-center gap-8">
+      <div className="bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-800 shadow-lg flex flex-col md:flex-row items-center gap-8">
         
         {/* Left column: Text info */}
         <div className="flex-grow space-y-2 text-center md:text-left">
@@ -30,8 +30,8 @@ export default function PriceEstimator() {
             <Calculator className="w-4 h-4" />
             เครื่องคำนวณงบประมาณ
           </div>
-          <h2 className="text-xl font-headline font-bold text-slate-900 dark:text-white">เครื่องประเมินราคาอัจฉริยะ</h2>
-          <p className="text-slate-500 text-xs md:text-sm max-w-xs">
+          <h2 className="text-xl font-headline font-bold text-white">เครื่องประเมินราคาอัจฉริยะ</h2>
+          <p className="text-slate-400 text-xs md:text-sm max-w-xs">
             เลื่อนแถบพื้นที่ตารางเมตรเพื่อรับการประมาณการค่าบริการติดตั้งและผลิตภัณฑ์ในทันที
           </p>
         </div>
@@ -39,8 +39,8 @@ export default function PriceEstimator() {
         {/* Center column: Slider Input */}
         <div className="w-full md:w-80 space-y-4">
           <div className="flex justify-between items-center text-sm font-bold">
-            <span className="text-slate-600 dark:text-slate-300">พื้นที่กระจกรวม:</span>
-            <span className="text-accent-600 text-lg font-headline font-black">{area} ตร.ม.</span>
+            <span className="text-slate-300">พื้นที่กระจกรวม:</span>
+            <span className="text-accent-400 text-lg font-headline font-black">{area} ตร.ม.</span>
           </div>
           <input
             type="range"
@@ -84,16 +84,16 @@ export default function PriceEstimator() {
         </div>
 
         {/* Right column: Results overview */}
-        <div className="flex flex-col items-center md:items-end justify-center shrink-0 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 text-center md:text-right min-w-[200px]">
+        <div className="flex flex-col items-center md:items-end justify-center shrink-0 border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-8 text-center md:text-right min-w-[200px]">
           <span className="block text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">
             ประมาณการเริ่มต้น
           </span>
-          <span className="text-3xl font-headline font-black text-accent-600 tracking-tighter leading-none mb-4">
+          <span className="text-3xl font-headline font-black text-accent-400 tracking-tighter leading-none mb-4">
             {formatPrice(area * guardianRate)}*
           </span>
           <a
             href="/contact"
-            className="text-xs text-accent-700 hover:underline font-bold font-headline block"
+            className="text-xs text-accent-300 hover:underline font-bold font-headline block"
           >
             *อ้างอิงจากราคาเฉลี่ยรุ่น Guardian Ceramic
           </a>

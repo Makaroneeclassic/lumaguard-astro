@@ -17,12 +17,12 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
   const shellClass = sky
     ? "bg-accent-50/70 p-6 sm:p-8 md:p-10 rounded-2xl border border-accent-200 relative overflow-hidden max-w-4xl mx-auto"
-    : "bg-white dark:bg-slate-900 p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto";
+    : "bg-white p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto";
 
   // บนพื้นฟ้า ช่องกรอกต้องเป็นสีขาวถึงจะแยกออกจากพื้นหลัง
   const fieldClass = sky
     ? "w-full bg-white text-slate-900 border border-accent-200 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 transition-all disabled:opacity-50 text-sm"
-    : "w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-accent-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm";
+    : "w-full bg-slate-100 text-slate-900 border border-slate-200/80 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-accent-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm";
 
   // ปุ่มหลักให้ตรงกับปุ่ม "ขอใบเสนอราคาฟรี" ในกล่อง CTA
   const submitClass = sky
@@ -102,7 +102,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
   return (
     <div className={shellClass}>
-      <h3 className="text-xl sm:text-2xl font-headline font-extrabold mb-6 text-slate-900 dark:text-white tracking-tight text-center md:text-left">
+      <h3 className="text-xl sm:text-2xl font-headline font-extrabold mb-6 text-slate-900 tracking-tight text-center md:text-left">
         จองบริการสำรวจวัดขนาดพื้นที่ฟรี
       </h3>
 
@@ -131,7 +131,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="col-span-1 md:col-span-2 space-y-2">
-              <label htmlFor="lead-name" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-name" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 ชื่อ-นามสกุล *
               </label>
               <input
@@ -148,7 +148,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="lead-phone" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-phone" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 เบอร์โทรศัพท์ติดต่อ *
               </label>
               <input
@@ -165,7 +165,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="lead-district" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-district" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 เขต / อำเภอ (ที่ตั้งอาคาร) *
               </label>
               <input
@@ -182,7 +182,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="lead-property-type" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-property-type" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 ประเภทสิ่งปลูกสร้าง
               </label>
               <select
@@ -200,7 +200,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="lead-area-size" className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label htmlFor="lead-area-size" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 พื้นที่กระจกโดยประมาณ (ตร.ม.)
               </label>
               <input

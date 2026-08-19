@@ -4,11 +4,11 @@ import { ShieldAlert, Info } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-surface-container-low dark:bg-on-background/5 border-t border-outline-variant/10 pt-16 pb-8 font-body">
+    <footer className="bg-surface-container-low border-t border-outline-variant/10 pt-16 pb-8 font-body">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
         {/* Column 1: Info */}
         <div className="space-y-6">
-          <div className="text-2xl font-black text-primary dark:text-primary-fixed font-headline tracking-tighter">
+          <div className="text-2xl font-black text-primary font-headline tracking-tighter">
             LUMAGUARD
           </div>
           <p className="text-on-surface-variant leading-relaxed">
@@ -18,7 +18,7 @@ export default function Footer() {
 
         {/* Column 2: Quick Links */}
         <div>
-          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary mb-6">
             เมนูด่วน
           </h2>
           <ul className="space-y-4 font-medium text-on-surface-variant">
@@ -47,7 +47,7 @@ export default function Footer() {
 
         {/* Column 3: Resources */}
         <div>
-          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary mb-6">
             ข้อมูล & เอกสาร
           </h2>
           <ul className="space-y-4 font-medium text-on-surface-variant">
@@ -76,7 +76,7 @@ export default function Footer() {
 
         {/* Column 4: HQ Office */}
         <div>
-          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary dark:text-primary-fixed mb-6">
+          <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary mb-6">
             สำนักงานใหญ่
           </h2>
           <p className="text-on-surface-variant leading-relaxed mb-4">
