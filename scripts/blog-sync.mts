@@ -89,18 +89,58 @@ mkdirSync(IMG_DIR, { recursive: true });
  * รูปที่ n8n สร้างจะอยู่บน URL ภายนอกซึ่งหมดอายุได้ จึงต้องดึงมาเก็บไว้เอง
  * แปลงเป็น WebP เพื่อลดขนาด แล้วคืน path ที่ใช้ในเว็บ
  */
-async function localizeHeroImage(slug: string, src: string): Promise<string> {
-  if (!/^https?:\/\//.test(src)) return src; // เป็น path ในเครื่องอยู่แล้ว
+/**
+ * ดาวน์โหลดรูปมาเก็บในโปรเจกต์ แปลงเป็น WebP แล้วคืน path กับขนาดจริง
+ *
+ * รูปที่ AI สร้างมักอยู่บน URL ชั่วคราวที่หมดอายุภายในไม่กี่ชั่วโมง
+ * ถ้าปล่อยให้บทความอ้าง URL นั้นตรง ๆ วันหนึ่งรูปจะหายโดยไม่มีสัญญาณเตือน
+ */
+async function downloadImage(name: string, src: string) {
   const sharp = (await import("sharp")).default;
   const res = await fetch(src);
   if (!res.ok) throw new Error(`ดาวน์โหลดรูปไม่สำเร็จ (HTTP ${res.status})`);
-  const buf = Buffer.from(await res.arrayBuffer());
-  const out = await sharp(buf).resize({ width: 1600, withoutEnlargement: true })
-    .webp({ quality: 82 }).toBuffer();
-  writeFileSync(join(IMG_DIR, `${slug}.webp`), out);
-  console.log(`    ↳ ดึงรูปมาเก็บ: /images/blog/${slug}.webp (${Math.round(out.length / 1024)}KB)`);
-  return `/images/blog/${slug}.webp`;
+
+  const out = await sharp(Buffer.from(await res.arrayBuffer()))
+    .resize({ width: 1600, withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toBuffer();
+
+  const meta = await sharp(out).metadata();
+  writeFileSync(join(IMG_DIR, `${name}.webp`), out);
+  console.log(`    ↳ รูป: /images/blog/${name}.webp  ${meta.width}x${meta.height}  ${Math.round(out.length / 1024)}KB`);
+
+  return { path: `/images/blog/${name}.webp`, width: meta.width, height: meta.height };
 }
+
+async function localizeHeroImage(slug: string, src: string) {
+  if (!/^https?:\/\//.test(src)) return { path: src, width: undefined, height: undefined };
+  return await downloadImage(slug, src);
+}
+
+/**
+ * ดึงรูปที่อ้างอยู่ในเนื้อหา markdown มาเก็บด้วย
+ *
+ * แปลง ![alt](url) เป็นแท็ก img ที่มี width/height จริง เพราะรูปที่ไม่ระบุ
+ * ขนาดทำให้หน้ากระตุกตอนโหลด (CLS) ซึ่งเป็นสัญญาณที่ Google ใช้จัดอันดับ
+ * ต้นทางในชีตยังเขียนเป็น markdown ตามปกติ การแปลงเกิดตอนสร้างไฟล์เท่านั้น
+ */
+async function localizeBodyImages(slug: string, body: string): Promise<string> {
+  const pattern = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
+  const found = [...body.matchAll(pattern)];
+  if (found.length === 0) return body;
+
+  let result = body;
+  for (const [i, m] of found.entries()) {
+    const [full, alt, url] = m;
+    const img = await downloadImage(`${slug}-${i + 1}`, url);
+    result = result.replace(
+      full,
+      `<img src="${img.path}" alt="${alt.replace(/"/g, "&quot;")}" width="${img.width}" height="${img.height}" loading="lazy" decoding="async" />`,
+    );
+  }
+  return result;
+}
+
 
 /** ผลลัพธ์รายแถว ส่งกลับให้ n8n เขียนสถานะกลับเข้าชีต */
 const report: Array<{ slug: string; row: number; result: string; url?: string; error?: string }> = [];
@@ -159,6 +199,7 @@ for (const [i, row] of rows.entries()) {
   }
 
   let heroImage = (row.heroImage ?? "").trim();
+  let heroSize: { w?: number; h?: number } = {};
   const heroAlt = (row.heroAlt ?? "").trim();
   if (heroImage && !heroAlt) fail("ใส่ heroImage แล้วต้องใส่ heroAlt ด้วย");
 
@@ -188,7 +229,9 @@ for (const [i, row] of rows.entries()) {
   if (updated) fm.push(`updatedDate: ${updated}`);
   if (heroImage) {
     try {
-      heroImage = await localizeHeroImage(slug, heroImage);
+      const hero = await localizeHeroImage(slug, heroImage);
+      heroImage = hero.path;
+      heroSize = { w: hero.width, h: hero.height };
     } catch (e) {
       fail(`รูปหน้าปก: ${(e as Error).message}`);
       skipped++;
@@ -196,6 +239,10 @@ for (const [i, row] of rows.entries()) {
     }
     fm.push(`heroImage: ${yamlStr(heroImage)}`);
     fm.push(`heroAlt: ${yamlStr(heroAlt)}`);
+    if (heroSize.w && heroSize.h) {
+      fm.push(`heroWidth: ${heroSize.w}`);
+      fm.push(`heroHeight: ${heroSize.h}`);
+    }
   }
   if ((row.author ?? "").trim()) fm.push(`author: ${yamlStr(row.author.trim())}`);
 
@@ -220,9 +267,18 @@ for (const [i, row] of rows.entries()) {
 
   fm.push("---", "");
 
+  let finalBody = body;
+  try {
+    finalBody = await localizeBodyImages(slug, body);
+  } catch (e) {
+    fail(`รูปในเนื้อหา: ${(e as Error).message}`);
+    skipped++;
+    continue;
+  }
+
   const file = join(OUT_DIR, `${slug}.mdx`);
   const isNew = !existsSync(file);
-  writeFileSync(file, fm.join("\n") + "\n" + body + "\n");
+  writeFileSync(file, fm.join("\n") + "\n" + finalBody + "\n");
   console.log(`  ${isNew ? "สร้าง" : "อัปเดต"}: ${slug}.mdx`);
   report.push({ slug, row: line, result: "published", url: `/blog/${slug}` });
   written++;

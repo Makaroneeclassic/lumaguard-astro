@@ -1,6 +1,5 @@
 ---
 import { render } from 'astro:content';
-import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar';
 import Footer from '@/components/Footer';
@@ -36,7 +35,7 @@ const articleSchema = buildArticleSchema({
   title: post.data.title,
   description: post.data.description,
   canonical,
-  image: post.data.heroImage?.src ? absoluteUrl(post.data.heroImage.src) : undefined,
+  image: post.data.heroImage ? absoluteUrl(post.data.heroImage) : undefined,
   author: post.data.author,
   publishedAt: post.data.pubDate,
   modifiedAt: post.data.updatedDate,
@@ -49,7 +48,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
   title={`${post.data.title} | LUMAGUARD`}
   description={post.data.description}
   type="article"
-  image={post.data.heroImage?.src}
+  image={post.data.heroImage}
   publishedTime={post.data.pubDate}
   modifiedTime={post.data.updatedDate ?? post.data.pubDate}
   noindex={post.data.noindex}
@@ -90,14 +89,14 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
     </header>
 
     {post.data.heroImage && (
-      <Image
+      <img
         src={post.data.heroImage}
         alt={post.data.heroAlt ?? ''}
-        widths={[400, 800, 1200]}
-        sizes="(max-width: 768px) 100vw, 768px"
-        loading="eager"
+        width={post.data.heroWidth}
+        height={post.data.heroHeight}
         fetchpriority="high"
-        class="mt-8 rounded-2xl border border-slate-200 shadow-sm"
+        decoding="async"
+        class="mt-8 w-full rounded-2xl border border-slate-200 shadow-sm"
       />
     )}
 

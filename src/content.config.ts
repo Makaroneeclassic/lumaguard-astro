@@ -49,6 +49,9 @@ const blog = defineCollection({
       // Google Sheet ซึ่งอ้างไฟล์ในโฟลเดอร์ src/ ไม่ได้
       heroImage: z.string().startsWith('/').optional(),
       heroAlt: z.string().optional(),
+      // เก็บขนาดจริงไว้เพื่อให้เบราว์เซอร์จองพื้นที่ก่อนรูปโหลดเสร็จ (กัน CLS)
+      heroWidth: z.number().optional(),
+      heroHeight: z.number().optional(),
 
       author: z.string().default('ทีมงานวิศวกร LUMAGUARD'),
       tags: z.array(z.string()).max(4).default([]),
