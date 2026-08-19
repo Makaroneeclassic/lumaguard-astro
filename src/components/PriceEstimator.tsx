@@ -40,7 +40,7 @@ export default function PriceEstimator() {
         <div className="w-full md:w-80 space-y-4">
           <div className="flex justify-between items-center text-sm font-bold">
             <span className="text-slate-300">พื้นที่กระจกรวม:</span>
-            <span className="text-accent-400 text-lg font-headline font-black">{area} ตร.ม.</span>
+            <span className="text-white text-lg font-headline font-black">{area} ตร.ม.</span>
           </div>
           <input
             type="range"
@@ -88,7 +88,7 @@ export default function PriceEstimator() {
           <span className="block text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">
             ประมาณการเริ่มต้น
           </span>
-          <span className="text-3xl font-headline font-black text-accent-400 tracking-tighter leading-none mb-4">
+          <span className="text-3xl font-headline font-black text-white tracking-tighter leading-none mb-4">
             {formatPrice(area * guardianRate)}*
           </span>
           <a
