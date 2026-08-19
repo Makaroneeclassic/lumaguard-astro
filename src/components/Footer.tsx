@@ -52,18 +52,8 @@ export default function Footer() {
           </h2>
           <ul className="space-y-4 font-medium text-on-surface-variant">
             <li>
-              <a href="#" className="hover:text-primary transition-colors">
-                นโยบายความเป็นส่วนตัว
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-primary transition-colors">
-                เงื่อนไขการใช้บริการ
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-primary transition-colors">
-                ใบรับรองมาตรฐานฟิล์ม
+              <a href="/privacy-policy" className="hover:text-primary transition-colors">
+นโยบายความเป็นส่วนตัว
               </a>
             </li>
             <li>
@@ -114,14 +104,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
         <p>© {new Date().getFullYear()} LUMAGUARD Window Film. สงวนลิขสิทธิ์ทั้งหมด.</p>
         <div className="flex gap-6">
-          <a href="#" className="hover:text-primary transition-colors">
-            Privacy Policy
+          <a href="/privacy-policy" className="hover:text-primary transition-colors">
+Privacy Policy
           </a>
-          <span>•</span>
-          <a href="#" className="hover:text-primary transition-colors">
-            Terms of Service
-          </a>
-        </div>
+          </div>
         <div className="flex gap-4 text-on-surface-variant/40">
           <ShieldAlert className="w-5 h-5" />
           <Info className="w-5 h-5" />

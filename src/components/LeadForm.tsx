@@ -45,6 +45,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
     propertyType: "Condo",
     areaSize: "",
   });
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -228,10 +229,38 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
             </div>
           </div>
 
+          {/*
+            PDPA กำหนดให้ขอความยินยอมอย่างชัดแจ้งก่อนเก็บข้อมูลส่วนบุคคล
+            และห้ามติ๊กมาให้ล่วงหน้า ผู้ใช้ต้องเป็นคนกดเอง
+          */}
+          <div className="flex items-start gap-3 pt-2">
+            <input
+              id="lead-consent"
+              type="checkbox"
+              required
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              disabled={status === "submitting"}
+              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-primary focus:ring-2 focus:ring-primary/30"
+            />
+            <label htmlFor="lead-consent" className="text-xs leading-relaxed text-slate-600">
+              ข้าพเจ้ายินยอมให้ LUMAGUARD เก็บและใช้ข้อมูลที่กรอกไว้
+              เพื่อติดต่อกลับและเสนอราคา ตามที่ระบุใน{" "}
+              <a
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener"
+                className="font-semibold text-primary underline underline-offset-2"
+              >
+                นโยบายความเป็นส่วนตัว
+              </a>
+            </label>
+          </div>
+
           <div className="pt-2">
             <button
               type="submit"
-              disabled={status === "submitting"}
+              disabled={status === "submitting" || !consent}
               className={submitClass}
             >
               {status === "submitting" ? "กำลังประมวลผล..." : "ส่งข้อมูลและขอนัดหมายสำรวจพื้นที่"}
