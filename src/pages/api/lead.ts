@@ -4,6 +4,7 @@ import { z } from 'astro/zod';
 import { checkRateLimit } from '@/lib/ratelimit';
 import { notifyNewLead } from '@/lib/notify';
 import { sendGa4Event, parseGaClientId } from '@/lib/ga4';
+import { sendTrackingEvent } from '@/lib/tracking';
 
 // Force server rendering for this API route
 export const prerender = false;
@@ -125,33 +126,30 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (sgtmUrl) {
-      const gtmPreviewHeader = request.headers.get('x-gtm-server-preview') || '';
-      const sGtmPayload = {
-        event_name: 'Lead',
-        event_id: data.eventId || (lead ? lead.id : `lead_${Date.now()}`),
-        user_data: {
-          phone: data.phone.trim().replace(/^0/, '66'),
-          name: data.name.trim()
-        },
-        custom_data: {
-          district: data.district,
-          property_type: data.propertyType,
-          recommended_film: data.recommendedFilm,
-          gclid: data.gclid
-        },
-        client_ip_address: request.headers.get('x-forwarded-for') || '',
-        client_user_agent: request.headers.get('user-agent') || ''
-      };
-
       sideEffects.push(
-        fetch(sgtmUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(gtmPreviewHeader ? { 'x-gtm-server-preview': gtmPreviewHeader } : {})
+        sendTrackingEvent({
+          event_name: 'Lead',
+          event_id: data.eventId || (lead ? lead.id : `lead_${Date.now()}`),
+          event_time: Math.floor(Date.now() / 1000),
+          user_data: {
+            // ทำเบอร์ให้เป็นรูปแบบสากลก่อนส่ง ปลายทางจะได้ hash ได้ตรงกัน
+            phone: data.phone.trim().replace(/^0/, '66'),
+            name: data.name.trim(),
           },
-          body: JSON.stringify(sGtmPayload)
-        })
+          custom_data: {
+            district: data.district,
+            property_type: data.propertyType,
+            recommended_film: data.recommendedFilm,
+            area_size: data.areaSize ? Number(data.areaSize) : undefined,
+            gclid: data.gclid,
+            utm_source: data.utmSource,
+            utm_medium: data.utmMedium,
+            utm_campaign: data.utmCampaign,
+          },
+          client_ip_address: request.headers.get('x-forwarded-for') ?? undefined,
+          client_user_agent: request.headers.get('user-agent') ?? undefined,
+          source_url: data.landingPage,
+        }),
       );
     }
 
