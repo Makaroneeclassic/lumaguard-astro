@@ -19,8 +19,10 @@ export const BUSINESS = {
   telephoneDisplay: "098-353-9369",
 
   email: "",
-  lineOfficialAccount: "@LUMAGUARD",
-  lineUrl: "https://line.me/R/ti/p/@LUMAGUARD",
+  // ไอดีจริงของ Official Account ตรวจแล้วว่าลิงก์ @LUMAGUARD คืนหน้า 404
+  // ถ้าซื้อ Premium ID ในภายหลังให้แก้ทั้งสองบรรทัดนี้พร้อมกัน
+  lineOfficialAccount: "@541sdiuc",
+  lineUrl: "https://line.me/R/ti/p/@541sdiuc",
 
   address: {
     // TODO: เติมเลขที่และถนนเมื่อพร้อม — Google Business Profile ต้องใช้ที่อยู่เต็ม

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { BUSINESS } from '@/lib/site';
 import TopNavBar from '@/components/TopNavBar';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
@@ -72,7 +73,7 @@ const { title, description } = seo;
           <MessageSquare className="w-6 h-6" />
         </div>
         <h2 class="text-lg font-bold text-slate-900">LINE Official Account</h2>
-        <p class="text-slate-700 text-base font-bold">@LUMAGUARD <span class="text-xs font-normal text-slate-500">(ตอบ 24 ชม.)</span></p>
+        <p class="text-slate-700 text-base font-bold">{BUSINESS.lineOfficialAccount} <span class="text-xs font-normal text-slate-500">(ตอบ 24 ชม.)</span></p>
       </div>
 
       <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">

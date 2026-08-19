@@ -1,5 +1,6 @@
 "use client";
 
+import { BUSINESS } from "@/lib/site";
 import { ShieldAlert, Info } from "lucide-react";
 
 export default function Footer() {
@@ -85,7 +86,7 @@ export default function Footer() {
               โทร: 098-353-9369
             </a>
             <a 
-              href="https://line.me/R/ti/p/@LUMAGUARD" 
+              href={BUSINESS.lineUrl} 
               target="_blank" 
               rel="noopener noreferrer"
               onClick={() => {
@@ -95,7 +96,7 @@ export default function Footer() {
               }}
               className="hover:text-primary transition-colors block"
             >
-              LINE OA: @LUMAGUARD
+              LINE OA: {BUSINESS.lineOfficialAccount}
             </a>
           </p>        </div>
       </div>
