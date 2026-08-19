@@ -27,6 +27,7 @@ interface ImportMetaEnv {
   readonly LINE_ADMIN_USER_ID?: string;
   readonly RESEND_API_KEY?: string;
   readonly LEAD_NOTIFY_EMAIL?: string;
+  readonly LEAD_NOTIFY_FROM?: string;
 }
 
 interface ImportMeta {

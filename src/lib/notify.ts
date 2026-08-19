@@ -50,20 +50,33 @@ function formatMessage(lead: LeadNotification): string {
 
 async function pushToLine(message: string): Promise<void> {
   const token = import.meta.env.LINE_CHANNEL_ACCESS_TOKEN;
-  const to = import.meta.env.LINE_ADMIN_USER_ID;
-  if (!token || !to) return;
+  // รองรับผู้รับหลายคนโดยคั่นด้วยจุลภาค ถ้าผูกไว้กับคนเดียวแล้ววันหนึ่ง
+  // คนนั้นลาออกหรือเปลี่ยนบัญชี ลีดจะเงียบไปโดยไม่มีใครรู้
+  const recipients = (import.meta.env.LINE_ADMIN_USER_ID ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 
-  const res = await fetch('https://api.line.me/v2/bot/message/push', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ to, messages: [{ type: 'text', text: message }] }),
-  });
+  if (!token || recipients.length === 0) return;
 
-  if (!res.ok) {
-    throw new Error(`LINE push failed: ${res.status} ${await res.text()}`);
+  const results = await Promise.allSettled(
+    recipients.map(async (to) => {
+      const res = await fetch('https://api.line.me/v2/bot/message/push', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ to, messages: [{ type: 'text', text: message }] }),
+      });
+      if (!res.ok) throw new Error(`${to.slice(0, 8)}...: ${res.status} ${await res.text()}`);
+    }),
+  );
+
+  const failed = results.filter((r) => r.status === 'rejected');
+  // ส่งไม่ถึงบางคนยังถือว่าแจ้งเตือนสำเร็จ ขอแค่มีคนได้รับอย่างน้อยหนึ่งคน
+  if (failed.length === recipients.length) {
+    throw new Error(`LINE push ล้มเหลวทุกปลายทาง: ${failed.map((f: any) => f.reason?.message).join(' | ')}`);
   }
 }
 
@@ -79,7 +92,10 @@ async function sendEmail(lead: LeadNotification, message: string): Promise<void>
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: 'LUMAGUARD <onboarding@resend.dev>',
+      // onboarding@resend.dev เป็นที่อยู่ทดสอบของ Resend ซึ่งส่งได้เฉพาะไปยัง
+      // อีเมลเจ้าของบัญชีเท่านั้น ถ้า LEAD_NOTIFY_EMAIL เป็นที่อยู่อื่นจะส่งไม่ผ่าน
+      // ใช้งานจริงต้องยืนยันโดเมนใน Resend แล้วตั้ง LEAD_NOTIFY_FROM
+      from: import.meta.env.LEAD_NOTIFY_FROM || 'LUMAGUARD <onboarding@resend.dev>',
       to: [to],
       subject: `ลีดใหม่: ${lead.name} (${lead.district})`,
       text: message,

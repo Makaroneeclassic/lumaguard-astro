@@ -14,7 +14,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "blog:sync": "tsx scripts/blog-sync.mts",
-    "indexnow": "tsx scripts/indexnow.mts"
+    "indexnow": "tsx scripts/indexnow.mts",
+    "notify:test": "tsx scripts/notify-test.mts"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
