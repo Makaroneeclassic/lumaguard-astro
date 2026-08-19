@@ -13,7 +13,8 @@
     "astro": "astro",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "blog:sync": "tsx scripts/blog-sync.mts"
+    "blog:sync": "tsx scripts/blog-sync.mts",
+    "indexnow": "tsx scripts/indexnow.mts"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",

@@ -1,0 +1,60 @@
+name: ดึงบทความจาก Google Sheet
+
+# รันทุกวันตอน 09:00 เวลาไทย (02:00 UTC) และสั่งรันเองได้จากหน้า Actions
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+# ต้องมีสิทธิ์เขียนเพื่อ commit ไฟล์บทความกลับเข้า repo
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: ดึงบทความที่สถานะเป็น ready
+        env:
+          BLOG_SHEET_ID: ${{ vars.BLOG_SHEET_ID }}
+          BLOG_SHEET_TAB: ${{ vars.BLOG_SHEET_TAB || 'blog' }}
+        run: npm run blog:sync
+
+      - name: ตรวจว่ามีอะไรเปลี่ยนไหม
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain src/content/blog public/images/blog)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git status --porcelain src/content/blog public/images/blog
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "ไม่มีบทความใหม่หรือที่แก้ไข"
+          fi
+
+      - name: commit และ push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "blog-sync"
+          git config user.email "actions@github.com"
+          git add src/content/blog public/images/blog
+          git commit -m "content: ดึงบทความจาก Google Sheet"
+          git push
+
+      # Vercel เริ่ม build ทันทีที่ push จึงต้องรอให้ deploy เสร็จก่อนแจ้ง IndexNow
+      # ไม่งั้น Bing จะมาเก็บหน้าที่ยังไม่มีอยู่จริง
+      - name: รอ deploy แล้วแจ้ง IndexNow
+        if: steps.diff.outputs.changed == 'true' && vars.INDEXNOW_ENABLED == 'true'
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          sleep 180
+          npm run indexnow
