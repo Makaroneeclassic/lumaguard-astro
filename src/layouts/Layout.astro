@@ -31,20 +31,16 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
     <meta name="theme-color" content="#004692" />
     
     <!--
-      โหลดเฉพาะ Noto Sans Thai เท่านั้น
-
-      Manrope กับ Inter เคยถูกโหลดด้วย แต่ใน global.css ทั้งคู่อยู่หลัง
-      "Noto Sans Thai" ในลำดับ fallback และ Noto Sans Thai มีกลุ่มอักษรละติน
-      ครบอยู่แล้ว ทั้งสองจึงไม่มีวันถูกใช้เรนเดอร์ — เป็นการดาวน์โหลดเปล่า 8 น้ำหนัก
-      ส่วน Material Symbols มีแค่คลาสใน global.css ไม่มี markup ไหนเรียกใช้
-
-      น้ำหนัก 300-900 คงไว้ทั้งหมดเพราะถูกใช้จริงทุกตัวในหน้าเว็บ
+      ฟอนต์โฮสต์เองแล้ว ประกาศ @font-face อยู่ใน global.css
+      preload เฉพาะ subset ไทยซึ่งเป็นตัวอักษรที่ใช้จริงเกือบทั้งหน้า
+      เพื่อให้เริ่มโหลดพร้อมกับ CSS ไม่ต้องรอให้ CSS ถูกแยกวิเคราะห์ก่อน
     -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/noto-sans-thai-thai.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
     
     <SEO 
