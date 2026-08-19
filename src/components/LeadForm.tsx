@@ -4,7 +4,31 @@ import { useState, type FormEvent } from "react";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { getTrafficSourceData } from "@/lib/utmTracker";
 
-export default function LeadForm() {
+/**
+ * tone="sky" ใช้เมื่อวางฟอร์มต่อจากกล่อง CTA ในบทความ เพื่อให้โทนสีต่อเนื่องกัน
+ * ค่าเริ่มต้นคงสีเดิมไว้ เพราะฟอร์มนี้ถูกใช้ในอีกสามหน้าที่พื้นหลังต่างกัน
+ */
+interface LeadFormProps {
+  tone?: "default" | "sky";
+}
+
+export default function LeadForm({ tone = "default" }: LeadFormProps) {
+  const sky = tone === "sky";
+
+  const shellClass = sky
+    ? "bg-sky-50/70 p-6 sm:p-8 md:p-10 rounded-2xl border border-sky-200 relative overflow-hidden max-w-4xl mx-auto"
+    : "bg-white dark:bg-slate-900 p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto";
+
+  // บนพื้นฟ้า ช่องกรอกต้องเป็นสีขาวถึงจะแยกออกจากพื้นหลัง
+  const fieldClass = sky
+    ? "w-full bg-white text-slate-900 border border-sky-200 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all disabled:opacity-50 text-sm"
+    : "w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm";
+
+  // ปุ่มหลักให้ตรงกับปุ่ม "ขอใบเสนอราคาฟรี" ในกล่อง CTA
+  const submitClass = sky
+    ? "w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60"
+    : "w-full bg-amber-800 hover:bg-amber-700 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60";
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -77,7 +101,7 @@ export default function LeadForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto">
+    <div className={shellClass}>
       <h3 className="text-xl sm:text-2xl font-headline font-extrabold mb-6 text-slate-900 dark:text-white tracking-tight text-center md:text-left">
         จองบริการสำรวจวัดขนาดพื้นที่ฟรี
       </h3>
@@ -119,7 +143,7 @@ export default function LeadForm() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+                className={fieldClass}
               />
             </div>
 
@@ -136,7 +160,7 @@ export default function LeadForm() {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+                className={fieldClass}
               />
             </div>
 
@@ -153,7 +177,7 @@ export default function LeadForm() {
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+                className={fieldClass}
               />
             </div>
 
@@ -166,7 +190,7 @@ export default function LeadForm() {
                 value={formData.propertyType}
                 onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+                className={fieldClass}
               >
                 <option value="Condo">คอนโดมิเนียม</option>
                 <option value="House">บ้านเดี่ยว / ทาวน์โฮม</option>
@@ -186,7 +210,7 @@ export default function LeadForm() {
                 value={formData.areaSize}
                 onChange={(e) => setFormData({ ...formData, areaSize: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm"
+                className={fieldClass}
               />
             </div>
           </div>
@@ -195,7 +219,7 @@ export default function LeadForm() {
             <button
               type="submit"
               disabled={status === "submitting"}
-              className="w-full bg-amber-800 hover:bg-amber-700 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 shadow-lg disabled:opacity-50 min-h-[48px]"
+              className={submitClass}
             >
               {status === "submitting" ? "กำลังประมวลผล..." : "ส่งข้อมูลและขอนัดหมายสำรวจพื้นที่"}
               <Send className="w-4 h-4" />
