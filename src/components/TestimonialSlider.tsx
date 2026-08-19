@@ -70,7 +70,7 @@ export default function TestimonialSlider() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8 md:space-y-12">
         {/* Header */}
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-red-500 font-bold text-xs sm:text-sm tracking-wide">รีวิวลูกค้า</span>
+          <span className="text-red-700 font-bold text-xs sm:text-sm tracking-wide">รีวิวลูกค้า</span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
             ลูกค้าพูดถึงเราว่าอย่างไร
           </h2>
@@ -99,9 +99,9 @@ export default function TestimonialSlider() {
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex text-red-500 gap-1">
+                    <div className="flex text-red-600 gap-1">
                       {[...Array(t.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-current text-red-500" />
+                        <Star key={i} className="w-4 h-4 fill-current text-red-600" />
                       ))}
                     </div>
                     <span className="text-xs text-slate-600 font-light">{t.date}</span>
@@ -129,9 +129,9 @@ export default function TestimonialSlider() {
             <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between min-h-[220px]">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex text-red-500 gap-1">
+                  <div className="flex text-red-600 gap-1">
                     {[...Array(currentMobileItem.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current text-red-500" />
+                      <Star key={i} className="w-4 h-4 fill-current text-red-600" />
                     ))}
                   </div>
                   <span className="text-xs text-slate-600 font-light">{currentMobileItem.date}</span>
@@ -164,16 +164,28 @@ export default function TestimonialSlider() {
         </div>
 
         {/* Pagination Dots */}
-        <div className="flex justify-center items-center gap-2 pt-2">
+        {/*
+          ปุ่มเดิมมีขนาดเท่าจุดที่มองเห็นคือ 8x8px ซึ่งเล็กกว่าเกณฑ์พื้นที่กด
+          แยกเป็นปุ่มขนาด 44x44px ที่โปร่งใส แล้ววาดจุดด้วย span ข้างใน
+          หน้าตาจึงเหมือนเดิมแต่กดโดนง่ายขึ้นมากบนมือถือ
+        */}
+        <div className="flex justify-center items-center pt-2">
           {defaultTestimonials.map((_, idx) => (
             <button
               key={idx}
+              type="button"
               onClick={() => setCurrentIndex(idx)}
-              className={`transition-all duration-300 ${
-                currentIndex === idx ? "w-6 h-2 bg-red-500 rounded-full" : "w-2 h-2 bg-slate-300 rounded-full"
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
+              className="flex h-11 w-11 items-center justify-center"
+              aria-label={`ไปที่รีวิวที่ ${idx + 1}`}
+              aria-current={currentIndex === idx ? "true" : undefined}
+            >
+              <span
+                aria-hidden="true"
+                className={`block rounded-full transition-all duration-300 ${
+                  currentIndex === idx ? "h-2 w-6 bg-red-600" : "h-2 w-2 bg-slate-400"
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>
