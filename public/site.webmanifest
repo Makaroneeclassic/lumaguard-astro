@@ -1,0 +1,15 @@
+{
+  "name": "LUMAGUARD",
+  "short_name": "LUMAGUARD",
+  "description": "ฟิล์มกรองแสงอาคาร บ้าน และคอนโด",
+  "lang": "th",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#004FC6",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
