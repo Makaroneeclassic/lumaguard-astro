@@ -9,23 +9,31 @@ import { sendTrackingEvent } from '@/lib/tracking';
 // Force server rendering for this API route
 export const prerender = false;
 
+/**
+ * ฟิลด์ที่ไม่บังคับใช้ nullish ไม่ใช่ optional
+ *
+ * optional ของ Zod ยอมรับเฉพาะ undefined แต่ฟอร์มส่ง null มาเสมอเมื่อไม่มีค่า
+ * เช่น sessionStorage.getItem คืน null และช่องพื้นที่ที่เว้นว่างก็ส่ง null
+ * ผลคือ validation ตกทุกครั้งที่ผู้ใช้ไม่ได้ผ่านหน้าเลือกฟิล์มมาก่อน
+ * ซึ่งเป็นเส้นทางปกติของคนที่เข้ามากรอกฟอร์มโดยตรง
+ */
 const leadValidation = z.object({
-  eventId: z.string().optional(),
+  eventId: z.string().nullish(),
   name: z.string().min(2, 'Name is required'),
   phone: z.string().min(9, 'Phone is required'),
   district: z.string().min(2, 'District is required'),
-  propertyType: z.string().optional().default('Condo'),
-  areaSize: z.union([z.number(), z.string()]).optional(),
-  estimatedArea: z.union([z.number(), z.string()]).optional(),
-  recommendedFilm: z.string().optional(),
-  trafficSource: z.string().optional(),
-  utmSource: z.string().optional(),
-  utmMedium: z.string().optional(),
-  utmCampaign: z.string().optional(),
-  gclid: z.string().optional(),
-  gaClientId: z.string().optional(),
-  landingPage: z.string().optional(),
-  website_url: z.string().optional() // Honeypot field
+  propertyType: z.string().nullish().transform((v) => v ?? 'Condo'),
+  areaSize: z.union([z.number(), z.string()]).nullish(),
+  estimatedArea: z.union([z.number(), z.string()]).nullish(),
+  recommendedFilm: z.string().nullish(),
+  trafficSource: z.string().nullish(),
+  utmSource: z.string().nullish(),
+  utmMedium: z.string().nullish(),
+  utmCampaign: z.string().nullish(),
+  gclid: z.string().nullish(),
+  gaClientId: z.string().nullish(),
+  landingPage: z.string().nullish(),
+  website_url: z.string().nullish() // Honeypot field
 });
 
 export const POST: APIRoute = async ({ request }) => {
@@ -45,8 +53,26 @@ export const POST: APIRoute = async ({ request }) => {
     // 1. Zod Validation
     const parsed = leadValidation.safeParse(body);
     if (!parsed.success) {
+      // เดิมตอบข้อความเดียวกันหมดไม่ว่าฟิลด์ไหนผิด ทำให้ผู้ใช้ไม่รู้ว่าต้องแก้ตรงไหน
+      // และเราก็หาสาเหตุไม่ได้ ตอนที่ null ทำให้ตกก็ยังขึ้นว่าชื่อและเบอร์ขาด
+      const issues = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`);
+      console.warn('[lead] ข้อมูลไม่ผ่านการตรวจสอบ:', issues.join(' | '));
+
+      const labels: Record<string, string> = {
+        name: 'ชื่อ-นามสกุล',
+        phone: 'เบอร์โทรศัพท์',
+        district: 'เขต/อำเภอ',
+      };
+      const missing = [...new Set(parsed.error.issues.map((i) => String(i.path[0])))]
+        .map((f) => labels[f])
+        .filter(Boolean);
+
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: name, phone, and district are required.' }),
+        JSON.stringify({
+          error: missing.length
+            ? `กรุณากรอก${missing.join(', ')}ให้ถูกต้อง`
+            : 'ข้อมูลที่ส่งมาไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
+        }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
