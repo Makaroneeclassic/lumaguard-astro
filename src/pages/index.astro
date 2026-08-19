@@ -115,7 +115,7 @@ const faqItems = [
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:load />
+  <TopNavBar client:idle pathname={Astro.url.pathname} />
   
   <main class="min-h-screen pt-16 overflow-x-hidden">
     <!-- Hero Section -->

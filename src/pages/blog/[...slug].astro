@@ -57,7 +57,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
   <JsonLd schema={buildBreadcrumbSchema(breadcrumb)} />
   {post.data.faq && post.data.faq.length > 0 && <JsonLd schema={buildFaqSchema(post.data.faq)} />}
 
-  <TopNavBar client:idle />
+  <TopNavBar client:idle pathname={Astro.url.pathname} />
 
   <article class="min-h-screen pt-24 pb-16 px-6 max-w-3xl mx-auto">
     <nav aria-label="breadcrumb" class="mb-6">

@@ -107,7 +107,7 @@ const FEATURES = [
   <JsonLd schema={productSchema} />
   <JsonLd schema={buildBreadcrumbSchema(breadcrumb)} />
 
-  <TopNavBar client:idle />
+  <TopNavBar client:idle pathname={Astro.url.pathname} />
 
   <main class="flex-grow pt-28 pb-24 font-body">
     <nav aria-label="breadcrumb" class="max-w-7xl mx-auto px-6 mb-6">

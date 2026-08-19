@@ -5,15 +5,16 @@ import { Menu, X } from "lucide-react";
 import SearchDialog from "@/components/SearchDialog";
 import { initializeTrafficSourceTracker } from "@/lib/utmTracker";
 
-export default function TopNavBar() {
+/**
+ * รับ pathname มาจากฝั่งเซิร์ฟเวอร์
+ *
+ * เดิมอ่านจาก window ใน useEffect ทำให้ตอนเรนเดอร์ครั้งแรกค่าเป็น "/" เสมอ
+ * เมนู "หน้าหลัก" จึงถูกไฮไลต์ผิดชั่วขณะบนทุกหน้า แล้วค่อยกระโดดไปถูกเมื่อ
+ * hydrate เสร็จ การส่งค่ามาตั้งแต่แรกทำให้ถูกต้องตั้งแต่ HTML ชุดแรก
+ * และเป็นเงื่อนไขที่ทำให้เลื่อน hydration ไปเป็น client:idle ได้อย่างปลอดภัย
+ */
+export default function TopNavBar({ pathname = "/" }: { pathname?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [pathname, setPathname] = useState("/");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPathname(window.location.pathname);
-    }
-  }, []);
 
   useEffect(() => {
     initializeTrafficSourceTracker();

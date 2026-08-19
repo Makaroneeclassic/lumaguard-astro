@@ -70,14 +70,36 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
       });
     </script>
     
-    <!-- Google Tag Manager Web Container -->
+    <!--
+      โหลด GTM ตอนเบราว์เซอร์ว่าง ไม่ใช่ทันทีที่เจอแท็ก
+
+      สคริปต์ GTM มักเป็นไฟล์ที่หนักที่สุดในหน้าการตลาด การปล่อยให้ดึงพร้อม
+      กับเนื้อหาทำให้แย่งแบนด์วิดท์และเวลาประมวลผลช่วงที่กำลังวาดหน้าจอ
+      requestIdleCallback จึงเลื่อนไปทำตอนงานหลักเสร็จแล้ว โดยมี setTimeout
+      สำรองไว้สำหรับเบราว์เซอร์ที่ยังไม่รองรับ
+
+      ส่วน Consent Mode ด้านบนยังทำงานทันทีตามเดิม เพราะต้องตั้งค่าความยินยอม
+      ให้เสร็จก่อน GTM เริ่มทำงานเสมอ
+    -->
     {gtmId && (
       <script is:inline define:vars={{ gtmId }}>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',gtmId);
+        (function (w, d, s, l, i) {
+          function loadGtm() {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+          }
+          if ('requestIdleCallback' in w) {
+            w.requestIdleCallback(loadGtm, { timeout: 3000 });
+          } else {
+            w.addEventListener('load', function () { setTimeout(loadGtm, 1200); });
+          }
+        })(window, document, 'script', 'dataLayer', gtmId);
       </script>
     )}
   </head>

@@ -37,7 +37,7 @@ const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:load />
+  <TopNavBar client:idle pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-24 pb-16 px-6 max-w-[1440px] mx-auto space-y-16">
     <div class="text-center max-w-3xl mx-auto space-y-4">

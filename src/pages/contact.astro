@@ -44,7 +44,7 @@ const { title, description } = seo;
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:load />
+  <TopNavBar client:idle pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-28 md:pt-36 pb-24 px-4 sm:px-8 max-w-[1440px] mx-auto space-y-20">
     <!-- Page Title Header -->
