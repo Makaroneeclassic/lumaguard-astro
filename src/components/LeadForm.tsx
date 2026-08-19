@@ -16,18 +16,18 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
   const sky = tone === "sky";
 
   const shellClass = sky
-    ? "bg-sky-50/70 p-6 sm:p-8 md:p-10 rounded-2xl border border-sky-200 relative overflow-hidden max-w-4xl mx-auto"
+    ? "bg-accent-50/70 p-6 sm:p-8 md:p-10 rounded-2xl border border-accent-200 relative overflow-hidden max-w-4xl mx-auto"
     : "bg-white dark:bg-slate-900 p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-xl relative overflow-hidden max-w-4xl mx-auto";
 
   // บนพื้นฟ้า ช่องกรอกต้องเป็นสีขาวถึงจะแยกออกจากพื้นหลัง
   const fieldClass = sky
-    ? "w-full bg-white text-slate-900 border border-sky-200 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all disabled:opacity-50 text-sm"
-    : "w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-sky-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm";
+    ? "w-full bg-white text-slate-900 border border-accent-200 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 transition-all disabled:opacity-50 text-sm"
+    : "w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-700 rounded-xl px-4 sm:px-5 py-3.5 focus:ring-2 focus:ring-accent-500/20 focus:bg-white transition-all disabled:opacity-50 text-sm";
 
   // ปุ่มหลักให้ตรงกับปุ่ม "ขอใบเสนอราคาฟรี" ในกล่อง CTA
   const submitClass = sky
-    ? "w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60"
-    : "w-full bg-amber-800 hover:bg-amber-700 text-white py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60";
+    ? "w-full bg-primary hover:opacity-90 text-on-primary py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60"
+    : "w-full bg-primary hover:opacity-90 text-on-primary py-4 rounded-xl font-headline font-bold text-sm sm:text-base transition-all flex justify-center items-center gap-2 disabled:opacity-60";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -107,15 +107,15 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
       </h3>
 
       {status === "success" ? (
-        <div className="bg-sky-50 border border-sky-200 p-8 rounded-2xl text-center space-y-4 animate-fade-in">
-          <CheckCircle2 className="w-12 h-12 text-sky-600 mx-auto" />
+        <div className="bg-accent-50 border border-accent-200 p-8 rounded-2xl text-center space-y-4 animate-fade-in">
+          <CheckCircle2 className="w-12 h-12 text-accent-600 mx-auto" />
           <h4 className="text-lg font-bold font-headline text-slate-900">ส่งคำขอเสร็จสมบูรณ์!</h4>
           <p className="text-slate-600 text-sm font-light">
             ขอบคุณสำหรับความสนใจ เจ้าหน้าที่ผู้เชี่ยวชาญจะติดต่อกลับเพื่อประเมินราคาและยืนยันนัดหมายทางโทรศัพท์โดยเร็วที่สุด
           </p>
           <button
             onClick={() => setStatus("idle")}
-            className="bg-sky-600 text-white px-6 py-2.5 rounded-xl font-bold font-headline text-sm hover:bg-sky-700 transition-colors shadow-sm"
+            className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold font-headline text-sm hover:bg-accent-700 transition-colors shadow-sm"
           >
             ส่งคำขอใหม่
           </button>

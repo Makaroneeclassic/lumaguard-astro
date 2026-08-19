@@ -54,7 +54,7 @@ export const SERIES: SeriesDetail[] = [
     subtitle: 'เทคโนโลยี Sputtering Film สะท้อนรังสีความร้อนโลหะหลายชั้น ประหยัดพลังงานดีเยี่ยม',
     description:
       'ฟิล์มกรองแสงสปัตเตอร์สุญญากาศ เคลือบอนุภาคโลหะหลายชั้นเพื่อทำหน้าที่สะท้อนพลังงานความร้อนแดดออกจากหน้าต่างทันทีก่อนพัดเข้าสู่ห้อง มอบการประหยัดพลังงานแอร์อย่างโดดเด่น',
-    bannerBg: 'from-sky-950 to-slate-900 text-sky-100',
+    bannerBg: 'from-accent-950 to-slate-900 text-accent-100',
   },
   {
     slug: 'apex',

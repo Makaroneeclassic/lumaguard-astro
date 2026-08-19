@@ -147,7 +147,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
       case "Apex":
         return "bg-amber-50 text-amber-800 border-amber-200";
       case "Guardian":
-        return "bg-sky-50 text-sky-700 border-sky-200";
+        return "bg-accent-50 text-accent-700 border-accent-200";
       default:
         return "bg-slate-100 text-slate-600 border-slate-200";
     }
@@ -173,8 +173,8 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
           onClick={toggleCompareMode}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-headline font-bold text-xs transition-all shadow-sm border min-h-[44px] ${
             isCompareMode
-              ? "bg-sky-600 text-white border-sky-600 hover:bg-sky-700"
-              : "bg-white text-sky-600 border-slate-200 hover:bg-slate-50"
+              ? "bg-primary text-on-primary border-primary hover:opacity-90"
+              : "bg-white text-accent-600 border-slate-200 hover:bg-slate-50"
           }`}
         >
           <Columns className="w-4 h-4" />
@@ -189,7 +189,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
           onClick={handleSelectAll}
           className={`px-4 py-2 rounded-xl font-headline font-bold text-xs transition-all cursor-pointer min-h-[40px] ${
             (!isCompareMode && selectedSeries.length === 0) || (isCompareMode && selectedSeries.length === activeSeriesList.length)
-              ? "bg-sky-600 text-white shadow-sm"
+              ? "bg-primary text-on-primary shadow-sm"
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/60"
           }`}
         >
@@ -202,7 +202,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
         {activeSeriesList.map((series) => {
           const isSelected = selectedSeries.includes(series);
           const activeClass = isSelected
-            ? "bg-sky-50 text-sky-700 border-sky-300 font-bold shadow-sm"
+            ? "bg-accent-50 text-accent-700 border-accent-300 font-bold shadow-sm"
             : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/60";
 
           return (
@@ -214,7 +214,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               {isCompareMode && (
                 <span>
                   {isSelected ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                    <CheckSquare className="w-3.5 h-3.5 text-accent-600 shrink-0" />
                   ) : (
                     <Square className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                   )}
@@ -258,9 +258,9 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
                   <span className="font-extrabold text-slate-900 text-sm">{product.vlt}</span>
                 </div>
 
-                <div className="bg-sky-50 p-2.5 rounded-xl border border-sky-100 text-center space-y-0.5">
-                  <span className="block text-[9px] font-bold text-sky-600 uppercase tracking-wider">กัน UV (UVR)</span>
-                  <span className="font-extrabold text-sky-700 text-sm">{product.uvr}</span>
+                <div className="bg-accent-50 p-2.5 rounded-xl border border-accent-100 text-center space-y-0.5">
+                  <span className="block text-[9px] font-bold text-accent-600 uppercase tracking-wider">กัน UV (UVR)</span>
+                  <span className="font-extrabold text-accent-700 text-sm">{product.uvr}</span>
                 </div>
 
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center space-y-0.5">
@@ -269,7 +269,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
                 </div>
 
                 <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-100 text-center space-y-0.5">
-                  <span className="block text-[9px] font-bold text-amber-700 uppercase tracking-wider">ความร้อนรวม (TSER)</span>
+                  <span className="block text-[9px] font-bold text-accent-700 uppercase tracking-wider">ความร้อนรวม (TSER)</span>
                   <span className="font-extrabold text-amber-800 text-sm">{product.tser}</span>
                 </div>
               </div>
@@ -278,7 +278,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <div>
                   <span className="block text-[10px] font-bold text-slate-400 uppercase">ราคาประเมิน</span>
-                  <span className="text-sm font-extrabold text-sky-600">฿{product.price ? Number(product.price).toLocaleString() : "1,100"} / ตร.ม.</span>
+                  <span className="text-sm font-extrabold text-accent-600">฿{product.price ? Number(product.price).toLocaleString() : "1,100"} / ตร.ม.</span>
                 </div>
                 <a
                   href="/contact"
@@ -336,7 +336,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
                   <td className="p-4 md:p-5 text-center font-mono font-bold whitespace-nowrap">{product.vlt}</td>
                   <td className="p-4 md:p-5 text-center font-mono font-bold text-emerald-600 whitespace-nowrap">{product.uvr}</td>
                   <td className="p-4 md:p-5 text-center font-mono whitespace-nowrap">{product.irr2}</td>
-                  <td className="p-4 md:p-5 text-center font-mono font-bold text-amber-700 whitespace-nowrap">{product.tser}</td>
+                  <td className="p-4 md:p-5 text-center font-mono font-bold text-accent-700 whitespace-nowrap">{product.tser}</td>
                 </tr>
               ))
             )}

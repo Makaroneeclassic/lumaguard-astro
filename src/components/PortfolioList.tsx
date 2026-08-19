@@ -70,7 +70,7 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
         {showLinkToAll && (
           <a
             href="/portfolio"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs sm:text-sm hover:bg-slate-800 transition-all shadow-sm shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs sm:text-sm hover:bg-slate-800 transition-all shadow-sm shrink-0"
           >
             <span>ดูผลงานทั้งหมด</span>
             <ChevronRight className="w-4 h-4" />
@@ -101,7 +101,7 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
 
               {/* Meta details */}
               <div className="px-6 space-y-2">
-                <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition-colors">
+                <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-accent-600 transition-colors">
                   {item.title}
                 </h2>
                 <p className="text-slate-500 text-xs font-medium flex items-center gap-1">
@@ -118,7 +118,7 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
             {/* Spec Footer */}
             <div className="p-6 mt-4 border-t border-slate-100 flex justify-between items-center text-xs font-semibold bg-slate-50/50">
               <div>
-                <span className="block text-[10px] font-bold text-amber-700 uppercase tracking-wider">
+                <span className="block text-[10px] font-bold text-accent-700 uppercase tracking-wider">
                   รุ่นฟิล์มที่ติดตั้ง
                 </span>
                 <span className="text-slate-900 font-bold">{item.seriesUsed}</span>

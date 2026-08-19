@@ -296,7 +296,7 @@ export default function FilmSelector() {
                 href="https://line.me"
                 target="_blank"
                 rel="noreferrer"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-xl font-headline font-bold text-xs active:scale-95 transition-all shadow-md flex items-center gap-1.5"
+                className="bg-primary hover:opacity-90 text-on-primary px-6 py-3.5 rounded-xl font-headline font-bold text-xs active:scale-95 transition-all shadow-md flex items-center gap-1.5"
               >
                 <MessageSquare className="w-4 h-4" />
                 แชทปรึกษาฝ่ายเทคนิค LINE

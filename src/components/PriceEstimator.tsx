@@ -26,7 +26,7 @@ export default function PriceEstimator() {
         
         {/* Left column: Text info */}
         <div className="flex-grow space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 text-sky-600 bg-sky-50 px-3 py-1 rounded-full text-xs font-bold font-headline">
+          <div className="inline-flex items-center gap-2 text-accent-600 bg-accent-50 px-3 py-1 rounded-full text-xs font-bold font-headline">
             <Calculator className="w-4 h-4" />
             เครื่องคำนวณงบประมาณ
           </div>
@@ -40,7 +40,7 @@ export default function PriceEstimator() {
         <div className="w-full md:w-80 space-y-4">
           <div className="flex justify-between items-center text-sm font-bold">
             <span className="text-slate-600 dark:text-slate-300">พื้นที่กระจกรวม:</span>
-            <span className="text-sky-600 text-lg font-headline font-black">{area} ตร.ม.</span>
+            <span className="text-accent-600 text-lg font-headline font-black">{area} ตร.ม.</span>
           </div>
           <input
             type="range"
@@ -74,7 +74,7 @@ export default function PriceEstimator() {
                 }
               }
             }}
-            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-accent-500"
           />
           <div className="flex justify-between text-xs text-slate-400 font-medium">
             <span>10 ตร.ม.</span>
@@ -88,12 +88,12 @@ export default function PriceEstimator() {
           <span className="block text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">
             ประมาณการเริ่มต้น
           </span>
-          <span className="text-3xl font-headline font-black text-sky-600 tracking-tighter leading-none mb-4">
+          <span className="text-3xl font-headline font-black text-accent-600 tracking-tighter leading-none mb-4">
             {formatPrice(area * guardianRate)}*
           </span>
           <a
             href="/contact"
-            className="text-xs text-amber-700 hover:underline font-bold font-headline block"
+            className="text-xs text-accent-700 hover:underline font-bold font-headline block"
           >
             *อ้างอิงจากราคาเฉลี่ยรุ่น Guardian Ceramic
           </a>
@@ -110,13 +110,13 @@ export default function PriceEstimator() {
         </div>
 
         {/* Guardian Series */}
-        <div className="bg-sky-50 p-6 rounded-2xl border border-sky-200 text-center space-y-2 shadow-md relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-sky-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-lg font-headline">
+        <div className="bg-accent-50 p-6 rounded-2xl border border-accent-200 text-center space-y-2 shadow-md relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-accent-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-lg font-headline">
             รุ่นยอดนิยม
           </div>
-          <h3 className="font-headline font-bold text-sky-900 text-sm">Guardian (Ceramic)</h3>
-          <p className="text-2xl font-headline font-black text-sky-700">{formatPrice(area * guardianRate)}</p>
-          <span className="text-xs text-sky-800 block font-medium">ฟิล์มเซรามิกระดับกลาง กันความร้อนดีเยี่ยม</span>
+          <h3 className="font-headline font-bold text-accent-900 text-sm">Guardian (Ceramic)</h3>
+          <p className="text-2xl font-headline font-black text-accent-700">{formatPrice(area * guardianRate)}</p>
+          <span className="text-xs text-accent-800 block font-medium">ฟิล์มเซรามิกระดับกลาง กันความร้อนดีเยี่ยม</span>
         </div>
 
         {/* Apex Series */}

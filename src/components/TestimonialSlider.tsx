@@ -30,7 +30,7 @@ const defaultTestimonials: TestimonialItem[] = [
     rating: 5,
     date: "03/05/2026",
     initials: "อ",
-    avatarBg: "bg-emerald-700",
+    avatarBg: "bg-primary",
   },
   {
     id: "3",
@@ -48,7 +48,7 @@ const defaultTestimonials: TestimonialItem[] = [
     rating: 5,
     date: "15/01/2026",
     initials: "ภ",
-    avatarBg: "bg-amber-700",
+    avatarBg: "bg-accent-700",
   }
 ];
 

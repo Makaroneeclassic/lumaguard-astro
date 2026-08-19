@@ -64,7 +64,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
       <ol class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
         {breadcrumb.slice(0, -1).map((crumb) => (
           <li class="flex items-center gap-2">
-            <a href={crumb.url} class="hover:text-sky-600 transition-colors">{crumb.name}</a>
+            <a href={crumb.url} class="hover:text-accent-600 transition-colors">{crumb.name}</a>
             <span aria-hidden="true">/</span>
           </li>
         ))}

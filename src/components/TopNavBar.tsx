@@ -70,7 +70,7 @@ export default function TopNavBar() {
                 (window as any).gtag("event", "contact_click", { method: "web_form", placement: "header" });
               }
             }}
-            className="bg-tertiary-container text-on-tertiary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all duration-200 shadow-md shadow-tertiary-container/10"
+            className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all duration-200 shadow-md shadow-tertiary-container/10"
           >
             ติดต่อรับคำแนะนำฟรี
           </a>
@@ -120,7 +120,7 @@ export default function TopNavBar() {
                   (window as any).gtag("event", "contact_click", { method: "web_form", placement: "header_mobile" });
                 }
               }}
-              className="block text-center w-full bg-tertiary-container text-on-tertiary py-3.5 rounded-xl font-headline font-bold shadow-lg"
+              className="block text-center w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-bold shadow-lg"
             >
               ติดต่อรับคำแนะนำฟรี
             </a>
