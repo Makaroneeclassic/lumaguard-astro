@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar';
 import Footer from '@/components/Footer';
 import ProductMatrix, { ALL_PRODUCTS_DATA } from '@/components/ProductMatrix';
+import { SERIES } from '@/lib/series';
 import FilmSelector from '@/components/FilmSelector';
 import PriceEstimator from '@/components/PriceEstimator';
 import { prisma } from '@/lib/db';
@@ -42,6 +43,48 @@ const { title, description } = seo;
     </div>
 
     <ProductMatrix client:visible products={products} />
+
+    {/*
+      หน้ารายซีรีส์ทั้งหกเคยเข้าถึงได้ทางเดียวคือผ่าน sitemap เพราะไม่มีหน้าไหน
+      ในเว็บลิงก์เข้าไปเลย ผู้ใช้จึงหาไม่เจอ และ Google ก็ให้น้ำหนักหน้าที่ไม่มี
+      ลิงก์ภายในชี้ถึงน้อยกว่าปกติ ส่วนนี้จึงเป็นทางเข้าหลักของทั้งหกหน้า
+    */}
+    <section aria-labelledby="series-heading" class="space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <h2 id="series-heading" class="text-2xl sm:text-3xl md:text-4xl font-black text-on-surface tracking-tight">
+          เจาะลึกรายซีรีส์
+        </h2>
+        <p class="text-on-surface-variant leading-relaxed">
+          ดูเทคโนโลยี ค่าสเปกทุกระดับความทึบ และราคาของแต่ละซีรีส์แบบละเอียด
+        </p>
+      </div>
+
+      <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {SERIES.map((series) => (
+          <li>
+            <a
+              href={`/products/${series.slug}`}
+              class="group flex h-full flex-col justify-between gap-4 rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-6 transition-shadow hover:shadow-md"
+            >
+              <div class="space-y-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-accent-700">
+                  {series.tag}
+                </span>
+                <h3 class="font-headline text-xl font-bold text-primary">
+                  {series.displayName}
+                </h3>
+                <p class="text-sm leading-relaxed text-on-surface-variant line-clamp-3">
+                  {series.subtitle}
+                </p>
+              </div>
+              <span class="text-sm font-bold text-primary group-hover:underline">
+                ดูสเปกทุกรุ่น →
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
 
     <section id="consultation" class="pt-8">
       <FilmSelector client:visible />
