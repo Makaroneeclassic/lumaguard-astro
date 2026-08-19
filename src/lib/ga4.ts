@@ -21,7 +21,14 @@ export async function sendGa4Event(
 ): Promise<void> {
   const id = import.meta.env.GA4_MEASUREMENT_ID;
   const secret = import.meta.env.GA4_API_SECRET;
-  if (!id || !secret) return;
+
+  // เขียน log เมื่อยังตั้งค่าไม่ครบ เดิม return เงียบ ๆ ทำให้แยกไม่ออกว่า
+  // ยังไม่ได้ตั้งค่า หรือตั้งแล้วแต่ยิงไม่สำเร็จ
+  if (!id || !secret) {
+    const missing = [!id && 'GA4_MEASUREMENT_ID', !secret && 'GA4_API_SECRET'].filter(Boolean);
+    console.warn(`[ga4] ข้ามการส่ง event เพราะยังไม่ได้ตั้ง ${missing.join(' และ ')}`);
+    return;
+  }
 
   const url =
     `https://www.google-analytics.com/mp/collect` +
@@ -47,6 +54,7 @@ export async function sendGa4Event(
 
   // Measurement Protocol ตอบ 204 เสมอแม้ payload ผิด จึงเช็คได้แค่ระดับ transport
   if (!res.ok) throw new Error(`GA4 Measurement Protocol ตอบ ${res.status}`);
+  console.log(`[ga4] ส่ง ${events.map((e) => e.name).join(', ')} เข้า ${id} แล้ว`);
 }
 
 /**
