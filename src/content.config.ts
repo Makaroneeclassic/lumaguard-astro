@@ -21,7 +21,7 @@ export const CLUSTERS = [
 
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
-  schema: ({ image }) =>
+  schema: () =>
     z.object({
       // จำกัดความยาวตั้งแต่ระดับ schema เพื่อให้ build fail ทันทีที่ metadata บาง
       // แทนที่จะไปรู้ตัวใน Search Console อีกสามเดือนถัดมา
@@ -45,7 +45,9 @@ const blog = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
 
-      heroImage: image().optional(),
+      // เก็บเป็น path ใต้ public/ แทน image() เพราะคนเขียนบทความกรอกผ่าน
+      // Google Sheet ซึ่งอ้างไฟล์ในโฟลเดอร์ src/ ไม่ได้
+      heroImage: z.string().startsWith('/').optional(),
       heroAlt: z.string().optional(),
 
       author: z.string().default('ทีมงานวิศวกร LUMAGUARD'),
