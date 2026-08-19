@@ -47,7 +47,7 @@ const { title, description } = seo;
   <TopNavBar client:idle pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-28 md:pt-36 pb-24 px-4 sm:px-8 max-w-[1440px] mx-auto space-y-20">
-    <!-- Page Title Header -->
+    {/* Page Title Header */}
     <div class="text-center max-w-3xl mx-auto space-y-4">
       <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
         ติดต่อเรา & ประเมินราคาฟรี
@@ -57,7 +57,7 @@ const { title, description } = seo;
       </p>
     </div>
 
-    <!-- Contact Info Cards (3 Columns) -->
+    {/* Contact Info Cards (3 Columns) */}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
       <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
         <div class="w-12 h-12 bg-accent-500/10 text-accent-700 rounded-2xl flex items-center justify-center">
@@ -84,17 +84,17 @@ const { title, description } = seo;
       </div>
     </div>
 
-    <!-- Interactive Price Estimator Section -->
+    {/* Interactive Price Estimator Section */}
     <section id="estimator" class="pt-8">
       <PriceEstimator client:visible />
     </section>
 
-    <!-- Lead Form Request Section -->
+    {/* Lead Form Request Section */}
     <section id="contact-form" class="pt-8">
       <LeadForm client:visible />
     </section>
 
-    <!-- FAQ Section -->
+    {/* FAQ Section */}
     <section class="py-12 bg-slate-50 rounded-3xl p-6 sm:p-10 border border-slate-200 space-y-8 shadow-sm">
       <div class="text-center space-y-2 max-w-xl mx-auto">
         <span class="text-accent-700 font-bold tracking-widest text-xs uppercase">

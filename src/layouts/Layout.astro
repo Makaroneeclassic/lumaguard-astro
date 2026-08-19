@@ -43,11 +43,11 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
       <meta name="google-site-verification" content={googleVerification} />
     )}
     
-    <!--
+    {/*
       ฟอนต์โฮสต์เองแล้ว ประกาศ @font-face อยู่ใน global.css
       preload เฉพาะ subset ไทยซึ่งเป็นตัวอักษรที่ใช้จริงเกือบทั้งหน้า
       เพื่อให้เริ่มโหลดพร้อมกับ CSS ไม่ต้องรอให้ CSS ถูกแยกวิเคราะห์ก่อน
-    -->
+    */}
     <link
       rel="preload"
       href="/fonts/noto-sans-thai-thai.woff2"
@@ -66,11 +66,11 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
       noindex={noindex} 
     />
     
-    <!-- Organization + WebSite + LocalBusiness ผูกกันด้วย @id ใส่ทุกหน้า -->
+    {/* Organization + WebSite + LocalBusiness ผูกกันด้วย @id ใส่ทุกหน้า */}
     <JsonLd schema={buildSiteSchema()} />
     {schema && <JsonLd schema={schema} />}
     
-    <!-- Consent Mode v2 Default Settings -->
+    {/* Consent Mode v2 Default Settings */}
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
@@ -83,10 +83,10 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
       });
     </script>
     
-    <!--
+    {/*
       โหลด GA4 ตรงเมื่อยังไม่มี GTM รอจนเบราว์เซอร์ว่างเช่นเดียวกัน
       Consent Mode ด้านบนทำงานไปแล้ว gtag จึงเคารพสถานะความยินยอมตั้งแต่ต้น
-    -->
+    */}
     {ga4Id && (
       <script is:inline define:vars={{ ga4Id }}>
         (function (w, d) {
@@ -109,17 +109,17 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
       </script>
     )}
 
-    <!--
+    {/*
       โหลด GTM ตอนเบราว์เซอร์ว่าง ไม่ใช่ทันทีที่เจอแท็ก
-
+      
       สคริปต์ GTM มักเป็นไฟล์ที่หนักที่สุดในหน้าการตลาด การปล่อยให้ดึงพร้อม
       กับเนื้อหาทำให้แย่งแบนด์วิดท์และเวลาประมวลผลช่วงที่กำลังวาดหน้าจอ
       requestIdleCallback จึงเลื่อนไปทำตอนงานหลักเสร็จแล้ว โดยมี setTimeout
       สำรองไว้สำหรับเบราว์เซอร์ที่ยังไม่รองรับ
-
+      
       ส่วน Consent Mode ด้านบนยังทำงานทันทีตามเดิม เพราะต้องตั้งค่าความยินยอม
       ให้เสร็จก่อน GTM เริ่มทำงานเสมอ
-    -->
+    */}
     {gtmId && (
       <script is:inline define:vars={{ gtmId }}>
         (function (w, d, s, l, i) {
@@ -143,7 +143,7 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
     )}
   </head>
   <body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
-    <!-- Google Tag Manager (noscript) -->
+    {/* Google Tag Manager (noscript) */}
     {gtmId && (
       <noscript>
         <iframe 

@@ -118,7 +118,7 @@ const faqItems = [
   <TopNavBar client:idle pathname={Astro.url.pathname} />
   
   <main class="min-h-screen pt-16 overflow-x-hidden">
-    <!-- Hero Section -->
+    {/* Hero Section */}
     <section class="relative min-h-[600px] sm:min-h-[720px] md:min-h-[850px] flex items-center overflow-hidden py-16">
       <div class="absolute inset-0 z-0">
         <img 
@@ -149,10 +149,10 @@ const faqItems = [
       </div>
     </section>
 
-    <!-- Why LUMAGUARD -->
+    {/* Why LUMAGUARD */}
     <section id="why-us" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <!-- Card 1: ป้องกันรังสี UV 100% -->
+        {/* Card 1: ป้องกันรังสี UV 100% */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
           <img 
             src="/images/why-us/uv-protection.webp" 
@@ -182,7 +182,7 @@ const faqItems = [
           </div>
         </div>
 
-        <!-- Card 2: ลดอุณหภูมิห้องสูงสุด 12°C -->
+        {/* Card 2: ลดอุณหภูมิห้องสูงสุด 12°C */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
           <img 
             src="/images/why-us/cool-temp.webp" 
@@ -211,7 +211,7 @@ const faqItems = [
           </div>
         </div>
 
-        <!-- Card 3: ทัศนียภาพคมชัดระดับ HD -->
+        {/* Card 3: ทัศนียภาพคมชัดระดับ HD */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl sm:col-span-2 lg:col-span-1">
           <img 
             src="/images/why-us/hd-view.webp" 
@@ -243,19 +243,19 @@ const faqItems = [
       </div>
     </section>
 
-    <!-- Consultation / Film Selector Tool Section -->
+    {/* Consultation / Film Selector Tool Section */}
     <section id="consultation" class="py-16 md:py-24 px-4 sm:px-8 max-w-[1440px] mx-auto">
       <FilmSelector client:visible />
     </section>
 
-    <!-- Product Spec Comparison Matrix Section -->
+    {/* Product Spec Comparison Matrix Section */}
     <section id="matrix" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
       <div class="max-w-[1440px] mx-auto px-4 sm:px-8">
         <ProductMatrix client:visible products={products} />
       </div>
     </section>
 
-    <!-- Process / Service Steps Section -->
+    {/* Process / Service Steps Section */}
     <section id="process" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
       <div class="space-y-12 md:space-y-16">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 tracking-tight">
@@ -277,7 +277,7 @@ const faqItems = [
       </div>
     </section>
 
-    <!-- Portfolio Project Showcase Section -->
+    {/* Portfolio Project Showcase Section */}
     <section id="portfolio" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
       <div class="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-16 lg:px-24 space-y-10">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
@@ -298,10 +298,10 @@ const faqItems = [
       </div>
     </section>
 
-    <!-- Testimonials Review Slider Section -->
+    {/* Testimonials Review Slider Section */}
     <TestimonialSlider client:visible />
 
-    <!-- FAQ / Q&A Section -->
+    {/* FAQ / Q&A Section */}
     <section id="faq" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
       <div class="max-w-4xl mx-auto px-4 sm:px-8 space-y-8 sm:space-y-12">
         <div class="text-center space-y-3">
@@ -326,7 +326,7 @@ const faqItems = [
       </div>
     </section>
 
-    <!-- Contact Lead Form -->
+    {/* Contact Lead Form */}
     <section id="contact" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
       <LeadForm client:visible />
     </section>
