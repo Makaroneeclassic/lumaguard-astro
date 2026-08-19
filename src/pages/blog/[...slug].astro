@@ -22,6 +22,36 @@ export async function getStaticPaths() {
 const { post, posts } = Astro.props;
 const { Content } = await render(post);
 
+/**
+ * ถ้าผู้เขียนวาง <ArticleCta /> ไว้ในเนื้อหาเองแล้ว ไม่ต้องเติมอันท้ายบทความอีก
+ * มิฉะนั้นผู้อ่านจะเจอกล่องชวนติดต่อสองอันติดกันโดยไม่ได้ตั้งใจ
+ */
+const hasInlineCta = post.body?.includes('<ArticleCta') ?? false;
+
+/**
+ * ข้อความ CTA ท้ายบทความต้องเข้ากับเรื่องที่เพิ่งอ่านจบ
+ * เดิมใช้ข้อความเดียวทุกบท บทความเรื่องฟิล์มรถยนต์จึงลงท้ายด้วยคำว่า "บ้านคุณ"
+ */
+const CTA_BY_CLUSTER: Record<string, { heading: string; body: string }> = {
+  'ppf-automotive': {
+    heading: 'อยากรู้ว่ารถของคุณควรติดฟิล์มแบบไหน?',
+    body: 'ทีมงานประเมินหน้างานและเสนอราคาให้ฟรี ไม่มีค่าใช้จ่าย',
+  },
+  'safety-security': {
+    heading: 'อยากเสริมความปลอดภัยให้กระจกบ้านหรืออาคาร?',
+    body: 'ปรึกษาเรื่องฟิล์มนิรภัยกับทีมวิศวกร ประเมินหน้างานฟรี',
+  },
+  privacy: {
+    heading: 'อยากได้ความเป็นส่วนตัวโดยยังได้แสงธรรมชาติ?',
+    body: 'ให้ทีมงานช่วยเลือกระดับความทึบที่เหมาะกับห้องของคุณ ประเมินฟรี',
+  },
+};
+
+const endCta = CTA_BY_CLUSTER[post.data.cluster] ?? {
+  heading: 'อยากรู้ว่าบ้านคุณเหมาะกับฟิล์มรุ่นไหน?',
+  body: 'ทีมงานประเมินหน้างานและเสนอราคาให้ฟรี ไม่มีค่าใช้จ่าย',
+};
+
 const related = getRelatedPosts(post, posts);
 const canonical = absoluteUrl(`/blog/${post.id}`);
 
@@ -106,7 +136,14 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
 
     {post.data.faq && <FaqSection faq={post.data.faq} />}
 
-    <ArticleCta href={post.data.relatedServiceUrl} position="end" />
+    {!hasInlineCta && (
+      <ArticleCta
+        href={post.data.relatedServiceUrl}
+        position="end"
+        heading={endCta.heading}
+        body={endCta.body}
+      />
+    )}
 
     {related.length > 0 && (
       <section class="mt-16 pt-10 border-t border-slate-200 space-y-6">
