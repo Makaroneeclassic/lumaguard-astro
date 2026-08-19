@@ -26,7 +26,7 @@ export default function PriceEstimator() {
         
         {/* Left column: Text info */}
         <div className="flex-grow space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 text-accent-600 bg-accent-50 px-3 py-1 rounded-full text-xs font-bold font-headline">
+          <div className="inline-flex items-center gap-2 text-accent-700 bg-accent-50 px-3 py-1 rounded-full text-xs font-bold font-headline">
             <Calculator className="w-4 h-4" />
             เครื่องคำนวณงบประมาณ
           </div>

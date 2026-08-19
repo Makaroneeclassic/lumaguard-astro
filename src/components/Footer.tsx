@@ -21,24 +21,24 @@ export default function Footer() {
           <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary mb-6">
             เมนูด่วน
           </h2>
-          <ul className="space-y-4 font-medium text-on-surface-variant">
+          <ul className="space-y-1 font-medium text-on-surface-variant">
             <li>
-              <a href="/products" className="hover:text-primary transition-colors">
+              <a href="/products" className="block py-2 hover:text-primary transition-colors">
                 สินค้า & เปรียบเทียบ
               </a>
             </li>
             <li>
-              <a href="/portfolio" className="hover:text-primary transition-colors">
+              <a href="/portfolio" className="block py-2 hover:text-primary transition-colors">
                 ผลงานการติดตั้ง
               </a>
             </li>
             <li>
-              <a href="/services" className="hover:text-primary transition-colors">
+              <a href="/services" className="block py-2 hover:text-primary transition-colors">
                 ขั้นตอน & บริการ
               </a>
             </li>
             <li>
-              <a href="/contact" className="hover:text-primary transition-colors">
+              <a href="/contact" className="block py-2 hover:text-primary transition-colors">
                 ติดต่อรับคำแนะนำฟรี
               </a>
             </li>
@@ -50,14 +50,14 @@ export default function Footer() {
           <h2 className="font-headline font-bold text-xs uppercase tracking-widest text-primary mb-6">
             ข้อมูล & เอกสาร
           </h2>
-          <ul className="space-y-4 font-medium text-on-surface-variant">
+          <ul className="space-y-1 font-medium text-on-surface-variant">
             <li>
-              <a href="/privacy-policy" className="hover:text-primary transition-colors">
+              <a href="/privacy-policy" className="block py-2 hover:text-primary transition-colors">
 นโยบายความเป็นส่วนตัว
               </a>
             </li>
             <li>
-              <a href="/blog" className="hover:text-primary transition-colors">
+              <a href="/blog" className="block py-2 hover:text-primary transition-colors">
                 บทความ & สาระน่ารู้
               </a>
             </li>
@@ -104,7 +104,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
         <p>© {new Date().getFullYear()} LUMAGUARD Window Film. สงวนลิขสิทธิ์ทั้งหมด.</p>
         <div className="flex gap-6">
-          <a href="/privacy-policy" className="hover:text-primary transition-colors">
+          <a href="/privacy-policy" className="block py-2 hover:text-primary transition-colors">
 Privacy Policy
           </a>
           </div>

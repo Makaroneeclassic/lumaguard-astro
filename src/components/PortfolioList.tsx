@@ -101,7 +101,7 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
 
               {/* Meta details */}
               <div className="px-6 space-y-2">
-                <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-accent-600 transition-colors">
+                <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-accent-700 transition-colors">
                   {item.title}
                 </h2>
                 <p className="text-slate-500 text-xs font-medium flex items-center gap-1">
@@ -125,7 +125,7 @@ export default function PortfolioList({ initialItems, portfolioItems, showLinkTo
               </div>
               {item.areaSize && (
                 <div className="text-right">
-                  <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <span className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider">
                     พื้นที่ติดตั้ง
                   </span>
                   <span className="text-slate-900 font-bold">{item.areaSize}</span>

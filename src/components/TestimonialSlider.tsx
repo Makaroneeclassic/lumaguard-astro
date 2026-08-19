@@ -104,7 +104,7 @@ export default function TestimonialSlider() {
                         <Star key={i} className="w-4 h-4 fill-current text-red-500" />
                       ))}
                     </div>
-                    <span className="text-xs text-slate-400 font-light">{t.date}</span>
+                    <span className="text-xs text-slate-600 font-light">{t.date}</span>
                   </div>
                   <p className="text-slate-700 text-sm italic leading-relaxed font-light">
                     "{t.content}"
@@ -134,7 +134,7 @@ export default function TestimonialSlider() {
                       <Star key={i} className="w-4 h-4 fill-current text-red-500" />
                     ))}
                   </div>
-                  <span className="text-xs text-slate-400 font-light">{currentMobileItem.date}</span>
+                  <span className="text-xs text-slate-600 font-light">{currentMobileItem.date}</span>
                 </div>
                 <p className="text-slate-700 text-sm italic leading-relaxed font-light">
                   "{currentMobileItem.content}"

@@ -50,7 +50,7 @@ export default function TopNavBar({ pathname = "/" }: { pathname?: string }) {
             <a
               key={link.href}
               href={link.href}
-              className={`transition-colors py-1 ${
+              className={`transition-colors py-3 ${
                 isActive(link.href)
                   ? "text-primary border-b-2 border-primary"
                   : "text-on-surface-variant hover:text-primary"

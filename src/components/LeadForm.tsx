@@ -122,7 +122,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
       {status === "success" ? (
         <div className="bg-accent-50 border border-accent-200 p-8 rounded-2xl text-center space-y-4 animate-fade-in">
-          <CheckCircle2 className="w-12 h-12 text-accent-600 mx-auto" />
+          <CheckCircle2 className="w-12 h-12 text-accent-700 mx-auto" />
           <h4 className="text-lg font-bold font-headline text-slate-900">ส่งคำขอเสร็จสมบูรณ์!</h4>
           <p className="text-slate-600 text-sm font-light">
             ขอบคุณสำหรับความสนใจ เจ้าหน้าที่ผู้เชี่ยวชาญจะติดต่อกลับเพื่อประเมินราคาและยืนยันนัดหมายทางโทรศัพท์โดยเร็วที่สุด

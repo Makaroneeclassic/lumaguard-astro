@@ -171,10 +171,10 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
         {/* Mode Toggle Button */}
         <button
           onClick={toggleCompareMode}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-headline font-bold text-xs transition-all shadow-sm border min-h-[44px] ${
+          className={`flex items-center gap-2 px-4 py-2.5 min-h-[48px] rounded-xl font-headline font-bold text-xs transition-all shadow-sm border min-h-[44px] ${
             isCompareMode
               ? "bg-primary text-on-primary border-primary hover:opacity-90"
-              : "bg-white text-accent-600 border-slate-200 hover:bg-slate-50"
+              : "bg-white text-accent-700 border-slate-200 hover:bg-slate-50"
           }`}
         >
           <Columns className="w-4 h-4" />
@@ -187,7 +187,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
         {/* All Series Chip */}
         <button
           onClick={handleSelectAll}
-          className={`px-4 py-2 rounded-xl font-headline font-bold text-xs transition-all cursor-pointer min-h-[40px] ${
+          className={`px-4 py-2 rounded-xl font-headline font-bold text-xs transition-all cursor-pointer min-h-[48px] ${
             (!isCompareMode && selectedSeries.length === 0) || (isCompareMode && selectedSeries.length === activeSeriesList.length)
               ? "bg-primary text-on-primary shadow-sm"
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/60"
@@ -209,12 +209,12 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
             <button
               key={series}
               onClick={() => handleSeriesClick(series)}
-              className={`px-3.5 py-2 rounded-xl font-headline font-semibold text-xs transition-all cursor-pointer flex items-center gap-1.5 border min-h-[40px] ${activeClass}`}
+              className={`px-3.5 py-2 min-h-[48px] rounded-xl font-headline font-semibold text-xs transition-all cursor-pointer flex items-center gap-1.5 border min-h-[40px] ${activeClass}`}
             >
               {isCompareMode && (
                 <span>
                   {isSelected ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-accent-600 shrink-0" />
+                    <CheckSquare className="w-3.5 h-3.5 text-accent-700 shrink-0" />
                   ) : (
                     <Square className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                   )}
@@ -254,17 +254,17 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               {/* Specs Grid (2x2 Stat Cards) */}
               <div className="grid grid-cols-2 gap-2.5 text-xs">
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center space-y-0.5">
-                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">แสงผ่าน (VLT)</span>
+                  <span className="block text-[9px] font-bold text-slate-600 uppercase tracking-wider">แสงผ่าน (VLT)</span>
                   <span className="font-extrabold text-slate-900 text-sm">{product.vlt}</span>
                 </div>
 
                 <div className="bg-accent-50 p-2.5 rounded-xl border border-accent-100 text-center space-y-0.5">
-                  <span className="block text-[9px] font-bold text-accent-600 uppercase tracking-wider">กัน UV (UVR)</span>
+                  <span className="block text-[9px] font-bold text-accent-700 uppercase tracking-wider">กัน UV (UVR)</span>
                   <span className="font-extrabold text-accent-700 text-sm">{product.uvr}</span>
                 </div>
 
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center space-y-0.5">
-                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">กัน IR (1000-1700nm)</span>
+                  <span className="block text-[9px] font-bold text-slate-600 uppercase tracking-wider">กัน IR (1000-1700nm)</span>
                   <span className="font-extrabold text-slate-900 text-sm">{product.irr2}</span>
                 </div>
 
@@ -277,8 +277,8 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               {/* Price & Action */}
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <div>
-                  <span className="block text-[10px] font-bold text-slate-400 uppercase">ราคาประเมิน</span>
-                  <span className="text-sm font-extrabold text-accent-600">฿{product.price ? Number(product.price).toLocaleString() : "1,100"} / ตร.ม.</span>
+                  <span className="block text-[10px] font-bold text-slate-600 uppercase">ราคาประเมิน</span>
+                  <span className="text-sm font-extrabold text-accent-700">฿{product.price ? Number(product.price).toLocaleString() : "1,100"} / ตร.ม.</span>
                 </div>
                 <a
                   href="/contact"
@@ -308,7 +308,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
           <tbody className="divide-y divide-slate-100 text-xs md:text-sm font-medium text-slate-700">
             {filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-12 text-center text-slate-400 font-light">
+                <td colSpan={6} className="p-12 text-center text-slate-600 font-light">
                   ไม่มีสินค้าตรงตามซีรีส์ที่เลือก กรุณาเลือกซีรีส์อื่นในการเปรียบเทียบ
                 </td>
               </tr>

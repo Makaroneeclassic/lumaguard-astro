@@ -129,7 +129,7 @@ export default function SearchDialog({ label = "ค้นหา" }: { label?: st
             className="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden"
           >
             <div className="flex items-center gap-3 border-b border-slate-200 px-4">
-              <Search className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
+              <Search className="w-5 h-5 text-slate-600 shrink-0" aria-hidden="true" />
               <input
                 ref={inputRef}
                 type="search"
@@ -139,12 +139,12 @@ export default function SearchDialog({ label = "ค้นหา" }: { label?: st
                 aria-label="คำค้นหา"
                 className="flex-1 py-4 text-slate-900 placeholder-slate-400 outline-none bg-transparent"
               />
-              {loading && <Loader2 className="w-4 h-4 text-slate-400 animate-spin" aria-hidden="true" />}
+              {loading && <Loader2 className="w-4 h-4 text-slate-600 animate-spin" aria-hidden="true" />}
               <button
                 type="button"
                 aria-label="ปิดการค้นหา"
                 onClick={() => setOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-700 transition-colors"
+                className="p-2 text-slate-600 hover:text-slate-700 transition-colors"
               >
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -164,7 +164,7 @@ export default function SearchDialog({ label = "ค้นหา" }: { label?: st
               )}
 
               {!failed && !query.trim() && (
-                <p className="p-6 text-sm text-slate-400">
+                <p className="p-6 text-sm text-slate-600">
                   พิมพ์คำที่ต้องการค้นหา เช่น ฟิล์มนิรภัย, Guardian, ราคา
                 </p>
               )}
