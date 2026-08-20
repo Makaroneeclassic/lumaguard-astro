@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import TopNavBar from '@/components/TopNavBar';
+import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import { buildBreadcrumbSchema } from '@/lib/schema';
@@ -38,7 +38,7 @@ const rights = [
     ])}
   />
 
-  <TopNavBar client:idle pathname={Astro.url.pathname} />
+  <TopNavBar pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-28 pb-20 px-6">
     <article class="mx-auto max-w-3xl">

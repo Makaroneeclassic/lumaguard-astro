@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import TopNavBar from '@/components/TopNavBar';
+import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import PriceEstimator from '@/components/PriceEstimator';
@@ -110,7 +110,7 @@ const estimatorRates = await getEstimatorRates();
   <JsonLd schema={productSchema} />
   <JsonLd schema={buildBreadcrumbSchema(breadcrumb)} />
 
-  <TopNavBar client:idle pathname={Astro.url.pathname} />
+  <TopNavBar pathname={Astro.url.pathname} />
 
   <main class="flex-grow pt-28 pb-24 font-body">
     <nav aria-label="breadcrumb" class="max-w-7xl mx-auto px-6 mb-6">

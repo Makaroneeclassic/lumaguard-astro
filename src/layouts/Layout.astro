@@ -45,12 +45,25 @@ const googleVerification = import.meta.env.GOOGLE_SITE_VERIFICATION || '';
     
     {/*
       ฟอนต์โฮสต์เองแล้ว ประกาศ @font-face อยู่ใน global.css
-      preload เฉพาะ subset ไทยซึ่งเป็นตัวอักษรที่ใช้จริงเกือบทั้งหน้า
-      เพื่อให้เริ่มโหลดพร้อมกับ CSS ไม่ต้องรอให้ CSS ถูกแยกวิเคราะห์ก่อน
+      preload เพื่อให้เริ่มโหลดพร้อมกับ CSS ไม่ต้องรอให้ CSS ถูกแยกวิเคราะห์ก่อน
+
+      ต้อง preload ทั้งสอง subset เพราะทุกหน้ามีทั้งสองชุดอักษรอยู่เหนือเส้นพับ
+      ไทยคือเนื้อหาเกือบทั้งหน้า ส่วนละตินคือชื่อแบรนด์บนแถบเมนูและพาดหัวหลัก
+      เดิม preload แค่ชุดไทย ชุดละตินจึงเริ่มโหลดช้ากว่าและทำให้พาดหัวกระพริบ
+      เปลี่ยนฟอนต์ให้เห็น เพราะ @font-face ตั้ง font-display เป็น swap ไว้
+
+      subset ext ไม่ preload เพราะมีแค่อักขระพิเศษที่แทบไม่ถูกใช้จริง
     */}
     <link
       rel="preload"
       href="/fonts/noto-sans-thai-thai.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/noto-sans-thai-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin

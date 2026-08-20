@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { BUSINESS } from '@/lib/site';
-import TopNavBar from '@/components/TopNavBar';
+import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import PriceEstimator from '@/components/PriceEstimator';
@@ -48,7 +48,7 @@ const estimatorRates = await getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:idle pathname={Astro.url.pathname} />
+  <TopNavBar pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-28 md:pt-36 pb-24 px-4 sm:px-8 max-w-[1440px] mx-auto space-y-20">
     {/* Page Title Header */}

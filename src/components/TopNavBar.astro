@@ -1,0 +1,243 @@
+---
+import SearchDialog from '@/components/SearchDialog.astro';
+
+/**
+ * แถบเมนูด้านบน
+ *
+ * เดิมเป็นคอมโพเนนต์ React ที่โหลดด้วย client:idle ทุกหน้า ซึ่งลาก React runtime
+ * เข้ามาในเส้นทางวิกฤตราว 65 KB (client.js + react + jsx-runtime + ตัวคอมโพเนนต์)
+ * ทั้งที่ใช้ state จริงแค่ตัวเดียวคือเปิด/ปิดเมนูบนมือถือ
+ *
+ * เวอร์ชันนี้เรนเดอร์เป็น HTML ล้วนตั้งแต่ตอน build ส่วนการเปิดปิดเมนูใช้สคริปต์
+ * ขนาดเล็กแทน island อื่นในหน้าเป็น client:visible อยู่แล้ว React จึงไม่ถูกโหลด
+ * จนกว่าผู้ใช้จะเลื่อนลงไปถึงส่วนที่ต้องใช้จริง
+ *
+ * pathname รับมาจากฝั่งเซิร์ฟเวอร์เหมือนเดิม เมนูที่ถูกไฮไลต์จึงถูกต้อง
+ * ตั้งแต่ HTML ชุดแรกโดยไม่ต้องรอ JavaScript
+ */
+interface Props {
+  pathname?: string;
+}
+
+const { pathname = '/' } = Astro.props;
+
+const navLinks = [
+  { name: 'หน้าหลัก', href: '/' },
+  { name: 'สินค้า & เปรียบเทียบ', href: '/products' },
+  { name: 'ขั้นตอน & บริการ', href: '/services' },
+  { name: 'ผลงาน', href: '/portfolio' },
+  { name: 'ติดต่อเรา & FAQ', href: '/contact' },
+  { name: 'บล็อก', href: '/blog' },
+];
+
+const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+---
+
+<nav class="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant/10">
+  <div class="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
+    <a href="/" class="text-2xl font-black text-primary tracking-tighter font-headline">
+      LUMAGUARD
+    </a>
+
+    <div class="hidden md:flex items-center gap-8 font-headline font-bold text-sm tracking-tight">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class={`transition-colors py-3 ${
+              isActive(link.href)
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-on-surface-variant hover:text-primary'
+            }`}
+          >
+            {link.name}
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="hidden md:flex items-center gap-6">
+      <button
+        type="button"
+        aria-label="ค้นหา"
+        data-search-open
+        class="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-5 h-5"
+          aria-hidden="true"
+        >
+          <path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle>
+        </svg>
+      </button>
+
+      <a
+        href="/contact"
+        data-track-contact="header"
+        class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all duration-200 shadow-md shadow-tertiary-container/10"
+      >
+        ติดต่อรับคำแนะนำฟรี
+      </a>
+    </div>
+
+    <div class="md:hidden flex items-center gap-4">
+      <button
+        type="button"
+        aria-label="ค้นหา"
+        data-search-open
+        class="text-on-surface-variant p-2 rounded-full hover:bg-surface-container-low transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-5 h-5"
+          aria-hidden="true"
+        >
+          <path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        id="lg-menu-toggle"
+        aria-label="เปิดเมนู"
+        aria-expanded="false"
+        aria-controls="lg-mobile-menu"
+        class="text-on-surface p-2 rounded-lg hover:bg-surface-container-low transition-colors"
+      >
+        <svg
+          data-icon="menu"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+          aria-hidden="true"
+        >
+          <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
+        </svg>
+        <svg
+          data-icon="close"
+          hidden
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="lg-mobile-menu"
+    hidden
+    class="md:hidden bg-surface border-b border-outline-variant/10 px-6 py-8 space-y-4 animate-fade-in"
+  >
+    <div class="flex flex-col space-y-4 font-headline font-bold text-lg">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class={`py-2 ${
+              isActive(link.href)
+                ? 'text-primary border-l-4 border-primary pl-3'
+                : 'text-on-surface-variant pl-3'
+            }`}
+          >
+            {link.name}
+          </a>
+        ))
+      }
+    </div>
+    <div class="pt-4 border-t border-outline-variant/10">
+      <a
+        href="/contact"
+        data-track-contact="header_mobile"
+        class="block text-center w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-bold shadow-lg"
+      >
+        ติดต่อรับคำแนะนำฟรี
+      </a>
+    </div>
+  </div>
+</nav>
+
+<SearchDialog />
+
+<style>
+  /* ต้องชนะคลาส display ของ Tailwind ตอนเมนูถูกซ่อน จึงใช้ตัวเลือกที่มี id ร่วมด้วย */
+  #lg-mobile-menu[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { initializeTrafficSourceTracker } from '@/lib/utmTracker';
+
+  initializeTrafficSourceTracker();
+
+  const toggle = document.getElementById('lg-menu-toggle');
+  const menu = document.getElementById('lg-mobile-menu');
+
+  if (toggle && menu) {
+    const iconMenu = toggle.querySelector<SVGElement>('[data-icon="menu"]');
+    const iconClose = toggle.querySelector<SVGElement>('[data-icon="close"]');
+
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'ปิดเมนู' : 'เปิดเมนู');
+      if (iconMenu) iconMenu.toggleAttribute('hidden', open);
+      if (iconClose) iconClose.toggleAttribute('hidden', !open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+
+    // ปิดเมนูเมื่อกดลิงก์ เพราะบางลิงก์ชี้มาที่หน้าเดิมจึงไม่มีการโหลดหน้าใหม่มาปิดให้
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+  }
+
+  // ปุ่มติดต่อเดิมยิง gtag ผ่าน onClick ของ React จึงต้องผูกใหม่ให้ทำงานเหมือนเดิม
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLElement>('[data-track-contact]');
+    if (!link) return;
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    if (typeof gtag === 'function') {
+      gtag('event', 'contact_click', {
+        method: 'web_form',
+        placement: link.dataset.trackContact,
+      });
+    }
+  });
+</script>

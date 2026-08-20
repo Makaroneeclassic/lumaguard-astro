@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import TopNavBar from '@/components/TopNavBar';
+import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import { getPublishedPosts } from '@/lib/blog';
@@ -25,7 +25,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
     ])}
   />
 
-  <TopNavBar client:idle pathname={Astro.url.pathname} />
+  <TopNavBar pathname={Astro.url.pathname} />
 
   <main class="min-h-screen pt-24 pb-16 px-6 max-w-[1200px] mx-auto space-y-12">
     <header class="text-center max-w-3xl mx-auto space-y-4">

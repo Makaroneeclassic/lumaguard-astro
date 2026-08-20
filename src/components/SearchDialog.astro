@@ -1,0 +1,246 @@
+---
+/**
+ * ช่องค้นหาทั้งเว็บ ใช้ดัชนีที่ Pagefind สร้างตอน build
+ *
+ * เดิมเป็นคอมโพเนนต์ React ที่ถูกเรียกจากแถบเมนู ซึ่งบังคับให้ React runtime
+ * โหลดตั้งแต่ต้นทุกหน้า (~65 KB) ทั้งที่ตัวมันเองใช้ state แค่ไม่กี่ตัว
+ * เวอร์ชันนี้เขียนด้วย DOM API ตรง ๆ จึงไม่มี JavaScript ก้อนใหญ่ในเส้นทางวิกฤต
+ *
+ * ตัวสคริปต์ของ Pagefind ยังโหลดแบบ lazy เมื่อเปิดกล่องค้นหาครั้งแรกเหมือนเดิม
+ *
+ * ปุ่มเปิดไม่ได้อยู่ในไฟล์นี้ — ผูกกับอะไรก็ได้ที่มีแอตทริบิวต์ data-search-open
+ * ทำให้แถบเมนูใช้ปุ่มคนละตัวสำหรับจอใหญ่กับมือถือได้ แต่ใช้กล่องค้นหาร่วมกัน
+ * (เดิมเรนเดอร์คอมโพเนนต์สองครั้ง จึงมีกล่องค้นหาซ้อนกันสองชุดในหน้าเดียว)
+ */
+---
+
+<div
+  id="lg-search"
+  hidden
+  class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-start justify-center p-4 pt-24"
+>
+  <div
+    role="dialog"
+    aria-modal="true"
+    aria-label="ค้นหาในเว็บไซต์"
+    class="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden"
+    data-search-panel
+  >
+    <div class="flex items-center gap-3 border-b border-slate-200 px-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="w-5 h-5 text-slate-600 shrink-0"
+        aria-hidden="true"
+      >
+        <path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle>
+      </svg>
+
+      <input
+        type="search"
+        id="lg-search-input"
+        placeholder="ค้นหาบทความ สินค้า หรือบริการ..."
+        aria-label="คำค้นหา"
+        class="flex-1 py-4 text-slate-900 placeholder-slate-400 outline-none bg-transparent"
+      />
+
+      <svg
+        id="lg-search-spinner"
+        hidden
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="w-4 h-4 text-slate-600 animate-spin"
+        aria-hidden="true"
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+      </svg>
+
+      <button
+        type="button"
+        aria-label="ปิดการค้นหา"
+        data-search-close
+        class="p-2 text-slate-600 hover:text-slate-700 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-5 h-5"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="lg-search-body" class="max-h-[60vh] overflow-y-auto" aria-live="polite">
+      <p class="p-6 text-sm text-slate-600">
+        พิมพ์คำที่ต้องการค้นหา เช่น ฟิล์มนิรภัย, Guardian, ราคา
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ต้องชนะคลาส flex ของ Tailwind ตอนกล่องถูกซ่อน จึงใช้ตัวเลือกที่มี id ร่วมด้วย */
+  #lg-search[hidden] {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.getElementById('lg-search');
+    if (!root) return;
+
+    const input = document.getElementById('lg-search-input');
+    const spinner = document.getElementById('lg-search-spinner');
+    const body = document.getElementById('lg-search-body');
+    const panel = root.querySelector('[data-search-panel]');
+
+    let pagefind = null;
+    let failed = false;
+    let timer = null;
+    let seq = 0;
+    let lastFocus = null;
+
+    const HINT = '<p class="p-6 text-sm text-slate-600">พิมพ์คำที่ต้องการค้นหา เช่น ฟิล์มนิรภัย, Guardian, ราคา</p>';
+    const FAILED = '<p class="p-6 text-sm text-slate-500">ระบบค้นหาใช้งานไม่ได้ในขณะนี้ กรุณาเลือกจากเมนูด้านบนแทน</p>';
+
+    const escapeHtml = (s) =>
+      String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
+    async function loadPagefind() {
+      if (pagefind || failed) return;
+      try {
+        // เก็บ path ไว้ในตัวแปรก่อน เพื่อไม่ให้ bundler พยายามวิเคราะห์ปลายทาง
+        // ไฟล์นี้ Pagefind สร้างขึ้นหลัง build เสร็จ จึงยังไม่มีอยู่ตอน bundle
+        // และในโหมด dev ก็ไม่มีเช่นกัน กรณีนั้นจะตกไปที่ข้อความสำรอง
+        const modulePath = '/pagefind/pagefind.js';
+        const mod = await import(modulePath);
+        await mod.options({ excerptLength: 25 });
+        pagefind = mod;
+      } catch {
+        failed = true;
+        body.innerHTML = FAILED;
+      }
+    }
+
+    function open() {
+      if (!root.hidden) return;
+      lastFocus = document.activeElement;
+      root.hidden = false;
+      input.focus();
+      loadPagefind();
+    }
+
+    function close() {
+      if (root.hidden) return;
+      root.hidden = true;
+      input.value = '';
+      spinner.hidden = true;
+      body.innerHTML = failed ? FAILED : HINT;
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+    }
+
+    function render(results, term) {
+      if (!results.length) {
+        body.innerHTML =
+          '<p class="p-6 text-sm text-slate-500">ไม่พบผลลัพธ์สำหรับ &ldquo;' + escapeHtml(term) + '&rdquo;</p>';
+        return;
+      }
+      body.innerHTML =
+        '<ul>' +
+        results
+          .map((r) => {
+            // excerpt มาจาก Pagefind ซึ่งใส่ <mark> ไว้เอง จึงต้องปล่อยเป็น HTML
+            // ส่วน title กับ url เป็นข้อความดิบ ต้อง escape ก่อนเสมอ
+            const title = escapeHtml((r.meta && r.meta.title) || r.url);
+            const excerpt = r.excerpt
+              ? '<p class="mt-1 text-sm text-slate-500 line-clamp-2">' + r.excerpt + '</p>'
+              : '';
+            return (
+              '<li class="border-b border-slate-100 last:border-0">' +
+              '<a href="' + escapeHtml(r.url) + '" class="block px-5 py-4 hover:bg-slate-50 transition-colors">' +
+              '<p class="font-bold text-slate-900">' + title + '</p>' + excerpt +
+              '</a></li>'
+            );
+          })
+          .join('') +
+        '</ul>';
+    }
+
+    async function run(term) {
+      const mine = ++seq;
+      await loadPagefind();
+      if (failed || !pagefind || mine !== seq) return;
+
+      spinner.hidden = false;
+      try {
+        const search = await pagefind.search(term);
+        const data = await Promise.all(search.results.slice(0, 8).map((r) => r.data()));
+        if (mine === seq) render(data, term);
+      } catch {
+        if (mine === seq) body.innerHTML = FAILED;
+      } finally {
+        if (mine === seq) spinner.hidden = true;
+      }
+    }
+
+    // ปุ่มเปิดอยู่ที่ไหนก็ได้ในหน้า จึงดักที่ document แทนการผูกทีละปุ่ม
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-search-open]')) {
+        e.preventDefault();
+        open();
+        return;
+      }
+      if (e.target.closest('[data-search-close]')) {
+        close();
+        return;
+      }
+      // คลิกพื้นหลังนอกกล่องถือว่าปิด
+      if (!root.hidden && root.contains(e.target) && !panel.contains(e.target)) close();
+    });
+
+    input.addEventListener('input', () => {
+      const term = input.value.trim();
+      clearTimeout(timer);
+      seq++;
+      if (!term) {
+        spinner.hidden = true;
+        body.innerHTML = failed ? FAILED : HINT;
+        return;
+      }
+      // หน่วงเล็กน้อยกันยิงค้นหาทุกครั้งที่พิมพ์
+      timer = setTimeout(() => run(term), 200);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+      if (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        root.hidden ? open() : close();
+      }
+    });
+  })();
+</script>

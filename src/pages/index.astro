@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import TopNavBar from '@/components/TopNavBar';
+import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import FilmSelector from '@/components/FilmSelector';
@@ -115,16 +115,24 @@ const faqItems = [
 ---
 
 <Layout title={title} description={description}>
-  <TopNavBar client:idle pathname={Astro.url.pathname} />
+  <TopNavBar pathname={Astro.url.pathname} />
   
   <main class="min-h-screen pt-16 overflow-x-hidden">
     {/* Hero Section */}
     <section class="relative min-h-[600px] sm:min-h-[720px] md:min-h-[850px] flex items-center overflow-hidden py-16">
       <div class="absolute inset-0 z-0">
-        <img 
-          alt="Modern penthouse interior" 
-          class="w-full h-full object-cover" 
-          src="/images/gallery/home-penthouse-interior.webp" 
+        {/*
+          รูปนี้คือ LCP ของหน้าแรก จึงต้องบอกเบราว์เซอร์ให้ชิงโหลดก่อนทรัพยากรอื่น
+          ไม่งั้นมันจะถูกจัดคิวรวมกับรูปที่อยู่ล่าง ๆ ของหน้าและทำให้ LCP ช้าลง
+        */}
+        <img
+          alt="Modern penthouse interior"
+          class="w-full h-full object-cover"
+          src="/images/gallery/home-penthouse-interior.webp"
+          width="512"
+          height="512"
+          fetchpriority="high"
+          decoding="async"
         />
         <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent"></div>
       </div>
@@ -155,7 +163,9 @@ const faqItems = [
         {/* Card 1: ป้องกันรังสี UV 100% */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
           <img 
-            src="/images/why-us/uv-protection.webp" 
+            src="/images/why-us/uv-protection.webp"
+              srcset="/images/why-us/uv-protection-600.webp 600w, /images/why-us/uv-protection.webp 900w"
+              sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" 
             alt="ป้องกันรังสี UV 100%" 
             width="900"
             height="900"
@@ -185,7 +195,9 @@ const faqItems = [
         {/* Card 2: ลดอุณหภูมิห้องสูงสุด 12°C */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
           <img 
-            src="/images/why-us/cool-temp.webp" 
+            src="/images/why-us/cool-temp.webp"
+              srcset="/images/why-us/cool-temp-600.webp 600w, /images/why-us/cool-temp.webp 900w"
+              sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" 
             alt="ลดอุณหภูมิห้องสูงสุด 12°C" 
             width="900"
             height="900"
@@ -214,7 +226,9 @@ const faqItems = [
         {/* Card 3: ทัศนียภาพคมชัดระดับ HD */}
         <div class="relative group overflow-hidden p-8 sm:p-9 rounded-3xl flex flex-col justify-between min-h-[320px] sm:min-h-[360px] text-white border border-slate-700/60 shadow-xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl sm:col-span-2 lg:col-span-1">
           <img 
-            src="/images/why-us/hd-view.webp" 
+            src="/images/why-us/hd-view.webp"
+              srcset="/images/why-us/hd-view-600.webp 600w, /images/why-us/hd-view.webp 900w"
+              sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" 
             alt="ทัศนียภาพคมชัดระดับ HD" 
             width="900"
             height="900"
