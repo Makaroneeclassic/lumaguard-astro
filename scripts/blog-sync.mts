@@ -68,9 +68,13 @@ const parsed = Papa.parse<Record<string, string>>(csv, {
 });
 
 const rows = parsed.data.filter((r) => (r.slug ?? "").trim());
+
+// ชีตที่ยังไม่มีบทความเป็นสถานะปกติของงานที่รันตามเวลาทุกวัน ไม่ใช่ความผิดพลาด
+// ถ้าให้ล้มเหลวทุกครั้งที่ไม่มีอะไรให้ทำ คนจะชินกับอีเมลแจ้งเตือนแล้วเลิกอ่าน
+// พอถึงวันที่พังจริงก็จะไม่มีใครสังเกต
 if (rows.length === 0) {
-  console.error(`ไม่พบข้อมูลในแท็บ "${SHEET_TAB}" — ตรวจชื่อแท็บและหัวคอลัมน์ slug`);
-  process.exit(1);
+  console.log(`ยังไม่มีบทความในแท็บ "${SHEET_TAB}" — ไม่มีอะไรต้องทำ`);
+  process.exit(0);
 }
 
 /** ค่าที่ผู้ใช้พิมพ์ว่า TRUE/ใช่/1 ให้ถือเป็นจริง */
@@ -298,5 +302,9 @@ if (errors.length) {
   console.error("\nแก้ในชีตแล้วรันใหม่: npm run blog:sync");
   process.exit(1);
 }
-console.log(`เสร็จสิ้น — เขียนไฟล์ ${written} บท`);
-console.log("ขั้นถัดไป: ตรวจด้วย git diff แล้ว commit");
+if (written === 0) {
+  console.log(`ไม่มีบทความที่พร้อมเผยแพร่ (ข้าม ${skipped} แถวที่สถานะยังไม่ใช่ ready)`);
+} else {
+  console.log(`เสร็จสิ้น — เขียนไฟล์ ${written} บท`);
+  console.log("ขั้นถัดไป: ตรวจด้วย git diff แล้ว commit");
+}
