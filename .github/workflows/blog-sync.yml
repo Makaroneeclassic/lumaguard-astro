@@ -23,10 +23,9 @@ jobs:
 
       - run: npm ci
 
+      # ค่าชีตและกุญแจ IndexNow ตั้งเป็นค่าเริ่มต้นไว้ในสคริปต์แล้ว
+      # ไม่ต้องตั้ง Variables หรือ Secrets ใน GitHub อีก
       - name: ดึงบทความที่สถานะเป็น ready
-        env:
-          BLOG_SHEET_ID: ${{ vars.BLOG_SHEET_ID }}
-          BLOG_SHEET_TAB: ${{ vars.BLOG_SHEET_TAB || 'blog' }}
         run: npm run blog:sync
 
       - name: ตรวจว่ามีอะไรเปลี่ยนไหม
@@ -52,9 +51,7 @@ jobs:
       # Vercel เริ่ม build ทันทีที่ push จึงต้องรอให้ deploy เสร็จก่อนแจ้ง IndexNow
       # ไม่งั้น Bing จะมาเก็บหน้าที่ยังไม่มีอยู่จริง
       - name: รอ deploy แล้วแจ้ง IndexNow
-        if: steps.diff.outputs.changed == 'true' && vars.INDEXNOW_ENABLED == 'true'
-        env:
-          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        if: steps.diff.outputs.changed == 'true'
         run: |
           sleep 180
           npm run indexnow

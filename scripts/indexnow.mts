@@ -14,12 +14,12 @@
 import 'dotenv/config';
 
 const HOST = 'lumaguardthailand.com';
-const KEY = process.env.INDEXNOW_KEY;
-
-if (!KEY) {
-  console.error('ต้องตั้ง INDEXNOW_KEY ใน .env — ต้องตรงกับชื่อไฟล์ใน public/<key>.txt');
-  process.exit(1);
-}
+/**
+ * กุญแจ IndexNow ไม่ใช่ความลับ ตัวมาตรฐานกำหนดให้เผยแพร่ไว้ที่
+ * https://โดเมน/<key>.txt เพื่อพิสูจน์ว่าเราคุมโดเมนนั้นจริง ใครก็เปิดอ่านได้
+ * จึงเก็บไว้ในโค้ดให้ตรงกับไฟล์ใน public/ ไม่ต้องตั้ง secret ซ้ำอีกที่
+ */
+const KEY = process.env.INDEXNOW_KEY ?? "bceebc4241e8ec1f0bcd87418484b88b";
 
 const explicit = process.argv.slice(2).filter((a) => a.startsWith('/'));
 

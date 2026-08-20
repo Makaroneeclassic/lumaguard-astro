@@ -14,7 +14,14 @@ import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import "dotenv/config";
 
-const SHEET_ID = process.env.BLOG_SHEET_ID;
+/**
+ * ค่าเริ่มต้นชี้ไปที่ชีตจริงของโปรเจกต์ ตั้ง env ทับได้ถ้าต้องการใช้ชีตอื่น
+ *
+ * ไม่ใช่ความลับเพราะชีตเปิดสิทธิ์ให้ผู้ที่มีลิงก์ดูได้อยู่แล้ว การเก็บไว้ในโค้ด
+ * ทำให้ทั้งเครื่องนักพัฒนาและ GitHub Actions ใช้ค่าเดียวกันโดยไม่ต้องตั้งซ้ำ
+ * และเห็นได้จากประวัติ git ว่าเคยชี้ไปที่ไหนบ้าง
+ */
+const SHEET_ID = process.env.BLOG_SHEET_ID ?? "1uD7tzXHfi4UruWMVSIyOTQNff0nYasJvyjQuAyg2wmg";
 const SHEET_TAB = process.env.BLOG_SHEET_TAB ?? "blog";
 const OUT_DIR = "src/content/blog";
 
