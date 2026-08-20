@@ -15,7 +15,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "blog:sync": "tsx scripts/blog-sync.mts",
     "indexnow": "tsx scripts/indexnow.mts",
-    "notify:test": "tsx scripts/notify-test.mts"
+    "notify:test": "tsx scripts/notify-test.mts",
+    "prices": "tsx scripts/set-prices.mts"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
