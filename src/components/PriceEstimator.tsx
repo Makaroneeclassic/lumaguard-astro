@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { Calculator } from "lucide-react";
 
-export default function PriceEstimator() {
+interface PriceEstimatorProps {
+  /** ราคาต่อตารางเมตร ดึงจากฐานข้อมูลผ่าน getEstimatorRates */
+  rates?: { element: number; guardian: number; apex: number };
+}
+
+export default function PriceEstimator({ rates }: PriceEstimatorProps) {
   const [area, setArea] = useState(120);
 
   // Price rates per square meter (approx calculated from Stitch designs)
-  const elementRate = 415;  // Condo (30m²) = 12,500 (~415/m²)
-  const guardianRate = 630; // Condo (30m²) = 18,900 (~630/m²)
-  const apexRate = 950;     // Condo (30m²) = 28,500 (~950/m²)
+  // ค่าที่ส่งเข้ามาคือราคาจริงจากฐานข้อมูล ตัวเลขสำรองด้านล่างใช้เฉพาะกรณี
+  // ที่หน้าเรียกใช้โดยไม่ส่ง rates มา ซึ่งไม่ควรเกิดขึ้นในหน้าจริง
+  const elementRate = rates?.element ?? 1100;
+  const guardianRate = rates?.guardian ?? 1800;
+  const apexRate = rates?.apex ?? 2800;
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("th-TH", {

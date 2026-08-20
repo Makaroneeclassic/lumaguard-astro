@@ -9,6 +9,7 @@ import { prisma } from '@/lib/db';
 import { MapPin, Phone, MessageSquare } from 'lucide-react';
 
 import { getPageSeo } from '@/lib/pageSeo';
+import { getEstimatorRates } from '@/lib/rates';
 let globalSettings: any = null;
 try {
   globalSettings = await prisma.seoGlobal.findUnique({
@@ -42,6 +43,8 @@ const seo = await getPageSeo('/contact', {
   description: "ติดต่อทีมงานผู้เชี่ยวชาญ LUMAGUARD เพื่อขอรับคำปรึกษา การวัดขนาดพื้นที่กระจกฟรี หรือขอใบเสนอราคาฟิล์มติดบ้าน คอนโด",
 });
 const { title, description } = seo;
+
+const estimatorRates = await getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
@@ -87,7 +90,7 @@ const { title, description } = seo;
 
     {/* Interactive Price Estimator Section */}
     <section id="estimator" class="pt-8">
-      <PriceEstimator client:visible />
+      <PriceEstimator client:visible rates={estimatorRates} />
     </section>
 
     {/* Lead Form Request Section */}

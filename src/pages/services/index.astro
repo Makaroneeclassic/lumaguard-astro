@@ -6,6 +6,7 @@ import PriceEstimator from '@/components/PriceEstimator';
 import LeadForm from '@/components/LeadForm';
 
 import { getPageSeo } from '@/lib/pageSeo';
+import { getEstimatorRates } from '@/lib/rates';
 const processSteps = [
   {
     stepNo: "01",
@@ -34,6 +35,8 @@ const seo = await getPageSeo('/services', {
   description: "ขั้นตอนการให้บริการและติดตั้งฟิล์มกรองแสงมาตรฐานระดับมืออาชีพ วัดพื้นที่ฟรี การเตรียมพื้นที่ และรับประกันดิจิทัล",
 });
 const { title, description } = seo;
+
+const estimatorRates = await getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
@@ -63,7 +66,7 @@ const { title, description } = seo;
       ))}
     </div>
 
-    <PriceEstimator client:visible />
+    <PriceEstimator client:visible rates={estimatorRates} />
 
     <section id="contact" class="py-12">
       <LeadForm client:visible />

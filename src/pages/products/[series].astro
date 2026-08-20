@@ -10,6 +10,7 @@ import { buildBreadcrumbSchema } from '@/lib/schema';
 import { SITE_URL, BUSINESS, absoluteUrl } from '@/lib/site';
 import { prisma } from '@/lib/db';
 
+import { getEstimatorRates } from '@/lib/rates';
 export async function getStaticPaths() {
   // ชุดหน้าถูกกำหนดจาก SERIES ไม่ใช่จาก DB หน้าจึงครบเสมอแม้ DB ล่ม
   let dbProducts: any[] = [];
@@ -101,6 +102,8 @@ const FEATURES = [
     body: 'โครงสร้างฟิล์มผ่านการสังเคราะห์ทางวิศวกรรม ช่วยให้คลื่นวิทยุ สัญญาณ 5G สัญญาณ Wi-Fi และเครื่องส่งสัญญาณ EasyPass ผ่านได้ 100% ไร้กังวล',
   },
 ];
+
+const estimatorRates = await getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
@@ -222,7 +225,7 @@ const FEATURES = [
     </section>
 
     <section class="max-w-7xl mx-auto px-6 mb-28">
-      <PriceEstimator client:visible />
+      <PriceEstimator client:visible rates={estimatorRates} />
     </section>
 
     <section class="max-w-4xl mx-auto px-6 text-center bg-surface-container-low p-12 rounded-3xl border border-outline-variant/10 space-y-6">

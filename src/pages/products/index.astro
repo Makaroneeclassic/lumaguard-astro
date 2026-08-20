@@ -9,6 +9,7 @@ import PriceEstimator from '@/components/PriceEstimator';
 import { prisma } from '@/lib/db';
 
 import { getPageSeo } from '@/lib/pageSeo';
+import { getEstimatorRates } from '@/lib/rates';
 let products: any[] = [];
 try {
   products = await prisma.product.findMany({
@@ -27,6 +28,8 @@ const seo = await getPageSeo('/products', {
   description: "สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสงบ้านและคอนโด LUMAGUARD ครบทั้ง 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex, Guardian เพื่อการกันความร้อนสูงสุด",
 });
 const { title, description } = seo;
+
+const estimatorRates = await getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
@@ -92,7 +95,7 @@ const { title, description } = seo;
 
     {/* Price Estimator Section with top spacing */}
     <section id="estimator" class="mt-20 md:mt-24 pt-8">
-      <PriceEstimator client:visible />
+      <PriceEstimator client:visible rates={estimatorRates} />
     </section>
   </main>
 
