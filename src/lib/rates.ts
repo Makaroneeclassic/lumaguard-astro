@@ -1,23 +1,14 @@
-import { lowestPrice } from '@/lib/products';
+import { SERIES_LIST, lowestPrice } from '@/lib/products';
 
 /**
- * ราคาต่อตารางฟุตที่เครื่องประเมินราคาใช้
+ * ราคาต่อตารางฟุตของทุกซีรีส์ สำหรับเครื่องประเมินราคา
  *
- * เดิมอ่านจากตาราง Product แล้วถอยไปใช้ค่าคงที่ในคอมโพเนนต์เมื่อต่อฐานข้อมูล
- * ไม่ได้ ซึ่งสองชุดนั้นเพี้ยนจากกันอยู่จริง ราคาที่ลูกค้าเห็นจึงขึ้นกับว่า
- * ตอน build ต่อฐานข้อมูลติดหรือไม่ ตอนนี้ข้อมูลสินค้าอยู่ในไฟล์เดียวใน git
- * แล้ว จึงไม่ต้องมีค่าสำรองและไม่ต้องเป็นฟังก์ชัน async อีก
+ * เดิมคืนค่าเฉพาะสามซีรีส์ที่เครื่องคำนวณแสดงอยู่ตอนนั้น พอจะเปลี่ยนว่าจะโชว์
+ * ซีรีส์ไหนก็ต้องแก้ทั้งไฟล์นี้และหน้าที่เรียกใช้ทุกหน้า คืนมาให้ครบทุกซีรีส์
+ * แล้วให้ฝั่งแสดงผลเลือกเอง จึงเปลี่ยนได้ที่เดียว
  */
-export interface EstimatorRates {
-  element: number;
-  guardian: number;
-  apex: number;
-}
+export type EstimatorRates = Record<string, number>;
 
 export function getEstimatorRates(): EstimatorRates {
-  return {
-    element: lowestPrice('Element'),
-    guardian: lowestPrice('Guardian'),
-    apex: lowestPrice('Apex'),
-  };
+  return Object.fromEntries(SERIES_LIST.map((s) => [s, lowestPrice(s)]));
 }

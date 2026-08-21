@@ -144,3 +144,92 @@ h1, h2, h3, h4, h5, h6 {
 .btn-premium {
   @apply relative overflow-hidden bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all duration-200;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   เครื่องประเมินราคา
+
+   แถบเลื่อนของเบราว์เซอร์ต้องสไตล์ผ่าน pseudo-element เฉพาะของแต่ละเจ้า
+   ซึ่ง utility class ทำไม่ได้ จึงเขียนไว้ที่นี่ ส่วนแผงมืดใช้ไล่สีกับแสง
+   เรืองซ้อนกันหลายชั้นซึ่งอ่านง่ายกว่าเมื่อรวมไว้เป็นคลาสเดียว
+   ───────────────────────────────────────────────────────────── */
+
+.lg-estimator {
+  background:
+    radial-gradient(120% 140% at 85% 0%, rgba(56, 182, 221, 0.18), transparent 55%),
+    radial-gradient(90% 120% at 0% 100%, rgba(0, 70, 146, 0.35), transparent 60%),
+    linear-gradient(160deg, #0c1a2b 0%, #0a1420 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 24px 48px -24px rgba(0, 25, 51, 0.55);
+}
+
+.lg-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-accent-400) 0%,
+    var(--color-accent-400) var(--fill, 0%),
+    rgba(255, 255, 255, 0.14) var(--fill, 0%),
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  cursor: pointer;
+  outline: none;
+}
+
+.lg-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--color-accent-400);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease;
+}
+.lg-range::-webkit-slider-thumb:hover,
+.lg-range::-webkit-slider-thumb:active {
+  transform: scale(1.12);
+}
+
+.lg-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--color-accent-400);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+.lg-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+/* คีย์บอร์ดต้องเห็นตำแหน่งโฟกัสชัดเจน ไม่งั้นเลื่อนด้วยลูกศรแล้วหาไม่เจอ */
+.lg-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(56, 182, 221, 0.35);
+}
+.lg-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgba(56, 182, 221, 0.35);
+}
+
+/* การ์ดรุ่นเรือธง ใช้เส้นขอบไล่สีแทนพื้นทึบ เพื่อให้เด่นโดยไม่แย่งสายตาตัวเลข */
+.lg-card-flagship {
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-accent-50) 100%);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 1.5px var(--color-primary),
+    0 12px 28px -16px rgba(0, 70, 146, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-range::-webkit-slider-thumb {
+    transition: none;
+  }
+}
