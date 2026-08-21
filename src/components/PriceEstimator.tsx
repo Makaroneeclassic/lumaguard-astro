@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calculator } from "lucide-react";
+import { technologyOf } from "@/lib/products";
 
 interface PriceEstimatorProps {
   /** ราคาต่อตารางฟุต ดึงจาก src/data/products.json ผ่าน getEstimatorRates */
@@ -113,9 +114,9 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Element Series */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center space-y-2">
-          <h3 className="font-headline font-bold text-slate-600 text-sm">Element (Carbon)</h3>
+          <h3 className="font-headline font-bold text-slate-600 text-sm">{`Element (${technologyOf("Element")})`}</h3>
           <p className="text-2xl font-headline font-black text-slate-900">{formatPrice(area * elementRate)}</p>
-          <span className="text-xs text-slate-500 block font-light">ฟิล์มคาร์บอนระดับเริ่มต้น ดำเข้ม สวยงาม</span>
+          <span className="text-xs text-slate-500 block font-light">เซรามิกระดับเริ่มต้น ดำเข้มสนิท สัญญาณผ่าน 100%</span>
         </div>
 
         {/* Guardian Series */}
@@ -123,16 +124,16 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
           <div className="absolute top-0 right-0 bg-accent-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-lg font-headline">
             รุ่นยอดนิยม
           </div>
-          <h3 className="font-headline font-bold text-accent-900 text-sm">Guardian (Ceramic)</h3>
+          <h3 className="font-headline font-bold text-accent-900 text-sm">{`Guardian (${technologyOf("Guardian")})`}</h3>
           <p className="text-2xl font-headline font-black text-accent-700">{formatPrice(area * guardianRate)}</p>
-          <span className="text-xs text-accent-800 block font-medium">ฟิล์มเซรามิกระดับกลาง กันความร้อนดีเยี่ยม</span>
+          <span className="text-xs text-accent-800 block font-medium">เซรามิกเกรดพิเศษ สว่างเคลียร์ใส กัน UV 100%</span>
         </div>
 
         {/* Apex Series */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center space-y-2">
-          <h3 className="font-headline font-bold text-slate-600 text-sm">Apex (Sputtered)</h3>
+          <h3 className="font-headline font-bold text-slate-600 text-sm">{`Apex (${technologyOf("Apex")})`}</h3>
           <p className="text-2xl font-headline font-black text-slate-900">{formatPrice(area * apexRate)}</p>
-          <span className="text-xs text-slate-500 block font-light">สปัตเตอร์ฟิล์มระดับท็อป สะท้อนความร้อนสูงสุด</span>
+          <span className="text-xs text-slate-500 block font-light">สปัตเตอร์เคลือบโลหะมีค่า สะท้อนความร้อนขีดสุด</span>
         </div>
       </div>
     </div>

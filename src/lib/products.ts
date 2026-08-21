@@ -60,3 +60,13 @@ export function lowestPrice(series: string): number {
     .filter((n) => Number.isFinite(n) && n > 0);
   return prices.length ? Math.min(...prices) : 0;
 }
+
+/** ชื่อเทคโนโลยีของซีรีส์ ดึงจากสินค้ารุ่นแรกของซีรีส์นั้น */
+export function technologyOf(series: string): string {
+  return getProductsBySeries(series)[0]?.technology ?? '';
+}
+
+/** ลำดับความพรีเมียมของซีรีส์ เรียงจากราคาถูกไปแพง ใช้ตัดสินว่าตัวไหนคือรุ่นท็อป */
+export function seriesByPrice(): string[] {
+  return [...SERIES_LIST].sort((a, b) => lowestPrice(a) - lowestPrice(b));
+}
