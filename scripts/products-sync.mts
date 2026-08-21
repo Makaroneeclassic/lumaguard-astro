@@ -55,6 +55,32 @@ const truthy = (v: unknown) =>
 /** ราคาที่พิมพ์มาอาจมีจุลภาค สัญลักษณ์บาท หรือช่องว่าง เก็บเฉพาะตัวเลข */
 const cleanPrice = (v: unknown) => String(v ?? '').replace(/[^\d.]/g, '');
 
+/**
+ * ทำค่าเปอร์เซ็นต์ให้เป็นรูปแบบเดียวกัน
+ *
+ * Google Sheets แปลงข้อความที่ลงท้ายด้วย % เป็นตัวเลขให้อัตโนมัติ ค่า 5%
+ * จึงถูกเก็บเป็น 0.05 และตอนดึงออกมาอาจได้ทั้ง "5.00%" หรือ "0.05" แล้วแต่
+ * รูปแบบการแสดงผลของช่องนั้น ถ้าปล่อยไว้ ตารางเปรียบเทียบสเปกจะขึ้นค่าที่
+ * ผิดไปร้อยเท่าโดยไม่มีใครสังเกต
+ *
+ * ช่องพวกนี้เป็นค่าระหว่าง 0 ถึง 100 เสมอ เลขที่น้อยกว่าหรือเท่ากับ 1
+ * จึงแปลว่าถูกแปลงเป็นสัดส่วนมาแล้ว ต้องคูณกลับ
+ */
+function cleanPercent(v: unknown): string {
+  const raw = String(v ?? '').trim();
+  if (!raw) return '';
+
+  const n = Number(raw.replace(/[%\s,]/g, ''));
+  if (!Number.isFinite(n)) return raw; // อ่านไม่ออกก็ส่งต่อไปตามเดิม ให้คนตรวจเอง
+
+  const pct = raw.includes('%') ? n : n <= 1 ? n * 100 : n;
+  // ตัดทศนิยมที่ไม่จำเป็นออก 5.00% ให้เหลือ 5%
+  return `${Math.round(pct * 100) / 100}%`;
+}
+
+/** ช่องที่เป็นค่าเปอร์เซ็นต์ทั้งหมด */
+const PERCENT_FIELDS = ['vlt', 'uvr', 'irr', 'irr2', 'tser'] as const;
+
 async function readCsv(): Promise<string> {
   if (fileArg > -1) {
     const path = process.argv[fileArg + 1];
@@ -118,16 +144,24 @@ function toProducts(rows: Record<string, string>[]): Product[] {
       problems.push(`แถว ${line}: ราคา "${row.price}" อ่านเป็นตัวเลขไม่ได้`);
     }
 
+    const pct = Object.fromEntries(
+      PERCENT_FIELDS.map((f) => [f, cleanPercent(row[f])]),
+    ) as Record<(typeof PERCENT_FIELDS)[number], string>;
+
+    // เตือนเมื่อค่าที่อ่านได้ต่างจากที่พิมพ์มา จะได้รู้ว่า Sheets แปลงค่าให้
+    for (const f of PERCENT_FIELDS) {
+      const before = String(row[f] ?? '').trim();
+      if (before && before !== pct[f]) {
+        problems.push(`แถว ${line}: ${f} "${before}" ปรับเป็น "${pct[f]}"`);
+      }
+    }
+
     out.push({
       id,
       name: row.name,
       series: row.series,
       technology: row.technology ?? '',
-      vlt: row.vlt,
-      uvr: row.uvr ?? '',
-      irr: row.irr ?? '',
-      irr2: row.irr2 ?? '',
-      tser: row.tser ?? '',
+      ...pct,
       thickness: row.thickness ?? '',
       price,
       showOnHomepage: truthy(row.showOnHomepage),
