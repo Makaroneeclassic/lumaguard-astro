@@ -166,7 +166,7 @@ async function main() {
       image: "/images/gallery/portfolio-monument-thonglo.webp",
       altText: "Luxury condo penthouse Thong Lo floor to ceiling windows",
       seriesUsed: "Apex Sputter 20",
-      areaSize: "45 m²",
+      areaSize: "484 ตร.ฟุต",
       description: "Sleek multi-layer sputtered film application on floor-to-ceiling double-glazed panels, achieving 76% TSER while preserving panoramic city views at sunset.",
     },
     {
@@ -176,7 +176,7 @@ async function main() {
       image: "/images/gallery/portfolio-santipura-residence.webp",
       altText: "Modern tropical villa Bang Na with large pool windows",
       seriesUsed: "Guardian Ceramic 70",
-      areaSize: "180 m²",
+      areaSize: "1,938 ตร.ฟุต",
       description: "Complete architectural protection of a modern tropical villa, reducing solar heat gain without altering the visual facade of the glass.",
     },
     {
@@ -186,7 +186,7 @@ async function main() {
       image: "/images/gallery/portfolio-park-origin-phrom-phong.webp",
       altText: "Bedroom windows with night vision film overlooking Sukhumvit",
       seriesUsed: "Guardian Ceramic 35",
-      areaSize: "32 m²",
+      areaSize: "344 ตร.ฟุต",
       description: "Installation in dual master bedrooms, providing privacy and significant glare reduction during bright morning hours.",
     },
   ];
