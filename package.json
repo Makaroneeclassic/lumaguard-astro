@@ -16,7 +16,8 @@
     "blog:sync": "tsx scripts/blog-sync.mts",
     "indexnow": "tsx scripts/indexnow.mts",
     "notify:test": "tsx scripts/notify-test.mts",
-    "prices": "tsx scripts/set-prices.mts"
+    "prices": "tsx scripts/set-prices.mts",
+    "products:sync": "tsx scripts/products-sync.mts"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",

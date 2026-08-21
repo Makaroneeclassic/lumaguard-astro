@@ -2,65 +2,22 @@
 
 import { useState } from "react";
 import { CheckSquare, Square, Columns } from "lucide-react";
+import { ALL_PRODUCTS, SERIES_LIST, type Product } from "@/lib/products";
 
-export interface Product {
-  id: string;
-  name: string;
-  series: string;
-  technology: string;
-  vlt: string;
-  uvr: string;
-  irr: string;
-  irr2: string;
-  tser: string;
-  thickness?: string;
-  shade?: string;
-  price?: string;
-}
+// ส่งออกต่อเพื่อความเข้ากันได้กับที่อื่นที่เคยนำเข้าจากไฟล์นี้
+export type { Product };
+export { SERIES_LIST };
 
 interface ProductMatrixProps {
   products?: Product[];
 }
 
-export const SERIES_LIST = ["Element", "Shield", "Zenith", "Nexus", "Apex", "Guardian"];
-
-export const ALL_PRODUCTS_DATA: Product[] = [
-  // Element Series
-  { id: "e1", name: "DNC05", series: "Element", technology: "Ceramic Film", vlt: "5%", uvr: "99%", irr: "70%", irr2: "75%", tser: "62%", price: "1100" },
-  { id: "e2", name: "DNC1590", series: "Element", technology: "Ceramic Film", vlt: "15%", uvr: "99%", irr: "70%", irr2: "75%", tser: "58%", price: "1100" },
-  { id: "e3", name: "DNC35", series: "Element", technology: "Ceramic Film", vlt: "35%", uvr: "99%", irr: "70%", irr2: "75%", tser: "52%", price: "1100" },
-
-  // Shield Series
-  { id: "s1", name: "IR0590 HD", series: "Shield", technology: "Nano Ceramic film", vlt: "5%", uvr: "99%", irr: "90%", irr2: "90%", tser: "68%", price: "1500" },
-  { id: "s2", name: "IR2090 HD", series: "Shield", technology: "Nano Ceramic film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "90%", tser: "62%", price: "1500" },
-  { id: "s3", name: "IR3590 HD", series: "Shield", technology: "Nano Ceramic film", vlt: "35%", uvr: "99%", irr: "90%", irr2: "90%", tser: "56%", price: "1500" },
-
-  // Zenith Series
-  { id: "z1", name: "PNC 05 HD", series: "Zenith", technology: "Premium Nano Ceramic Film", vlt: "7%", uvr: "99%", irr: "90%", irr2: "93%", tser: "73%", price: "1800" },
-  { id: "z2", name: "PNC 20 HD", series: "Zenith", technology: "Premium Nano Ceramic Film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "93%", tser: "71%", price: "1800" },
-  { id: "z3", name: "PNC 35 HD", series: "Zenith", technology: "Premium Nano Ceramic Film", vlt: "35%", uvr: "99%", irr: "90%", irr2: "93%", tser: "65%", price: "1800" },
-
-  // Nexus Series
-  { id: "n1", name: "SC0595", series: "Nexus", technology: "Sputtering Film", vlt: "7%", uvr: "99%", irr: "85%", irr2: "93%", tser: "75%", price: "2200" },
-  { id: "n2", name: "SC2595", series: "Nexus", technology: "Sputtering Film", vlt: "25%", uvr: "99%", irr: "85%", irr2: "93%", tser: "68%", price: "2200" },
-  { id: "n3", name: "SC3595", series: "Nexus", technology: "Sputtering Film", vlt: "35%", uvr: "99%", irr: "85%", irr2: "93%", tser: "65%", price: "2200" },
-
-  // Apex Series
-  { id: "a1", name: "VSN05HD", series: "Apex", technology: "Nano Sputtering Film", vlt: "7%", uvr: "99%", irr: "90%", irr2: "95%", tser: "80%", price: "2500" },
-  { id: "a2", name: "VSN20HD", series: "Apex", technology: "Nano Sputtering Film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "95%", tser: "76%", price: "2500" },
-  { id: "a3", name: "VSN35HD", series: "Apex", technology: "Nano Sputtering Film", vlt: "35%", uvr: "99%", irr: "90%", irr2: "95%", tser: "70%", price: "2500" },
-
-  // Guardian Series
-  { id: "g1", name: "DSP 05 UHD PRO", series: "Guardian", technology: "UHD Ceramic", vlt: "5%", uvr: "100%", irr: "80%", irr2: "85%", tser: "85%", price: "2800" },
-  { id: "g2", name: "DSP 15 UHD PRO", series: "Guardian", technology: "UHD Ceramic", vlt: "15%", uvr: "100%", irr: "80%", irr2: "85%", tser: "78%", price: "2800" },
-  { id: "g3", name: "DSP 40 UHD", series: "Guardian", technology: "UHD Ceramic", vlt: "35%", uvr: "100%", irr: "80%", irr2: "85%", tser: "70%", price: "2800" },
-];
 
 export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
   const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
   const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
 
-  const displayProducts = products.length > 0 ? products : ALL_PRODUCTS_DATA;
+  const displayProducts = products.length > 0 ? products : ALL_PRODUCTS;
 
   const activeSeriesList = SERIES_LIST;
 

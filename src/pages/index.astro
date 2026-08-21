@@ -4,7 +4,8 @@ import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import FilmSelector from '@/components/FilmSelector';
-import ProductMatrix, { ALL_PRODUCTS_DATA } from '@/components/ProductMatrix';
+import ProductMatrix from '@/components/ProductMatrix';
+import { getHomepageProducts } from '@/lib/products';
 import PortfolioList from '@/components/PortfolioList';
 import TestimonialSlider from '@/components/TestimonialSlider';
 import { ShieldCheck, Thermometer, Eye } from 'lucide-react';
@@ -21,23 +22,8 @@ try {
 const title = pageSeo?.title || "LUMAGUARD | ฟิล์มกรองแสงบ้านและคอนโดพรีเมียม";
 const description = pageSeo?.description || "ฟิล์มกรองแสงระดับนาโนเซรามิกและสปัตเตอร์สะท้อนความร้อนสูง ป้องกันความร้อนสูงสุด 98% รับประกัน 10-15 ปี";
 
-let products: any[] = [];
-try {
-  products = await prisma.product.findMany({ where: { showOnHomepage: true }, orderBy: { createdAt: 'asc' } });
-} catch (e) {}
+const products = getHomepageProducts();
 
-const homepageFeaturedProducts = [
-  // Shield Series (ตัวกลาง: IR2090 HD)
-  { id: "s2", name: "IR2090 HD", series: "Shield", technology: "Nano Ceramic film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "90%", tser: "62%", price: "1500" },
-  // Apex Series (ตัวกลาง: VSN20HD)
-  { id: "a2", name: "VSN20HD", series: "Apex", technology: "Nano Sputtering Film", vlt: "20%", uvr: "99%", irr: "90%", irr2: "95%", tser: "76%", price: "2500" },
-  // Guardian Series (ตัวกลาง: DSP 15 UHD PRO)
-  { id: "g2", name: "DSP 15 UHD PRO", series: "Guardian", technology: "UHD Ceramic", vlt: "15%", uvr: "100%", irr: "80%", irr2: "85%", tser: "78%", price: "2800" },
-];
-
-if (products.length === 0) {
-  products = homepageFeaturedProducts;
-}
 
 let portfolioItems: any[] = [];
 try {
