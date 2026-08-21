@@ -53,7 +53,7 @@ const breadcrumb = [
 
 const title = `${series.displayName} — ${series.tag} | LUMAGUARD`;
 const description = hasPrices
-  ? `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ม. พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`
+  ? `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ฟุต พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`
   : `${series.subtitle} พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์ ปรึกษาและประเมินราคาหน้างานฟรี`;
 
 const productSchema = {
@@ -160,7 +160,7 @@ const estimatorRates = await getEstimatorRates();
         <p class="text-xs text-on-surface-variant leading-relaxed">
           {hasPrices ? (
             <>
-              ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางเมตร</strong>
+              ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางฟุต</strong>
               (คิดตามพื้นที่กระจกจริง) พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
             </>
           ) : (

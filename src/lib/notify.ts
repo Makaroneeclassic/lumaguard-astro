@@ -32,7 +32,7 @@ function formatMessage(lead: LeadNotification): string {
   ];
 
   if (lead.propertyType) lines.push(`ประเภท: ${lead.propertyType}`);
-  if (lead.areaSize) lines.push(`พื้นที่: ${lead.areaSize} ตร.ม.`);
+  if (lead.areaSize) lines.push(`พื้นที่: ${lead.areaSize} ตร.ฟุต`);
   if (lead.recommendedFilm) lines.push(`ฟิล์มที่แนะนำ: ${lead.recommendedFilm}`);
 
   const source = lead.gclid ? 'Google Ads' : (lead.utmSource ?? 'organic/direct');

@@ -233,7 +233,7 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
             <div className="space-y-2">
               <label htmlFor="lead-area-size" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                พื้นที่กระจกโดยประมาณ (ตร.ม.)
+                พื้นที่กระจกโดยประมาณ (ตร.ฟุต)
               </label>
               <input
                 type="number"

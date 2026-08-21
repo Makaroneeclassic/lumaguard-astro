@@ -235,7 +235,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <div>
                   <span className="block text-[10px] font-bold text-slate-600 uppercase">ราคาประเมิน</span>
-                  <span className="text-sm font-extrabold text-accent-700">฿{product.price ? Number(product.price).toLocaleString() : "1,100"} / ตร.ม.</span>
+                  <span className="text-sm font-extrabold text-accent-700">{product.price ? `฿${Number(product.price).toLocaleString()} / ตร.ฟุต` : "สอบถามราคา"}</span>
                 </div>
                 <a
                   href="/contact"

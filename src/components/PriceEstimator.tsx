@@ -4,19 +4,20 @@ import { useState } from "react";
 import { Calculator } from "lucide-react";
 
 interface PriceEstimatorProps {
-  /** ราคาต่อตารางเมตร ดึงจากฐานข้อมูลผ่าน getEstimatorRates */
+  /** ราคาต่อตารางฟุต ดึงจาก src/data/products.json ผ่าน getEstimatorRates */
   rates?: { element: number; guardian: number; apex: number };
 }
 
 export default function PriceEstimator({ rates }: PriceEstimatorProps) {
-  const [area, setArea] = useState(120);
+  // ค่าเริ่มต้นราว 1,200 ตร.ฟุต เทียบเท่าบ้านขนาดกลางที่ติดทั้งหลัง
+  const [area, setArea] = useState(1200);
 
-  // Price rates per square meter (approx calculated from Stitch designs)
-  // ค่าที่ส่งเข้ามาคือราคาจริงจากฐานข้อมูล ตัวเลขสำรองด้านล่างใช้เฉพาะกรณี
+  // ราคาทั้งหมดเป็นบาทต่อตารางฟุต ซึ่งเป็นหน่วยที่วงการฟิล์มในไทยใช้กัน
+  // ค่าที่ส่งเข้ามาคือราคาจริงจากไฟล์สินค้า ตัวเลขสำรองด้านล่างใช้เฉพาะกรณี
   // ที่หน้าเรียกใช้โดยไม่ส่ง rates มา ซึ่งไม่ควรเกิดขึ้นในหน้าจริง
-  const elementRate = rates?.element ?? 1100;
-  const guardianRate = rates?.guardian ?? 1800;
-  const apexRate = rates?.apex ?? 2800;
+  const elementRate = rates?.element ?? 89;
+  const guardianRate = rates?.guardian ?? 259;
+  const apexRate = rates?.apex ?? 229;
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("th-TH", {
@@ -39,7 +40,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
           </div>
           <h2 className="text-xl font-headline font-bold text-white">เครื่องประเมินราคาอัจฉริยะ</h2>
           <p className="text-slate-400 text-xs md:text-sm max-w-xs">
-            เลื่อนแถบพื้นที่ตารางเมตรเพื่อรับการประมาณการค่าบริการติดตั้งและผลิตภัณฑ์ในทันที
+            เลื่อนแถบพื้นที่ตารางฟุตเพื่อรับการประมาณการค่าบริการติดตั้งและผลิตภัณฑ์ในทันที
           </p>
         </div>
 
@@ -47,12 +48,13 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
         <div className="w-full md:w-80 space-y-4">
           <div className="flex justify-between items-center text-sm font-bold">
             <span className="text-slate-300">พื้นที่กระจกรวม:</span>
-            <span className="text-white text-lg font-headline font-black">{area} ตร.ม.</span>
+            <span className="text-white text-lg font-headline font-black">{area.toLocaleString()} ตร.ฟุต</span>
           </div>
           <input
             type="range"
-            min="10"
-            max="500"
+            min="100"
+            max="5000"
+            step="50"
             value={area}
             onChange={(e) => setArea(parseInt(e.target.value))}
             onMouseUp={() => {
@@ -62,7 +64,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
                 }
                 if ((window as any).gtag) {
                   (window as any).gtag("event", "calculate_estimate", {
-                    estimated_area_sqm: area,
+                    estimated_area_sqft: area,
                     selected_series: "Guardian"
                   });
                 }
@@ -75,7 +77,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
                 }
                 if ((window as any).gtag) {
                   (window as any).gtag("event", "calculate_estimate", {
-                    estimated_area_sqm: area,
+                    estimated_area_sqft: area,
                     selected_series: "Guardian"
                   });
                 }
@@ -84,9 +86,9 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
             className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-accent-500"
           />
           <div className="flex justify-between text-xs text-slate-400 font-medium">
-            <span>10 ตร.ม.</span>
-            <span>250 ตร.ม.</span>
-            <span>500 ตร.ม.</span>
+            <span>100 ตร.ฟุต</span>
+            <span>2,500 ตร.ฟุต</span>
+            <span>5,000 ตร.ฟุต</span>
           </div>
         </div>
 

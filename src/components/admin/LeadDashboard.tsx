@@ -282,9 +282,9 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
                     <div className="grid grid-cols-2 gap-4">
                       {selectedLead.areaSize && (
                         <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 space-y-1">
-                          <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">พื้นที่หน้างาน (ตร.ม.)</span>
+                          <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">พื้นที่หน้างาน (ตร.ฟุต)</span>
                           <span className="text-sm font-bold text-on-surface flex items-center gap-1.5">
-                            <Square className="w-4 h-4 text-primary shrink-0" /> {selectedLead.areaSize} ตร.ม.
+                            <Square className="w-4 h-4 text-primary shrink-0" /> {selectedLead.areaSize} ตร.ฟุต
                           </span>
                         </div>
                       )}
@@ -386,7 +386,7 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
                       <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/10 space-y-1">
                         <span className="block text-[9px] text-on-surface-variant/60 font-bold uppercase">📐 ขนาดพื้นที่คำนวณราคา</span>
                         <span className="text-sm font-black text-on-surface">
-                          {selectedLead.estimatedArea ? `${selectedLead.estimatedArea} ตร.ม.` : "ไม่ได้ประเมินราคา"}
+                          {selectedLead.estimatedArea ? `${selectedLead.estimatedArea} ตร.ฟุต` : "ไม่ได้ประเมินราคา"}
                         </span>
                       </div>
 
