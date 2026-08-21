@@ -41,7 +41,11 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
   const [area, setArea] = useState(400);
 
   const rateOf = (series: string) => rates?.[series] ?? lowestPrice(series);
-  const headlineRate = rateOf("Guardian");
+
+  // ตัวเลขใหญ่อ้างอิงซีรีส์ที่ติดป้ายไว้ ไม่ได้เขียนชื่อตายตัว ย้ายป้ายไปซีรีส์ไหน
+  // ตัวเลขก็ตามไปเอง เดิมอ้างอิง Guardian แบบตายตัวจึงหลุดจากป้ายเมื่อย้าย
+  const headline = FEATURED.find((f) => f.badge) ?? FEATURED[0];
+  const headlineRate = rateOf(headline.series);
 
   /** เกินช่วงที่ประเมินเองได้ ต้องให้ทีมขายดูหน้างาน */
   const needsQuote = area >= AREA_MAX;
@@ -59,7 +63,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
     const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
     gtag?.("event", "calculate_estimate", {
       estimated_area_sqft: area,
-      selected_series: "Guardian",
+      selected_series: headline.series,
       over_range: needsQuote,
     });
   };
@@ -121,7 +125,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
           {/* ขวา: ผลลัพธ์ */}
           <div className="shrink-0 w-full lg:w-[210px] flex flex-col items-center lg:items-end justify-center border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-8 text-center lg:text-right">
             <span className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-bold font-headline mb-2">
-              ประมาณการเริ่มต้น
+              ประมาณการ
             </span>
 
             {needsQuote ? (
@@ -145,7 +149,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
                   {formatPrice(area * headlineRate)}
                 </span>
                 <span className="mt-3 text-[11px] text-slate-500 leading-relaxed max-w-[190px]">
-                  {`อ้างอิงรุ่น Guardian ฿${headlineRate}/ตร.ฟุต`}
+                  {`อ้างอิงรุ่น ${headline.series} ฿${headlineRate}/ตร.ฟุต`}
                   <br />
                   ราคาจริงขึ้นกับหน้างานและจำนวนบาน
                 </span>
