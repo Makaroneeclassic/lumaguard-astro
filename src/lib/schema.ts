@@ -67,6 +67,17 @@ export function buildSiteSchema() {
           },
         }),
         areaServed: BUSINESS.areaServed.map((name) => ({ '@type': 'AdministrativeArea', name })),
+
+        // เวลาทำการเหมือนกันทุกวัน จึงรวมเป็นรายการเดียวที่ระบุครบเจ็ดวัน
+        // ตามที่ schema.org รองรับ แทนการเขียนแยกทีละวันซึ่งยาวโดยไม่จำเป็น
+        openingHoursSpecification: [
+          {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: BUSINESS.openingHours.days,
+            opens: BUSINESS.openingHours.opens,
+            closes: BUSINESS.openingHours.closes,
+          },
+        ],
       },
     ],
   };
