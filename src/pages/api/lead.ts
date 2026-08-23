@@ -89,9 +89,51 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // 3. Persist Lead to Prisma DB
+    //
+    //    ก่อนบันทึกต้องเช็กว่าเป็นการส่งซ้ำหรือไม่ ฟอร์มปิดปุ่มระหว่างส่งอยู่แล้ว
+    //    แต่กันไม่ได้ถ้าผู้ใช้กดย้อนกลับแล้วส่งใหม่ หรือยิงตรงมาที่ endpoint
+    //    ของจริงเคยเกิดแล้ว เบอร์เดียวกันเข้ามาสองครั้งห่างกันสิบหกวินาที
+    //    ทำให้ทีมขายเห็นลีดซ้ำและโทรหาลูกค้าคนเดิมสองรอบ
+    const DEDUPE_WINDOW_MS = 10 * 60 * 1000;
+
     let lead = null;
+    let isDuplicate = false;
     try {
-      lead = await prisma.lead.create({
+      const recent = await prisma.lead.findFirst({
+        where: {
+          phone: data.phone,
+          createdAt: { gte: new Date(Date.now() - DEDUPE_WINDOW_MS) },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (recent) {
+        isDuplicate = true;
+        // อัปเดตแทนการสร้างใหม่ เผื่อรอบสองผู้ใช้กรอกข้อมูลเพิ่ม
+        // ค่าที่ว่างในรอบสองจะไม่ไปทับของเดิมที่มีอยู่แล้ว
+        lead = await prisma.lead.update({
+          where: { id: recent.id },
+          data: {
+            name: data.name || recent.name,
+            district: data.district || recent.district,
+            propertyType: data.propertyType || recent.propertyType,
+            areaSize: data.areaSize ? parseFloat(String(data.areaSize)) : recent.areaSize,
+            estimatedArea: data.estimatedArea
+              ? parseFloat(String(data.estimatedArea))
+              : recent.estimatedArea,
+            recommendedFilm: data.recommendedFilm ?? recent.recommendedFilm,
+          },
+        });
+        console.log(`[lead] ส่งซ้ำภายในสิบนาที รวมเข้ากับลีดเดิม ${lead.id}`);
+      }
+    } catch (dupErr) {
+      // เช็กซ้ำไม่ได้ก็ให้บันทึกตามปกติ ดีกว่าปล่อยให้ลีดหายไปทั้งราย
+      console.error('[lead] ตรวจลีดซ้ำไม่สำเร็จ บันทึกตามปกติ:', dupErr);
+    }
+
+    if (!lead) {
+      try {
+        lead = await prisma.lead.create({
         data: {
           name: data.name,
           phone: data.phone,
@@ -108,10 +150,11 @@ export const POST: APIRoute = async ({ request }) => {
           gclid: data.gclid,
           landingPage: data.landingPage
         }
-      });
-      console.log('[DB SAVE SUCCESS] Created Lead:', lead.id);
-    } catch (dbErr) {
-      console.error('[DB SAVE WARNING] Could not insert to database, falling back:', dbErr);
+        });
+        console.log('[DB SAVE SUCCESS] Created Lead:', lead.id);
+      } catch (dbErr) {
+        console.error('[DB SAVE WARNING] Could not insert to database, falling back:', dbErr);
+      }
     }
 
     // 4. ส่งต่อไปยัง sGTM และแจ้งเตือนทีมขาย
@@ -124,7 +167,10 @@ export const POST: APIRoute = async ({ request }) => {
     // ถ้ายังไม่มีเซิร์ฟเวอร์ sGTM ให้ยิงเข้า GA4 ตรงผ่าน Measurement Protocol
     // เพื่อไม่ให้เสียข้อมูล conversion ระหว่างที่ยังตั้ง sGTM ไม่เสร็จ
     const sgtmUrl = import.meta.env.SGTM_URL;
-    if (!sgtmUrl) {
+
+    // การส่งซ้ำต้องไม่นับเป็น conversion ใหม่ ไม่งั้นตัวเลขใน GA4 จะพองเกินจริง
+    // และ Google Ads จะใช้ตัวเลขนั้นไปปรับการยิงโฆษณาผิดทิศ
+    if (!sgtmUrl && !isDuplicate) {
       const clientId =
         data.gaClientId ||
         parseGaClientId(
@@ -151,7 +197,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    if (sgtmUrl) {
+    if (sgtmUrl && !isDuplicate) {
       sideEffects.push(
         sendTrackingEvent({
           event_name: 'Lead',
@@ -181,7 +227,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     // แจ้งเตือนทำงานแม้บันทึก DB ไม่สำเร็จ — เดิมกรณีนั้นลีดจะหายไป
     // เหลือแค่ console.error โดยไม่มีใครรู้ว่ามีลูกค้าติดต่อเข้ามา
-    sideEffects.push(
+    //
+    // แต่ถ้าเป็นการส่งซ้ำต้องไม่แจ้งอีกรอบ ไม่งั้นทีมขายจะโทรหาลูกค้า
+    // คนเดิมสองครั้งซึ่งดูไม่เป็นมืออาชีพ
+    if (!isDuplicate) sideEffects.push(
       notifyNewLead({
         name: data.name,
         phone: data.phone,

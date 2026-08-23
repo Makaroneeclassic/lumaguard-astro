@@ -78,56 +78,6 @@ model Lead {
   createdAt       DateTime @default(now())
 }
 
-model PortfolioItem {
-  id          String   @id @default(uuid())
-  title       String
-  location    String
-  category    String
-  image       String   @db.Text
-  altText     String   @db.Text
-  seriesUsed  String
-  areaSize    String?
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-}
 
-model Testimonial {
-  id         String   @id @default(uuid())
-  authorName String
-  role       String
-  content    String   @db.Text
-  rating     Int      @default(5)
-  isFeatured Boolean  @default(false)
-  createdAt  DateTime @default(now())
-}
 
-model Product {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  series      String   // "Element", "Guardian", "Apex", "Shield", "Zenith", "Nexus"
-  vlt         String   // e.g. "38%"
-  irr         String   // e.g. "45%" (900-1000nm)
-  irr2        String   @default("75%") // e.g. "75%" (1000-1700nm)
-  uvr         String   // e.g. "99.9%"
-  tser        String   // e.g. "42%"
-  technology  String   @default("Ceramic Film") // e.g. "Ceramic Film"
-  thickness   String   @default("2MIL (50 micron)") // e.g. "2MIL (50 micron)"
-  description String?  @db.Text
-  image       String?  @db.Text
-  price       String?
-  showOnHomepage Boolean  @default(true)
-  isPopular      Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
-model HomepageModule {
-  id        String   @id @default(uuid())
-  key       String   @unique // e.g. "hero", "why-us", "products", "process", "estimator", "visualizer", "testimonials", "contact"
-  title     String
-  subtitle  String?  @db.Text
-  content   Json?    // บันทึกเนื้อหารายละเอียดเฉพาะของแต่ละโมดูลในรูปแบบ JSON
-  isActive  Boolean  @default(true)
-  sortOrder Int      @default(0)
-  updatedAt DateTime @updatedAt
-}

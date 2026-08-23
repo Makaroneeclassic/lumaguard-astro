@@ -3,44 +3,11 @@ import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import PortfolioList from '@/components/PortfolioList';
-import { prisma } from '@/lib/db';
+import { ALL_PORTFOLIO } from '@/lib/portfolio';
 
 import { getPageSeo } from '@/lib/pageSeo';
-let items: any[] = [];
-try {
-  items = await prisma.portfolioItem.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
-} catch (e) {
-  console.warn("Database connection failed for portfolio, using fallback.");
-}
+const items = ALL_PORTFOLIO;
 
-if (items.length === 0) {
-  items = [
-    {
-      id: "1",
-      title: "The Monument Thong Lo",
-      location: "ทองหล่อ, กรุงเทพฯ",
-      category: "condo",
-      image: "/images/gallery/portfolio-monument-thonglo.webp",
-      altText: "ห้องรับแขกเพ้นท์เฮ้าส์หรูทองหล่อติดฟิล์มลดความร้อนสะสม",
-      seriesUsed: "Apex Sputter 20",
-      areaSize: "484 ตร.ฟุต",
-      description: "ติดตั้งฟิล์มกรองแสงชนิดสปัตเตอร์หลายชั้นบนกระจกบานใหญ่พิเศษ ลดความร้อนสะสมและกรองแสงจ้าช่วงเย็น",
-    },
-    {
-      id: "2",
-      title: "Santi Pura Residence",
-      location: "บางนา, กรุงเทพฯ",
-      category: "house",
-      image: "/images/gallery/portfolio-santipura-residence.webp",
-      altText: "บ้านสไตล์โมเดิร์นทรอปิคอลติดฟิล์มกรองแสงเซรามิกใส",
-      seriesUsed: "Guardian Ceramic 70",
-      areaSize: "1,938 ตร.ฟุต",
-      description: "ติดตั้งฟิล์มเซรามิคพรีเมียม สบายตา นำความเย็นเข้าสู่บ้าน สบายใจและประหยัดไฟฟ้าตลอดปี",
-    },
-  ];
-}
 
 const seo = await getPageSeo('/portfolio', {
   title: "ผลงานการติดตั้งฟิล์มจริง คอนโดและบ้านหรู | LUMAGUARD",

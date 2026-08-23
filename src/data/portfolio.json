@@ -1,0 +1,35 @@
+[
+  {
+    "id": "72f88ad5-8b22-4b46-9b8e-5ecf39a6916e",
+    "title": "The Monument Thong Lo",
+    "location": "Thong Lo, Bangkok",
+    "category": "condo",
+    "image": "/images/gallery/portfolio-monument-thonglo.webp",
+    "altText": "Luxury condo penthouse Thong Lo floor to ceiling windows",
+    "seriesUsed": "Apex Sputter 20",
+    "areaSize": "484 ตร.ฟุต",
+    "description": "Sleek multi-layer sputtered film application on floor-to-ceiling double-glazed panels, achieving 76% TSER while preserving panoramic city views at sunset."
+  },
+  {
+    "id": "700bbf22-7782-476c-bdfc-2682b92563d2",
+    "title": "Santi Pura Residence",
+    "location": "Bang Na, Bangkok",
+    "category": "house",
+    "image": "/images/gallery/portfolio-santipura-residence.webp",
+    "altText": "Modern tropical villa Bang Na with large pool windows",
+    "seriesUsed": "Guardian Ceramic 70",
+    "areaSize": "1,938 ตร.ฟุต",
+    "description": "Complete architectural protection of a modern tropical villa, reducing solar heat gain without altering the visual facade of the glass."
+  },
+  {
+    "id": "1afcb707-d35d-4f52-9fd7-9c6a0698cd0d",
+    "title": "Park Origin Phrom Phong",
+    "location": "Sukhumvit 24, Bangkok",
+    "category": "condo",
+    "image": "/images/gallery/portfolio-park-origin-phrom-phong.webp",
+    "altText": "Bedroom windows with night vision film overlooking Sukhumvit",
+    "seriesUsed": "Guardian Ceramic 35",
+    "areaSize": "344 ตร.ฟุต",
+    "description": "Installation in dual master bedrooms, providing privacy and significant glare reduction during bright morning hours."
+  }
+]

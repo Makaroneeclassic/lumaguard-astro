@@ -26,3 +26,4 @@ pnpm-debug.log*
 # Vercel deployment metadata
 .vercel/
 
+backup/
