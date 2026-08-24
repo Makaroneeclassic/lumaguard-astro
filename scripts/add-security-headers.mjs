@@ -63,11 +63,15 @@ const HEADERS = {
 const config = JSON.parse(readFileSync(CONFIG, 'utf8'));
 
 // ลบของเดิมก่อนถ้ามี เพื่อให้รันซ้ำได้โดยไม่เกิดรายการซ้อน
-config.routes = config.routes.filter((r) => !r.__securityHeaders);
+//
+// ดูจาก header ที่เราใส่เองแทนการติดธงพิเศษไว้ในรายการ เพราะ Vercel ตรวจ
+// รูปแบบของไฟล์นี้ตาม schema ที่กำหนดไว้ การใส่ property ที่ไม่รู้จักลงไป
+// ทำให้ทั้งรายการถูกมองข้ามและ header ไม่ถูกส่งออกมาเลยโดยไม่มีข้อความแจ้ง
+config.routes = config.routes.filter((r) => !r.headers?.['x-frame-options']);
 
+// รูปแบบ src ต้องยึดตามที่อะแดปเตอร์ใช้อยู่คือ regex ที่ปิดหัวปิดท้าย
 config.routes.unshift({
-  __securityHeaders: true,
-  src: '/(.*)',
+  src: '^/(.*)$',
   headers: HEADERS,
   continue: true,
 });
