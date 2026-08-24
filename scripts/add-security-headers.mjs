@@ -28,7 +28,10 @@ const CONFIG = '.vercel/output/config.json';
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  // wasm-unsafe-eval จำเป็นเพราะกล่องค้นหาใช้ Pagefind ซึ่งรันดัชนีด้วย
+  // WebAssembly ถ้าไม่เปิดไว้ การค้นหาจะเงียบไปเฉย ๆ โดยไม่มีอาการให้เห็น
+  // และตรวจไม่พบตอนเปิดหน้าเว็บเฉย ๆ เพราะ Pagefind โหลดเมื่อกดค้นหาเท่านั้น
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self'",
