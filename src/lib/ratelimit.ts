@@ -87,7 +87,7 @@ export async function checkRateLimit(req: Request, type: "lead" | "admin"): Prom
   const ip = getClientIp(req);
   const key = `${type}:${ip}`;
 
-  if (hasUpstash) {
+  {
     const limiter = type === "lead" ? leadRatelimit : adminRatelimit;
     if (limiter) {
       try {
