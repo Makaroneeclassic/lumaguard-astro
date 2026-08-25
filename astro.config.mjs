@@ -36,6 +36,18 @@ import react from '@astrojs/react';
 export default defineConfig({
   output: 'static',
 
+  /**
+   * บทความสองบทแรกเป็นเนื้อหาตัวอย่างที่ลบออกแล้ว
+   *
+   * ทั้งคู่เคยอยู่ใน sitemap และถูกส่งให้ Google ไปแล้ว ถ้าปล่อยให้กลายเป็น 404
+   * คนที่กดจากผลค้นหาหรือลิงก์เก่าจะเจอหน้าไม่พบ พาไปหน้ารวมบทความแทนเพื่อ
+   * ไม่ให้ทางตัน และคงไว้ถาวรเพราะลิงก์เก่าอาจโผล่มาอีกได้หลายปี
+   */
+  redirects: {
+    '/blog/film-kan-ron-ban-lot-kha-fai': '/blog',
+    '/blog/ppf-paint-protection-film-guide': '/blog',
+  },
+
   adapter: vercel({
     webAnalytics: {
       enabled: true,
