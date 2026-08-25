@@ -151,9 +151,42 @@ async function downloadImage(name: string, src: string) {
   return { path: `/images/blog/${name}.webp`, width: meta.width, height: meta.height };
 }
 
+/**
+ * เตรียมรูปให้พร้อมใช้ ไม่ว่าจะมาจากลิงก์ภายนอกหรือไฟล์ที่วางไว้เองในโปรเจกต์
+ *
+ * ลิงก์ภายนอกจะถูกดาวน์โหลดมาเก็บในเว็บ ส่วนไฟล์ที่วางไว้เองใน public จะอ่าน
+ * ขนาดจริงจากไฟล์ และแปลงเป็น WebP ให้ถ้ายังไม่ใช่
+ *
+ * ที่ต้องอ่านขนาดเพราะแท็ก img ต้องมี width กับ height ติดไปด้วย ไม่งั้นเบราว์เซอร์
+ * ไม่รู้ว่าต้องกันที่ไว้เท่าไหร่ เนื้อหาใต้รูปจะกระโดดตอนรูปโหลดเสร็จ
+ */
 async function localizeHeroImage(slug: string, src: string) {
-  if (!/^https?:\/\//.test(src)) return { path: src, width: undefined, height: undefined };
-  return await downloadImage(slug, src);
+  if (/^https?:\/\//.test(src)) return await downloadImage(slug, src);
+
+  // ไม่ใช่ลิงก์ ถือว่าเป็นไฟล์ในโฟลเดอร์ public ของโปรเจกต์
+  const diskPath = join("public", src.replace(/^\//, ""));
+  if (!existsSync(diskPath)) {
+    console.warn(`    ⚠ ไม่พบไฟล์รูป ${diskPath} — ใส่ path ไว้แต่ไม่มีขนาด`);
+    return { path: src, width: undefined, height: undefined };
+  }
+
+  const sharp = (await import("sharp")).default;
+  const buf = readFileSync(diskPath);
+
+  // แปลงเป็น WebP ให้ถ้ายังไม่ใช่ เพื่อให้ขนาดไฟล์เท่ากับรูปที่โหลดจากลิงก์
+  if (!/\.webp$/i.test(src)) {
+    const out = await sharp(buf).resize({ width: 1600, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer();
+    const name = src.replace(/^.*\//, "").replace(/\.[^.]+$/, "");
+    const outPath = join(IMG_DIR, `${name}.webp`);
+    writeFileSync(outPath, out);
+    const meta = await sharp(out).metadata();
+    console.log(`    ↳ แปลงรูป: /images/blog/${name}.webp  ${meta.width}x${meta.height}  ${Math.round(out.length / 1024)} KB`);
+    return { path: `/images/blog/${name}.webp`, width: meta.width, height: meta.height };
+  }
+
+  const meta = await sharp(buf).metadata();
+  console.log(`    ↳ ใช้รูปในโปรเจกต์: ${src}  ${meta.width}x${meta.height}`);
+  return { path: src, width: meta.width, height: meta.height };
 }
 
 /**
