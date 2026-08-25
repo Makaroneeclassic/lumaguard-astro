@@ -31,8 +31,36 @@ const OUT_DIR = "src/content/blog";
  *   ready     ตรวจแล้ว พร้อมลงเว็บ — ดึง
  *   published ลงเว็บแล้ว — ดึงซ้ำเพื่ออัปเดตถ้ามีการแก้
  *   hold      พักไว้ก่อน — ข้าม
+ *
+ * ตั้งเวลาโพสด้วย pubDate ร่วมกับ publishTime
+ *
+ * แถวที่ยังไม่ถึงกำหนดจะถูกข้ามไว้ก่อนแม้สถานะเป็น ready แล้ว พอถึงเวลา
+ * รอบถัดไปของ GitHub Action จะดึงไปสร้างไฟล์แล้ว commit ซึ่งทำให้ Vercel
+ * deploy ต่อเองอัตโนมัติ จึงไม่ต้องมีใครมากดอะไรตอนถึงเวลา
+ *
+ * เทียบเวลาตามเขตเวลาไทยเสมอ ไม่ใช่เวลาของเครื่องที่รัน เพราะ GitHub Action
+ * ทำงานด้วยเวลา UTC ถ้าเทียบตรง ๆ บทความที่ตั้งไว้ตอนเช้าจะออกก่อนกำหนดเจ็ดชั่วโมง
  */
 const PULLED = new Set(["ready", "published"]);
+
+/** ข้ามการตรวจเวลา สำหรับรันเองเมื่อต้องการดึงทุกอย่างทันที */
+const IGNORE_SCHEDULE = process.argv.includes("--force");
+
+/**
+ * แปลงวันและเวลาจากชีตเป็นเวลาจริง โดยตีความว่าเป็นเวลาไทยเสมอ
+ *
+ * publishTime เว้นว่างได้ ถ้าไม่ใส่จะถือว่าเป็นเที่ยงคืนของวันนั้น
+ */
+function dueAt(pubDate: string, publishTime: string): Date {
+  const time = /^\d{1,2}:\d{2}$/.test(publishTime)
+    ? publishTime.padStart(5, "0")
+    : "00:00";
+  return new Date(`${pubDate}T${time}:00+07:00`);
+}
+
+/** แสดงเวลาแบบไทยเพื่อให้อ่านรายงานได้เข้าใจ */
+const thaiTime = (d: Date) =>
+  d.toLocaleString("th-TH", { timeZone: "Asia/Bangkok", dateStyle: "medium", timeStyle: "short" });
 
 const CLUSTERS = [
   "architectural-film", "energy-saving", "safety-security", "privacy",
@@ -158,7 +186,7 @@ const report: Array<{ slug: string; row: number; result: string; url?: string; e
 const errors: string[] = [];
 const seenKeyword = new Map<string, string>();
 const seenSlug = new Set<string>();
-let written = 0, skipped = 0;
+let written = 0, skipped = 0, scheduled = 0;
 
 for (const [i, row] of rows.entries()) {
   const line = i + 2; // +2 เพราะแถวแรกเป็นหัวคอลัมน์ และนับจาก 1
@@ -206,6 +234,16 @@ for (const [i, row] of rows.entries()) {
     console.log(`  ข้าม: ${slug} (status = ${status})`);
     report.push({ slug, row: line, result: "skipped" });
     skipped++;
+    continue;
+  }
+
+  // ยังไม่ถึงเวลาที่ตั้งไว้ ข้ามไว้ก่อนแล้วค่อยดึงในรอบถัดไป
+  const publishTime = (row.publishTime ?? "").trim();
+  const due = dueAt(pubDate, publishTime);
+  if (!IGNORE_SCHEDULE && due.getTime() > Date.now()) {
+    console.log(`  รอเวลา: ${slug} — กำหนดโพส ${thaiTime(due)}`);
+    report.push({ slug, row: line, result: "scheduled" });
+    scheduled++;
     continue;
   }
 
@@ -309,8 +347,13 @@ if (errors.length) {
   console.error("\nแก้ในชีตแล้วรันใหม่: npm run blog:sync");
   process.exit(1);
 }
+// รายงานบทความที่รอเวลาเสมอ ไม่ว่าจะมีบทความออกใหม่หรือไม่
+// ไม่งั้นคนตั้งเวลาไว้จะไม่รู้ว่าระบบเห็นแล้วและกำลังรออยู่
+if (scheduled > 0) {
+  console.log(`\nตั้งเวลาไว้ ${scheduled} บท — จะดึงอัตโนมัติเมื่อถึงกำหนด`);
+}
 if (written === 0) {
-  console.log(`ไม่มีบทความที่พร้อมเผยแพร่ (ข้าม ${skipped} แถวที่สถานะยังไม่ใช่ ready)`);
+  console.log(`ไม่มีบทความที่พร้อมเผยแพร่ (ข้าม ${skipped} บท)`);
 } else {
   console.log(`เสร็จสิ้น — เขียนไฟล์ ${written} บท`);
   console.log("ขั้นถัดไป: ตรวจด้วย git diff แล้ว commit");
