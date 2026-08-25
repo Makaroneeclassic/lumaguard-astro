@@ -80,7 +80,29 @@ config.routes.unshift({
   continue: true,
 });
 
+/**
+ * ให้ redirect รับทั้งแบบมีและไม่มีทับปิดท้าย
+ *
+ * Astro สร้าง regex ที่ปิดท้ายด้วย $ พอดี เช่น ^/blog/ชื่อบทความ$ ซึ่งไม่ match
+ * URL ที่มีทับต่อท้าย และการใส่ทั้งสองรูปแบบใน astro.config ก็ไม่ช่วย เพราะ
+ * Astro รวมให้เป็นรายการเดียวกันแล้วเตือนว่าชนกัน
+ *
+ * ปัญหาคือ canonical ของเว็บใช้แบบมีทับปิดท้าย URL ที่ Google เก็บไปจึงเป็น
+ * แบบนั้น ถ้าไม่ครอบให้ คนที่กดจากผลค้นหาจะเจอหน้าไม่พบทั้งที่ตั้ง redirect ไว้แล้ว
+ */
+let widened = 0;
+for (const r of config.routes) {
+  if (!r.headers?.Location || !r.src?.endsWith('$')) continue;
+  if (r.src.endsWith('/?$')) continue;
+  r.src = r.src.replace(/\$$/, '/?$');
+  widened++;
+}
+
 writeFileSync(CONFIG, JSON.stringify(config, null, 2) + '\n');
+
+if (widened > 0) {
+  console.log(`[headers] ขยาย redirect ${widened} รายการให้รับทับปิดท้ายด้วย`);
+}
 
 console.log(`[headers] ใส่ security header ${Object.keys(HEADERS).length} ตัวลง ${CONFIG}`);
 Object.keys(HEADERS).forEach((h) => console.log(`  ${h}`));
