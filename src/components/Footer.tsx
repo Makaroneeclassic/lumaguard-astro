@@ -9,9 +9,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
         {/* Column 1: Info */}
         <div className="space-y-6">
-          <div className="text-2xl font-black text-primary font-headline tracking-tighter">
-            LUMAGUARD
-          </div>
+          <img
+            src="/logo.webp"
+            alt="LUMAGUARD"
+            width={600}
+            height={146}
+            className="h-9 w-auto"
+            loading="lazy"
+            decoding="async"
+          />
           <p className="text-on-surface-variant leading-relaxed">
             ผู้ให้บริการฟิล์มกรองแสงระดับพรีเมียมในกรุงเทพฯ เราเชี่ยวชาญการติดตั้งฟิล์มกรองแสงกันความร้อนสูงและปกป้องรังสี UV สำหรับอาคาร คอนโดมิเนียม และบ้านพักอาศัย
           </p>
