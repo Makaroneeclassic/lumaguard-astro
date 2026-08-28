@@ -40,11 +40,6 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/services" className="block py-2 hover:text-primary transition-colors">
-                ขั้นตอน & บริการ
-              </a>
-            </li>
-            <li>
               <a href="/contact" className="block py-2 hover:text-primary transition-colors">
                 ติดต่อรับคำแนะนำฟรี
               </a>
