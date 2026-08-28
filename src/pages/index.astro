@@ -2,10 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
-import LeadForm from '@/components/LeadForm';
-import FilmSelector from '@/components/FilmSelector';
-import ProductMatrix from '@/components/ProductMatrix';
-import { getHomepageProducts } from '@/lib/products';
 import { getFeaturedPortfolio } from '@/lib/portfolio';
 import PortfolioList from '@/components/PortfolioList';
 import TestimonialSlider from '@/components/TestimonialSlider';
@@ -23,7 +19,6 @@ try {
 const title = pageSeo?.title || "LUMAGUARD | ฟิล์มกรองแสงบ้านและคอนโดพรีเมียม";
 const description = pageSeo?.description || "ฟิล์มกรองแสงระดับนาโนเซรามิกและสปัตเตอร์สะท้อนความร้อนสูง ป้องกันความร้อนสูงสุด 98% รับประกัน 10-15 ปี";
 
-const products = getHomepageProducts();
 
 
 const portfolioItems = getFeaturedPortfolio(2);
@@ -96,18 +91,19 @@ const faqItems = [
       <div class="relative z-10 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto w-full text-white">
         <div class="max-w-2xl space-y-6">
           <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.05] sm:leading-[0.95]">
-            LUMAGUARD: <br />
-            <span class="text-accent-400">Your Home's Ultimate Shield.</span>
+            LUMAGUARD <br />
+            <span class="text-accent-400">ฟิล์มกรองแสงบ้าน อาคาร และรถยนต์</span>
           </h1>
           <p class="text-sm sm:text-base md:text-lg text-slate-300 leading-relaxed font-light">
-            สัมผัสแสงธรรมชาติที่สว่างไสวโดยไม่มีความร้อนสะสม เทคโนโลยีฟิล์มกรองแสงเซรามิกระดับนาโนที่สกัดกั้นรังสี UV 99.9% และความร้อนอินฟราเรด
+            เทคโนโลยีฟิล์มนาโนเซรามิกและสปัตเตอร์เคลือบโลหะ สกัดรังสี UV และความร้อนอินฟราเรด
+            สำหรับทั้งกระจกอาคารและกระจกรถยนต์ ติดตั้งโดยทีมช่างของเราเอง
           </p>
           <div class="flex flex-wrap gap-3 sm:gap-4 pt-2">
-            <a href="/products" class="bg-accent-700 hover:bg-accent-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all shadow-lg text-sm sm:text-base min-h-[48px] flex items-center justify-center">
-              เลือกชมรุ่นฟิล์มกรองแสง
+            <a href="/home-film" class="bg-accent-700 hover:bg-accent-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all shadow-lg text-sm sm:text-base min-h-[48px] flex items-center justify-center">
+              ฟิล์มบ้านและอาคาร
             </a>
-            <a href="#contact" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all text-sm sm:text-base min-h-[48px] flex items-center justify-center">
-              ประเมินราคาฟรี
+            <a href="/car-film" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all text-sm sm:text-base min-h-[48px] flex items-center justify-center">
+              ฟิล์มรถยนต์
             </a>
           </div>
         </div>
@@ -214,38 +210,66 @@ const faqItems = [
       </div>
     </section>
 
-    {/* Consultation / Film Selector Tool Section */}
-    <section id="consultation" class="py-16 md:py-24 px-4 sm:px-8 max-w-[1440px] mx-auto">
-      <FilmSelector client:visible />
-    </section>
+    {/*
+      ทางแยกสองหมวด — หน้าที่หลักของหน้าแรกคือพาคนไปหน้าที่ตรงกับสิ่งที่เขาหา
+      ไม่ใช่ขายเองในหน้านี้
 
-    {/* Product Spec Comparison Matrix Section */}
-    <section id="matrix" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
-      <div class="max-w-[1440px] mx-auto px-4 sm:px-8">
-        <ProductMatrix client:visible products={products} />
-      </div>
-    </section>
+      เดิมตรงนี้เป็นเครื่องเลือกฟิล์ม ตารางเทียบสเปก และขั้นตอนการทำงาน ซึ่งซ้ำกับ
+      /home-film /products และ /services ทั้งหมด สามหน้านั้นจึงต้องแข่งกับหน้าแรก
+      ของตัวเองในคำค้นเดียวกัน ย้ายออกแล้วเหลือลิงก์ชี้ไปแทน หน้าแรกเลยส่งน้ำหนัก
+      ให้หน้าที่ควรติดอันดับจริง แทนที่จะดึงไว้เอง
 
-    {/* Process / Service Steps Section */}
-    <section id="process" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
-      <div class="space-y-12 md:space-y-16">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 tracking-tight">
-          ขั้นตอนการบริการมาตรฐานสากล
+      ตารางเทียบยังมีปัญหาเพิ่มอีกข้อ — ตอนนี้รวมฟิล์มรถ 17 รุ่นเข้ามาด้วย
+      คนที่เลื่อนมาเจอ Vanguard หรือ Stellar บนหน้าที่พูดเรื่องบ้านจะไม่เข้าใจว่าคืออะไร
+    */}
+    <section id="lines" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto space-y-10">
+      <div class="max-w-2xl mx-auto text-center space-y-3">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          เราทำฟิล์มสองสาย เลือกสายที่ตรงกับคุณ
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {processSteps.map((step) => (
-            <div key={step.stepNo} class="bg-white p-6 rounded-2xl border border-slate-200/80 space-y-4 text-left flex flex-col items-start shadow-sm">
-              <div class="w-14 h-11 rounded-xl bg-slate-100 flex items-center justify-center shadow-inner">
-                <span class="text-slate-800 font-extrabold text-lg">{step.stepNo}</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-slate-900">{step.title}</h3>
-              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-light">
-                {step.description}
-              </p>
-            </div>
-          ))}
-        </div>
+        <p class="text-slate-600 leading-relaxed">
+          คิดราคาคนละแบบ ติดตั้งคนละวิธี แต่ละสายมีหน้าของตัวเองที่บอกราคาและสเปกครบ
+        </p>
       </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a
+          href="/home-film"
+          class="group flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
+        >
+          <div class="space-y-3">
+            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">คิดราคาตามพื้นที่กระจก</span>
+            <h3 class="font-headline text-2xl font-bold text-slate-900">ฟิล์มบ้านและอาคาร</h3>
+            <p class="text-sm leading-relaxed text-slate-600">
+              บ้าน คอนโด และอาคารสำนักงาน ทีมงานเข้าไปวัดหน้างานให้ฟรีก่อนเสนอราคา
+              ประเมินราคาเบื้องต้นเองได้บนหน้านั้น
+            </p>
+          </div>
+          <span class="text-sm font-bold text-primary group-hover:underline">ดูรุ่นและราคาฟิล์มบ้าน →</span>
+        </a>
+
+        <a
+          href="/car-film"
+          class="group flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
+        >
+          <div class="space-y-3">
+            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">ราคาเหมาทั้งคัน</span>
+            <h3 class="font-headline text-2xl font-bold text-slate-900">ฟิล์มรถยนต์</h3>
+            <p class="text-sm leading-relaxed text-slate-600">
+              คิดราคาตามขนาดรถ รวมกระจกหน้าและค่าติดตั้งแล้ว เข้าไปติดตั้งถึงที่
+              ใช้เวลา 2-3 ชั่วโมงต่อคัน
+            </p>
+          </div>
+          <span class="text-sm font-bold text-primary group-hover:underline">ดูรุ่นและราคาฟิล์มรถ →</span>
+        </a>
+      </div>
+
+      <p class="text-center text-sm text-slate-600">
+        อยากเทียบค่าสเปกทุกรุ่นในตารางเดียว —
+        <a href="/products" class="font-bold text-primary hover:underline">ดูตารางเทียบสเปกทั้งหมด</a>
+        · อยากรู้ขั้นตอนหน้างาน —
+        <a href="/services" class="font-bold text-primary hover:underline">ดูขั้นตอนการทำงาน</a>
+      </p>
     </section>
 
     {/* Portfolio Project Showcase Section */}
@@ -272,35 +296,33 @@ const faqItems = [
     {/* Testimonials Review Slider Section */}
     <TestimonialSlider client:visible />
 
-    {/* FAQ / Q&A Section */}
-    <section id="faq" class="py-16 md:py-24 bg-slate-50 border-t border-b border-slate-200">
-      <div class="max-w-4xl mx-auto px-4 sm:px-8 space-y-8 sm:space-y-12">
-        <div class="text-center space-y-3">
-          <span class="text-accent-700 font-bold tracking-widest text-xs uppercase">
-            คำถามที่พบบ่อย (FAQS)
-          </span>
-          <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            ไขข้อข้องใจเรื่องการติดฟิล์มกระจกบ้านและคอนโด
-          </h2>
+    {/*
+      FAQ กับฟอร์มถูกย้ายออก คำถามทั้งสี่ข้อซ้ำกับ /contact แบบคำต่อคำ
+      ส่วนฟอร์มเป็นแบบงานอาคาร ถามเขตพื้นที่กับประเภทสิ่งปลูกสร้าง
+      คนที่เข้ามาหาฟิล์มรถกรอกแล้วจะได้ข้อมูลที่ผิด ให้การ์ดสองใบด้านบน
+      พาไปกรอกในหน้าที่ถูกต้องแทน
+    */}
+    <section class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
+      <div class="mx-auto max-w-3xl space-y-4 rounded-3xl bg-slate-50 border border-slate-200 p-10 text-center">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">พร้อมขอใบเสนอราคาแล้ว</h2>
+        <p class="text-slate-600 leading-relaxed">
+          เลือกสายที่ตรงกับงานของคุณ แบบฟอร์มในแต่ละหน้าถามเฉพาะสิ่งที่จำเป็นกับงานนั้นจริง ๆ
+        </p>
+        <div class="flex flex-wrap justify-center gap-3 pt-2">
+          <a href="/home-film#home-quote" class="rounded-xl bg-primary px-7 py-3.5 font-headline text-sm font-bold text-on-primary transition-opacity hover:opacity-90">
+            ขอวัดหน้างานฟรี (บ้าน/อาคาร)
+          </a>
+          <a href="/car-film#car-quote" class="rounded-xl border border-outline-variant/40 px-7 py-3.5 font-headline text-sm font-bold text-primary transition-colors hover:bg-white">
+            ขอราคาฟิล์มรถ
+          </a>
         </div>
-
-        <div class="space-y-4 sm:space-y-6">
-          {faqItems.map((item, idx) => (
-            <div key={idx} class="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">Q: {item.q}</h3>
-              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-light text-justify">
-                A: {item.a}
-              </p>
-            </div>
-          ))}
-        </div>
+        <p class="pt-2 text-sm text-slate-600">
+          มีคำถามอื่น —
+          <a href="/contact" class="font-bold text-primary hover:underline">ดูคำถามที่พบบ่อยและช่องทางติดต่อ</a>
+        </p>
       </div>
     </section>
 
-    {/* Contact Lead Form */}
-    <section id="contact" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
-      <LeadForm client:visible />
-    </section>
   </main>
 
   <Footer client:visible />
