@@ -5,7 +5,6 @@ import Footer from '@/components/Footer';
 import PriceEstimator from '@/components/PriceEstimator';
 import LeadForm from '@/components/LeadForm';
 
-import { getPageSeo } from '@/lib/pageSeo';
 import { getEstimatorRates } from '@/lib/rates';
 const processSteps = [
   {
@@ -30,11 +29,9 @@ const processSteps = [
   }
 ];
 
-const seo = await getPageSeo('/services', {
-  title: "ขั้นตอนการบริการมาตรฐานสากล | LUMAGUARD",
-  description: "ขั้นตอนการให้บริการและติดตั้งฟิล์มกรองแสงมาตรฐานระดับมืออาชีพ วัดพื้นที่ฟรี การเตรียมพื้นที่ และรับประกันดิจิทัล",
-});
-const { title, description } = seo;
+const title = "บริการติดตั้งฟิล์มกรองแสง ขั้นตอนงานติดตั้ง | LUMAGUARD";
+const description =
+  "ขั้นตอนการติดตั้งฟิล์มกรองแสงอาคารโดยทีมช่างมืออาชีพ ตั้งแต่สำรวจหน้างาน วัดขนาดกระจก ติดตั้งในพื้นที่ควบคุมฝุ่น พร้อมรับประกันคุณภาพงานติดตั้ง";
 
 const estimatorRates = await getEstimatorRates();
 ---

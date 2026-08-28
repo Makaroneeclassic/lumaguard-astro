@@ -6,14 +6,11 @@ import JsonLd from '@/components/JsonLd.astro';
 import { getPublishedPosts } from '@/lib/blog';
 import { buildBreadcrumbSchema } from '@/lib/schema';
 
-import { getPageSeo } from '@/lib/pageSeo';
 const posts = await getPublishedPosts();
 
-const seo = await getPageSeo('/blog', {
-  title: 'บทความน่ารู้เกี่ยวกับฟิล์มกรองแสงอาคาร บ้าน และคอนโด | LUMAGUARD',
-  description: 'รวมคู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง เทคนิคประหยัดค่าไฟ ฟิล์มนิรภัย และความรู้เรื่องฟิล์มนาโนเซรามิกจากทีมวิศวกร LUMAGUARD',
-});
-const { title, description } = seo;
+const title = "บทความฟิล์มกรองแสงอาคาร บ้าน และคอนโด | LUMAGUARD";
+const description =
+  "รวมบทความและคู่มือเลือกฟิล์มกรองแสงอาคาร วิธีลดอุณหภูมิห้อง เทคนิคประหยัดค่าไฟ ฟิล์มนิรภัย และความรู้เรื่องฟิล์มนาโนเซรามิกจากทีมวิศวกร";
 const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
 ---
 

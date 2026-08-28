@@ -5,14 +5,9 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import { buildBreadcrumbSchema } from '@/lib/schema';
 import { BUSINESS } from '@/lib/site';
-import { getPageSeo } from '@/lib/pageSeo';
 
-const seo = await getPageSeo('/privacy-policy', {
-  title: 'นโยบายความเป็นส่วนตัว | LUMAGUARD',
-  description:
-    'นโยบายความเป็นส่วนตัวของ LUMAGUARD อธิบายว่าเราเก็บข้อมูลอะไรบ้าง นำไปใช้ทำอะไร เก็บไว้นานเท่าใด และคุณมีสิทธิอะไรตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล',
-});
-const { title, description } = seo;
+const title = 'นโยบายความเป็นส่วนตัว | LUMAGUARD';
+const description = 'นโยบายความเป็นส่วนตัวของ LUMAGUARD อธิบายว่าเราเก็บข้อมูลอะไรบ้าง นำไปใช้ทำอะไร เก็บไว้นานเท่าใด และคุณมีสิทธิอะไรตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล';
 
 // ทบทวนล่าสุดเมื่อใด ต้องอัปเดตทุกครั้งที่แก้เนื้อหาในหน้านี้
 const lastUpdated = '2026-08-19';

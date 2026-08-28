@@ -9,7 +9,6 @@ import { ALL_PRODUCTS } from '@/lib/products';
 import { getSeriesByCategory } from '@/lib/series';
 import { CAR_PRICES, CAR_SIZES, getCarPrice, formatBaht } from '@/lib/carPrices';
 import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
-import { getPageSeo } from '@/lib/pageSeo';
 
 /**
  * หน้าขายฟิล์มรถยนต์
@@ -106,11 +105,8 @@ const faqItems = [
   },
 ];
 
-const seo = await getPageSeo('/car-film', {
-  title: `ฟิล์มกรองแสงรถยนต์ ราคาเหมาทั้งคัน เริ่ม ${formatBaht(startingPrice)} | LUMAGUARD`,
-  description: `ฟิล์มกรองแสงรถยนต์ ${carSeries.length} ซีรีส์ ราคาเหมาทั้งคันตามขนาดรถ รวมกระจกหน้าและค่าติดตั้ง เข้าไปติดถึงที่ ใช้เวลา 2-3 ชั่วโมง ดูค่า TSER IRR และ UV ครบทุกรุ่น`,
-});
-const { title, description } = seo;
+const title = `ฟิล์มกรองแสงรถยนต์ ราคาเหมาทั้งคัน เริ่ม ${formatBaht(startingPrice)} | LUMAGUARD`;
+const description = `ฟิล์มกรองแสงรถยนต์ ${carSeries.length} ซีรีส์ ราคาเหมาทั้งคันตามขนาดรถ รวมกระจกหน้าและค่าติดตั้ง เข้าไปติดถึงที่ ใช้เวลา 2-3 ชั่วโมง ดูค่า TSER IRR และ UV ครบทุกรุ่น`;
 ---
 
 <Layout title={title} description={description}>

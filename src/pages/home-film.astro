@@ -10,7 +10,6 @@ import LeadForm from '@/components/LeadForm';
 import { ALL_PRODUCTS, lowestPrice } from '@/lib/products';
 import { getSeriesByCategory } from '@/lib/series';
 import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
-import { getPageSeo } from '@/lib/pageSeo';
 import { getEstimatorRates } from '@/lib/rates';
 
 /**
@@ -58,11 +57,8 @@ const faqItems = [
   },
 ];
 
-const seo = await getPageSeo('/home-film', {
-  title: `ฟิล์มกรองแสงบ้าน คอนโด อาคาร ราคาเริ่ม ฿${startingPrice}/ตร.ฟุต | LUMAGUARD`,
-  description: `ฟิล์มกรองแสงบ้านและอาคาร ${homeSeries.length} ซีรีส์ ${homeProducts.length} รุ่น คิดราคาตามพื้นที่กระจกจริง วัดหน้างานฟรี ประเมินราคาเบื้องต้นได้เองบนหน้านี้ พร้อมค่า VLT TSER IRR ครบทุกรุ่น`,
-});
-const { title, description } = seo;
+const title = `ฟิล์มกรองแสงบ้าน คอนโด อาคาร ราคาเริ่ม ฿${startingPrice}/ตร.ฟุต | LUMAGUARD`;
+const description = `ฟิล์มกรองแสงบ้านและอาคาร ${homeSeries.length} ซีรีส์ ${homeProducts.length} รุ่น คิดราคาตามพื้นที่กระจกจริง วัดหน้างานฟรี ประเมินราคาเบื้องต้นได้เองบนหน้านี้ พร้อมค่า VLT TSER IRR ครบทุกรุ่น`;
 ---
 
 <Layout title={title} description={description}>

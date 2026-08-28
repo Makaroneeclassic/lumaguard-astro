@@ -39,21 +39,6 @@ model SeoGlobal {
   updatedAt              DateTime @updatedAt
 }
 
-model SeoPage {
-  id            String   @id @default(uuid())
-  routePath     String   @unique
-  pageName      String
-  title         String   @db.Text
-  description   String   @db.Text
-  keywords      String?  @db.Text
-  canonicalUrl  String?  @db.Text
-  ogTitle       String?  @db.Text
-  ogDescription String?  @db.Text
-  ogImage       String?  @db.Text
-  noindex       Boolean  @default(false)
-  nofollow      Boolean  @default(false)
-  updatedAt     DateTime @updatedAt
-}
 
 // หมายเหตุ: model BlogPost ถูกถอดออกแล้ว บทความย้ายไปเก็บเป็น MDX ใน git
 // ที่ src/content/blog/ เพื่อให้มี version history, บังคับกติกา SEO ตอน build

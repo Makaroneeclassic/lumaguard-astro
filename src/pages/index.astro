@@ -6,18 +6,10 @@ import { getFeaturedPortfolio } from '@/lib/portfolio';
 import PortfolioList from '@/components/PortfolioList';
 import TestimonialSlider from '@/components/TestimonialSlider';
 import { ShieldCheck, Thermometer, Eye } from 'lucide-react';
-import { prisma } from '@/lib/db';
 
-// Fetch SEO data
-let pageSeo = null;
-try {
-  pageSeo = await prisma.seoPage.findUnique({ where: { routePath: '/' } });
-} catch (e) {
-  console.warn("DB connection for SEO fallback");
-}
-
-const title = pageSeo?.title || "LUMAGUARD | ฟิล์มกรองแสงบ้านและคอนโดพรีเมียม";
-const description = pageSeo?.description || "ฟิล์มกรองแสงระดับนาโนเซรามิกและสปัตเตอร์สะท้อนความร้อนสูง ป้องกันความร้อนสูงสุด 98% รับประกัน 10-15 ปี";
+const title = "ฟิล์มกรองแสงบ้าน อาคาร และรถยนต์ นาโนเซรามิก | LUMAGUARD";
+const description =
+  "ติดฟิล์มกรองแสงบ้านและคอนโด ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก LUMAGUARD ประเมินราคาหน้างานฟรี";
 
 
 

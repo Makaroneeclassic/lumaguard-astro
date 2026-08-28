@@ -5,15 +5,12 @@ import Footer from '@/components/Footer';
 import PortfolioList from '@/components/PortfolioList';
 import { ALL_PORTFOLIO } from '@/lib/portfolio';
 
-import { getPageSeo } from '@/lib/pageSeo';
 const items = ALL_PORTFOLIO;
 
 
-const seo = await getPageSeo('/portfolio', {
-  title: "ผลงานการติดตั้งฟิล์มจริง คอนโดและบ้านหรู | LUMAGUARD",
-  description: "ชมภาพผลงานการติดตั้งฟิล์มกรองแสงบ้าน คอนโดมิเนียม และอาคารสำนักงานจริงทั่วกรุงเทพฯ และปริมณฑล โดยช่างผู้เชี่ยวชาญ LUMAGUARD",
-});
-const { title, description } = seo;
+const title = "ผลงานติดฟิล์มกรองแสง บ้านและคอนโดในกรุงเทพฯ | LUMAGUARD";
+const description =
+  "รวมผลงานติดตั้งฟิล์มกรองแสงอาคาร บ้านเดี่ยว คอนโดมิเนียม และอาคารสำนักงานในกรุงเทพฯ ดูภาพงานจริงพร้อมรุ่นฟิล์มที่เลือกใช้ในแต่ละโครงการ";
 ---
 
 <Layout title={title} description={description}>

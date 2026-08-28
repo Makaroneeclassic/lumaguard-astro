@@ -7,7 +7,6 @@ import { ALL_PRODUCTS } from '@/lib/products';
 import { CATEGORIES, getSeriesByCategory } from '@/lib/series';
 import { getCarPrice, formatBaht } from '@/lib/carPrices';
 
-import { getPageSeo } from '@/lib/pageSeo';
 const products = ALL_PRODUCTS;
 
 /**
@@ -23,11 +22,12 @@ const categoriesWithSeries = CATEGORIES.map((category) => ({
 })).filter((category) => category.series.length > 0);
 const seriesCount = categoriesWithSeries.reduce((n, c) => n + c.series.length, 0);
 
-const seo = await getPageSeo('/products', {
-  title: `เทียบสเปกฟิล์มกรองแสงทุกรุ่น ${modelCount} รุ่น ${seriesCount} ซีรีส์ | LUMAGUARD`,
-  description: `ตารางเทียบค่า VLT UVR IRR และ TSER ของฟิล์มกรองแสง LUMAGUARD ครบ ${modelCount} รุ่น ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ เลือกดูทีละหมวดหรือเทียบข้ามซีรีส์ในตารางเดียว`,
-});
-const { title, description } = seo;
+/*
+ * นับจากข้อมูลจริงแทนการพิมพ์ตัวเลขไว้ ค่าเดิมในฐานข้อมูลเขียน "18 รุ่น 6 ซีรีส์"
+ * ค้างอยู่หลายเดือนหลังสินค้าเพิ่มเป็นสี่สิบรุ่น เพราะไม่มีอะไรเตือนให้รู้ตัว
+ */
+const title = `เทียบสเปกฟิล์มกรองแสงทุกรุ่น ${modelCount} รุ่น ${seriesCount} ซีรีส์ | LUMAGUARD`;
+const description = `ตารางเทียบค่า VLT UVR IRR และ TSER ของฟิล์มกรองแสง LUMAGUARD ครบ ${modelCount} รุ่น ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ เลือกดูทีละหมวดหรือเทียบข้ามซีรีส์ในตารางเดียว`;
 
 ---
 
