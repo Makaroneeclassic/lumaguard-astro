@@ -93,13 +93,16 @@
     "models": [
       "MG3",
       "MG5",
+      "MG GT",
       "MG ZS",
       "MG HS",
-      "MG VS",
+      "MG VS HEV",
+      "MG Extender",
+      "MG V80",
+      "MG Urban",
       "MG EP",
-      "MG ES",
-      "MG4 Electric",
       "MG ZS EV",
+      "MG4 Electric",
       "MG Cyberster",
       "MG Maxus 9"
     ]
