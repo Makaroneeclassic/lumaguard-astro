@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { CheckSquare, Square, Columns } from "lucide-react";
 import { ALL_PRODUCTS, SERIES_LIST, type Product } from "@/lib/products";
-import { CATEGORIES, getSeriesByCategory, showsModelCodes, type ProductCategory } from "@/lib/series";
+import { CATEGORIES, getSeriesByCategory, type ProductCategory } from "@/lib/series";
 
 // ส่งออกต่อเพื่อความเข้ากันได้กับที่อื่นที่เคยนำเข้าจากไฟล์นี้
 export type { Product };
@@ -55,14 +55,6 @@ export default function ProductMatrix({ products = [], lockCategory }: ProductMa
     () => allProducts.filter((p) => activeSeriesList.includes(p.series)),
     [allProducts, activeSeriesList],
   );
-
-  /** ซีรีส์นี้โชว์รหัสรุ่นให้ลูกค้าเห็นได้ไหม ขึ้นกับหมวดที่มันสังกัด */
-  const canShowCode = (seriesName: string) => {
-    const cat = CATEGORIES.find((c) =>
-      getSeriesByCategory(c.id).some((x) => x.dbName === seriesName),
-    );
-    return cat ? showsModelCodes(cat.id) : true;
-  };
 
   const handleCategoryChange = (next: ProductCategory) => {
     setCategory(next);
@@ -291,11 +283,7 @@ export default function ProductMatrix({ products = [], lockCategory }: ProductMa
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">
                     {product.series} Series{" "}
-                    {selectedSeries.length > 0 && product.name && canShowCode(product.series)
-                      ? `(รุ่น ${product.name})`
-                      : selectedSeries.length > 0
-                      ? `(แสงส่องผ่าน ${product.vlt})`
-                      : ""}
+                    {selectedSeries.length > 0 ? `(แสงส่องผ่าน ${product.vlt})` : ""}
                   </h3>
                   <span className="text-xs text-slate-500 font-light">{product.technology}</span>
                 </div>
@@ -380,9 +368,9 @@ export default function ProductMatrix({ products = [], lockCategory }: ProductMa
                       <span className={`inline-block whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold border ${getSeriesBadgeColor(product.series)}`}>
                         {product.series} Series
                       </span>
-                      {selectedSeries.length > 0 && product.name && canShowCode(product.series) && (
+                      {selectedSeries.length > 0 && (
                         <span className="text-xs font-extrabold text-slate-700 tracking-wide pl-1">
-                          รุ่น {product.name}
+                          แสงส่องผ่าน {product.vlt}
                         </span>
                       )}
                     </div>

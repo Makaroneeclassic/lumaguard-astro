@@ -7,7 +7,7 @@ import ProductMatrix from '@/components/ProductMatrix';
 import FilmSelector from '@/components/FilmSelector';
 import PriceEstimator from '@/components/PriceEstimator';
 import LeadForm from '@/components/LeadForm';
-import { ALL_PRODUCTS, lowestPrice } from '@/lib/products';
+import { ALL_PRODUCTS, lowestPrice, withoutFactoryCodes } from '@/lib/products';
 import { getSeriesByCategory } from '@/lib/series';
 import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
 import { getEstimatorRates } from '@/lib/rates';
@@ -147,7 +147,7 @@ const description = `ฟิล์มกรองแสงบ้านและ�
     </section>
 
     <section class="mt-24">
-      <ProductMatrix client:visible products={homeProducts} lockCategory="architectural" />
+      <ProductMatrix client:visible products={withoutFactoryCodes(homeProducts)} lockCategory="architectural" />
     </section>
 
     <section id="home-estimator" class="mt-8 px-6 scroll-mt-24">

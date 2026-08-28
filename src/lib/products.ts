@@ -1,5 +1,5 @@
 import data from '@/data/products.json';
-import { SERIES, getSeriesByCategory, showsModelCodes } from '@/lib/series';
+import { SERIES, getSeriesByCategory } from '@/lib/series';
 
 /**
  * แหล่งข้อมูลสินค้าแหล่งเดียวของทั้งเว็บ
@@ -92,13 +92,14 @@ export function seriesByPrice(list: readonly string[] = ARCHITECTURAL_SERIES): s
 /**
  * ตัดรหัสรุ่นออกก่อนส่งข้อมูลให้คอมโพเนนต์ฝั่งเบราว์เซอร์
  *
- * การซ่อนด้วยเงื่อนไขตอนแสดงผลไม่พอ เพราะ Astro ฝังข้อมูลที่ส่งให้ island
- * ไว้ในแอตทริบิวต์ของหน้าเพื่อใช้ตอน hydrate รหัสจึงยังอ่านได้จากซอร์สอยู่ดี
- * ถ้าตั้งใจไม่ให้เห็น ต้องไม่ส่งค่านั้นออกไปตั้งแต่แรก
+ * ชื่ออย่าง DNC05 หรือ PNC 35 HD เป็นรหัสที่ใช้คุยกับโรงงาน ไม่ใช่ข้อมูลที่ลูกค้า
+ * ใช้ตัดสินใจ ลูกค้าเลือกจากซีรีส์กับระดับความเข้ม การโชว์รหัสจึงเพิ่มความสับสน
+ * โดยไม่ได้ช่วยอะไร และเปิดเผยข้อมูลฝั่งซัพพลายเชนโดยไม่จำเป็น
+ *
+ * ต้องตัดตั้งแต่ตอนส่งข้อมูล ไม่ใช่แค่ซ่อนตอนแสดงผล เพราะ Astro ฝังข้อมูลที่
+ * ส่งให้ island ไว้ในแอตทริบิวต์ของหน้าเพื่อใช้ตอน hydrate ถ้าซ่อนแค่ตอนเรนเดอร์
+ * รหัสจะยังอ่านได้จากซอร์สอยู่ดี
  */
-export function withoutHiddenModelCodes(list: Product[]): Product[] {
-  const hidden = new Set(
-    SERIES.filter((s) => !showsModelCodes(s.category)).map((s) => s.dbName),
-  );
-  return list.map((p) => (hidden.has(p.series) ? { ...p, name: '' } : p));
+export function withoutFactoryCodes(list: Product[]): Product[] {
+  return list.map((p) => ({ ...p, name: '' }));
 }

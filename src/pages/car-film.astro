@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import ProductMatrix from '@/components/ProductMatrix';
 import LeadForm from '@/components/LeadForm';
-import { ALL_PRODUCTS, withoutHiddenModelCodes } from '@/lib/products';
+import { ALL_PRODUCTS, withoutFactoryCodes } from '@/lib/products';
 import { getSeriesByCategory } from '@/lib/series';
 import { CAR_PRICES, CAR_SIZES, getCarPrice, formatBaht } from '@/lib/carPrices';
 import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
@@ -211,7 +211,7 @@ const description = `ฟิล์มกรองแสงรถยนต์ ${ca
     </section>
 
     <section class="mt-24">
-      <ProductMatrix client:visible products={withoutHiddenModelCodes(carProducts)} lockCategory="automotive" />
+      <ProductMatrix client:visible products={withoutFactoryCodes(carProducts)} lockCategory="automotive" />
     </section>
 
     <section class="max-w-6xl mx-auto px-6 mt-8 space-y-8">

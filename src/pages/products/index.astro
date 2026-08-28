@@ -3,8 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import ProductMatrix from '@/components/ProductMatrix';
-import { ALL_PRODUCTS, withoutHiddenModelCodes } from '@/lib/products';
-import { CATEGORIES, getSeriesByCategory, showsModelCodes } from '@/lib/series';
+import { ALL_PRODUCTS, withoutFactoryCodes } from '@/lib/products';
+import { CATEGORIES, getSeriesByCategory } from '@/lib/series';
 import { getCarPrice, formatBaht } from '@/lib/carPrices';
 
 const products = ALL_PRODUCTS;
@@ -45,7 +45,7 @@ const description = `ตารางเทียบค่า VLT UVR IRR แล�
       </p>
     </div>
 
-    <ProductMatrix client:visible products={withoutHiddenModelCodes(products)} />
+    <ProductMatrix client:visible products={withoutFactoryCodes(products)} />
 
     {/*
       หน้ารายซีรีส์ทั้งหกเคยเข้าถึงได้ทางเดียวคือผ่าน sitemap เพราะไม่มีหน้าไหน
@@ -78,11 +78,9 @@ const description = `ตารางเทียบค่า VLT UVR IRR แล�
               class="group flex h-full flex-col justify-between gap-4 rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-6 transition-shadow hover:shadow-md"
             >
               <div class="space-y-2">
-                {showsModelCodes(series.category) && (
-                  <span class="text-[10px] font-bold uppercase tracking-widest text-accent-700">
-                    {series.tag}
-                  </span>
-                )}
+                <span class="text-[10px] font-bold uppercase tracking-widest text-accent-700">
+                  {series.tag}
+                </span>
                 <h4 class="font-headline text-xl font-bold text-primary">
                   {series.displayName}
                 </h4>
