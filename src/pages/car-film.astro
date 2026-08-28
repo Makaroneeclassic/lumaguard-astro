@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import ProductMatrix from '@/components/ProductMatrix';
 import LeadForm from '@/components/LeadForm';
-import { ALL_PRODUCTS } from '@/lib/products';
+import { ALL_PRODUCTS, withoutHiddenModelCodes } from '@/lib/products';
 import { getSeriesByCategory } from '@/lib/series';
 import { CAR_PRICES, CAR_SIZES, getCarPrice, formatBaht } from '@/lib/carPrices';
 import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
@@ -190,7 +190,6 @@ const description = `ฟิล์มกรองแสงรถยนต์ ${ca
                     <a href={`/products/${series.slug}`} class="font-bold text-primary hover:underline">
                       {series.displayName}
                     </a>
-                    <span class="block text-[11px] font-normal text-on-surface-variant">{series.tag}</span>
                   </th>
                   {CAR_SIZES.map((size) => (
                     <td class="px-5 py-4 text-right font-mono font-bold text-on-surface tabular-nums">
@@ -212,7 +211,7 @@ const description = `ฟิล์มกรองแสงรถยนต์ ${ca
     </section>
 
     <section class="mt-24">
-      <ProductMatrix client:visible products={carProducts} lockCategory="automotive" />
+      <ProductMatrix client:visible products={withoutHiddenModelCodes(carProducts)} lockCategory="automotive" />
     </section>
 
     <section class="max-w-6xl mx-auto px-6 mt-8 space-y-8">

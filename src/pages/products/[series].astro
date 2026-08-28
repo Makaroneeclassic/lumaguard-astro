@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import PriceEstimator from '@/components/PriceEstimator';
 import { ALL_PRODUCTS } from '@/lib/products';
-import { SERIES, CATEGORIES, getSeries, type SeriesDetail } from '@/lib/series';
+import { SERIES, CATEGORIES, getSeries, showsModelCodes, type SeriesDetail } from '@/lib/series';
 import { buildBreadcrumbSchema } from '@/lib/schema';
 import { getCarPrice, CAR_SIZES, formatBaht } from '@/lib/carPrices';
 import { SITE_URL, BUSINESS, absoluteUrl } from '@/lib/site';
@@ -52,7 +52,11 @@ const breadcrumb = [
   { name: series.displayName, url: `/products/${series.slug}` },
 ];
 
-const title = `${series.displayName} — ${series.tag} | LUMAGUARD`;
+/** หมวดรถไม่โชว์รหัสซีรีส์ tag จึงไม่ควรไปโผล่ใน title ด้วย */
+const showCodes = showsModelCodes(series.category);
+const title = showCodes
+  ? `${series.displayName} — ${series.tag} | LUMAGUARD`
+  : `${series.displayName} ฟิล์มกรองแสงรถยนต์ | LUMAGUARD`;
 /** ฟิล์มรถคิดราคาเหมาต่อคันตามขนาดรถ เก็บคนละที่กับราคาต่อตารางฟุตของฝั่งอาคาร */
 const carPrice = series.category === 'automotive' ? getCarPrice(series.dbName) : undefined;
 
@@ -203,7 +207,7 @@ const estimatorRates = showEstimator ? await getEstimatorRates() : {};
 
         <div class="space-y-4 max-w-4xl">
           <span class="inline-block bg-white/10 px-3.5 py-1 rounded-full text-xs font-bold font-headline tracking-widest uppercase">
-            {series.tag}
+            {showCodes ? series.tag : 'ฟิล์มกรองแสงรถยนต์'}
           </span>
           <h1 class="text-4xl md:text-6xl font-extrabold font-headline tracking-tighter leading-tight">
             {series.displayName}
@@ -344,7 +348,7 @@ const estimatorRates = showEstimator ? await getEstimatorRates() : {};
             </caption>
             <thead>
               <tr class="bg-primary text-white text-xs md:text-sm font-headline">
-                <th scope="col" class="p-4 md:p-6 font-bold">ชื่อรุ่นผลิตภัณฑ์</th>
+                <th scope="col" class="p-4 md:p-6 font-bold">{showCodes ? 'ชื่อรุ่นผลิตภัณฑ์' : 'ระดับความเข้ม'}</th>
                 <th scope="col" class="p-4 md:p-6 font-bold">เทคโนโลยี</th>
                 <th scope="col" class="p-4 md:p-6 font-bold text-center">VLT (แสงส่องผ่าน)</th>
                 <th scope="col" class="p-4 md:p-6 font-bold text-center">IRR (900-1000nm)</th>
@@ -356,7 +360,13 @@ const estimatorRates = showEstimator ? await getEstimatorRates() : {};
             <tbody class="divide-y divide-outline-variant/10 text-xs md:text-sm font-medium text-on-surface-variant">
               {products.map((product, idx) => (
                 <tr class={idx % 2 === 1 ? 'bg-surface-container-low/30' : 'bg-white'}>
-                  <th scope="row" class="p-4 md:p-6 font-bold text-primary text-left">{product.name}</th>
+                  {/*
+                    หมวดรถแทนรหัสรุ่นด้วยค่าแสงส่องผ่าน เพราะเป็นสิ่งที่ลูกค้าใช้เลือกจริง
+                    ปล่อยช่องว่างไว้เฉย ๆ จะทำให้แถวไม่มีหัวเรื่องให้ยึด
+                  */}
+                  <th scope="row" class="p-4 md:p-6 font-bold text-primary text-left">
+                    {showCodes ? product.name : `แสงส่องผ่าน ${product.vlt}`}
+                  </th>
                   <td class="p-4 md:p-6">{product.technology || 'Ceramic Film'}</td>
                   <td class="p-4 md:p-6 text-center font-mono">{product.vlt}</td>
                   <td class="p-4 md:p-6 text-center font-mono">{product.irr}</td>
@@ -414,7 +424,9 @@ const estimatorRates = showEstimator ? await getEstimatorRates() : {};
               href={`/products/${other.slug}`}
               class="block h-full rounded-2xl border border-outline-variant/20 p-5 transition-shadow hover:shadow-md"
             >
-              <span class="text-xs font-bold tracking-widest text-on-surface-variant/70">{other.tag}</span>
+              {showsModelCodes(other.category) && (
+                <span class="text-xs font-bold tracking-widest text-on-surface-variant/70">{other.tag}</span>
+              )}
               <h3 class="mt-1 font-bold font-headline text-primary">{other.displayName}</h3>
               <p class="mt-2 text-sm text-on-surface-variant line-clamp-2">{other.subtitle}</p>
             </a>

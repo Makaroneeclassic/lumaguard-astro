@@ -1,5 +1,5 @@
 import data from '@/data/products.json';
-import { SERIES, getSeriesByCategory } from '@/lib/series';
+import { SERIES, getSeriesByCategory, showsModelCodes } from '@/lib/series';
 
 /**
  * แหล่งข้อมูลสินค้าแหล่งเดียวของทั้งเว็บ
@@ -87,4 +87,18 @@ export function technologyOf(series: string): string {
  */
 export function seriesByPrice(list: readonly string[] = ARCHITECTURAL_SERIES): string[] {
   return [...list].sort((a, b) => lowestPrice(a) - lowestPrice(b));
+}
+
+/**
+ * ตัดรหัสรุ่นออกก่อนส่งข้อมูลให้คอมโพเนนต์ฝั่งเบราว์เซอร์
+ *
+ * การซ่อนด้วยเงื่อนไขตอนแสดงผลไม่พอ เพราะ Astro ฝังข้อมูลที่ส่งให้ island
+ * ไว้ในแอตทริบิวต์ของหน้าเพื่อใช้ตอน hydrate รหัสจึงยังอ่านได้จากซอร์สอยู่ดี
+ * ถ้าตั้งใจไม่ให้เห็น ต้องไม่ส่งค่านั้นออกไปตั้งแต่แรก
+ */
+export function withoutHiddenModelCodes(list: Product[]): Product[] {
+  const hidden = new Set(
+    SERIES.filter((s) => !showsModelCodes(s.category)).map((s) => s.dbName),
+  );
+  return list.map((p) => (hidden.has(p.series) ? { ...p, name: '' } : p));
 }

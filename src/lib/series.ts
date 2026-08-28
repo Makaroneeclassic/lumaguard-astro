@@ -92,6 +92,18 @@ export const SERIES: SeriesDetail[] = (seriesData as SeriesRow[]).map((row) => (
   ...(row.sameFilmAs ? { sameFilmAs: row.sameFilmAs } : {}),
 }));
 
+/**
+ * หมวดที่ไม่แสดงรหัสรุ่นและรหัสซีรีส์ให้ลูกค้าเห็น
+ *
+ * ฝั่งรถลูกค้าเลือกจากระดับความเข้มกับงบ ไม่ได้เลือกจากรหัสอย่าง PNC 35 HD
+ * หรือ RT3599HD การโชว์รหัสจึงเป็นข้อมูลที่ไม่ช่วยตัดสินใจและทำให้ตารางอ่านยาก
+ * ส่วนฝั่งอาคารยังโชว์อยู่ เพราะลูกค้ากลุ่มนั้นอ้างอิงรหัสรุ่นตอนขอใบเสนอราคา
+ */
+const CATEGORIES_WITHOUT_MODEL_CODES = new Set<ProductCategory>(['automotive']);
+
+export const showsModelCodes = (category: ProductCategory): boolean =>
+  !CATEGORIES_WITHOUT_MODEL_CODES.has(category);
+
 export const getSeries = (slug: string): SeriesDetail | undefined =>
   SERIES.find((s) => s.slug === slug.toLowerCase());
 
