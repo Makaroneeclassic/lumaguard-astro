@@ -17,27 +17,6 @@ model User {
   createdAt DateTime @default(now())
 }
 
-model SeoGlobal {
-  id                     String   @id @default("global")
-  siteName               String   @default("LUMAGUARD")
-  titleTemplate          String   @default("%s | LUMAGUARD")
-  defaultDescription     String   @db.Text
-  defaultOgImage         String?  @db.Text
-  googleVerificationCode String?
-  googleAnalyticsId      String?
-  robotsTxtDirectives    String?  @db.Text
-  primaryColor           String   @default("#0f172a")
-  secondaryColor         String   @default("#0284c7")
-  textColor              String   @default("#1e293b")
-  buttonColor            String   @default("#0f172a")
-  buttonTextColor        String   @default("#ffffff")
-  fontFamily             String   @default("Noto Sans Thai")
-  businessAddress        String?  @db.Text
-  businessPhone          String?
-  businessPriceRange     String?
-  businessMapUri         String?  @db.Text
-  updatedAt              DateTime @updatedAt
-}
 
 
 // หมายเหตุ: model BlogPost ถูกถอดออกแล้ว บทความย้ายไปเก็บเป็น MDX ใน git
