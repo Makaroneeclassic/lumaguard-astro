@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import { getFeaturedPortfolio } from '@/lib/portfolio';
+import { ARCHITECTURAL_SERIES, lowestPrice } from '@/lib/products';
+import { CAR_PRICES } from '@/lib/carPrices';
 import PortfolioList from '@/components/PortfolioList';
 import TestimonialSlider from '@/components/TestimonialSlider';
 import { ShieldCheck, Thermometer, Eye } from 'lucide-react';
@@ -12,6 +14,17 @@ const description =
   "ติดฟิล์มกรองแสงบ้านและคอนโด ลดความร้อนเข้าห้องสูงสุด 12°C ป้องกันรังสี UV 99.9% ด้วยฟิล์มนาโนเซรามิก LUMAGUARD ประเมินราคาหน้างานฟรี";
 
 
+
+/*
+ * ราคาเริ่มต้นของทั้งสองฝั่ง คำนวณจากข้อมูลจริงตอน build
+ *
+ * เอามาโชว์บนการ์ดเลย เพราะคำถามแรกของคนที่เข้ามาคือ "เท่าไร" การให้ตัวเลขจริง
+ * ตั้งแต่หน้าแรกทำให้เขาเลือกทางได้เองโดยไม่ต้องกดเข้าไปดูทีละหน้า
+ */
+const homeStartingPrice = Math.min(
+  ...ARCHITECTURAL_SERIES.map((s) => lowestPrice(s)).filter((n) => n > 0),
+);
+const carStartingPrice = Math.min(...CAR_PRICES.map((c) => c.S));
 
 const portfolioItems = getFeaturedPortfolio(2);
 
@@ -217,10 +230,10 @@ const faqItems = [
     <section id="lines" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto space-y-10">
       <div class="max-w-2xl mx-auto text-center space-y-3">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-          เราทำฟิล์มสองสาย เลือกสายที่ตรงกับคุณ
+          จะติดฟิล์มให้บ้าน หรือให้รถ
         </h2>
         <p class="text-slate-600 leading-relaxed">
-          คิดราคาคนละแบบ ติดตั้งคนละวิธี แต่ละสายมีหน้าของตัวเองที่บอกราคาและสเปกครบ
+          ราคาและวิธีทำงานต่างกัน เลือกให้ตรงแล้วดูราคาได้เลย ไม่ต้องกรอกอะไรก่อน
         </p>
       </div>
 
@@ -230,14 +243,16 @@ const faqItems = [
           class="group flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
         >
           <div class="space-y-3">
-            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">คิดราคาตามพื้นที่กระจก</span>
-            <h3 class="font-headline text-2xl font-bold text-slate-900">ฟิล์มบ้านและอาคาร</h3>
+            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">
+              เริ่มต้น ฿{homeStartingPrice}/ตร.ฟุต
+            </span>
+            <h3 class="font-headline text-2xl font-bold text-slate-900">ฟิล์มบ้าน คอนโด อาคาร</h3>
             <p class="text-sm leading-relaxed text-slate-600">
-              บ้าน คอนโด และอาคารสำนักงาน ทีมงานเข้าไปวัดหน้างานให้ฟรีก่อนเสนอราคา
-              ประเมินราคาเบื้องต้นเองได้บนหน้านั้น
+              คิดตามพื้นที่กระจกจริง ไม่คิดเหมา ทีมงานเข้าไปวัดให้ฟรี
+              ยังไม่ตัดสินใจก็ไม่มีค่าใช้จ่าย
             </p>
           </div>
-          <span class="text-sm font-bold text-primary group-hover:underline">ดูรุ่นและราคาฟิล์มบ้าน →</span>
+          <span class="text-sm font-bold text-primary group-hover:underline">ดูราคาและรุ่นฟิล์มบ้าน →</span>
         </a>
 
         <a
@@ -245,21 +260,23 @@ const faqItems = [
           class="group flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
         >
           <div class="space-y-3">
-            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">ราคาเหมาทั้งคัน</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-accent-700">
+              เริ่มต้น ฿{carStartingPrice.toLocaleString('en-US')} เหมาทั้งคัน
+            </span>
             <h3 class="font-headline text-2xl font-bold text-slate-900">ฟิล์มรถยนต์</h3>
             <p class="text-sm leading-relaxed text-slate-600">
-              คิดราคาตามขนาดรถ รวมกระจกหน้าและค่าติดตั้งแล้ว เข้าไปติดตั้งถึงที่
-              ใช้เวลา 2-3 ชั่วโมงต่อคัน
+              ราคาเหมาตามขนาดรถ รวมกระจกหน้าและค่าติดตั้งแล้ว
+              เราขับไปติดให้ถึงที่ เสร็จใน 2-3 ชั่วโมง
             </p>
           </div>
-          <span class="text-sm font-bold text-primary group-hover:underline">ดูรุ่นและราคาฟิล์มรถ →</span>
+          <span class="text-sm font-bold text-primary group-hover:underline">ดูราคาและรุ่นฟิล์มรถ →</span>
         </a>
       </div>
 
       <p class="text-center text-sm text-slate-600">
-        อยากเทียบค่าสเปกทุกรุ่นในตารางเดียว —
-        <a href="/products" class="font-bold text-primary hover:underline">ดูตารางเทียบสเปกทั้งหมด</a>
-        · อยากรู้ขั้นตอนหน้างาน —
+        อยากเทียบค่ากันความร้อนทุกรุ่นก่อน —
+        <a href="/products" class="font-bold text-primary hover:underline">ดูตารางเทียบสเปก</a>
+        · อยากรู้ว่าวันติดตั้งเป็นยังไง —
         <a href="/services" class="font-bold text-primary hover:underline">ดูขั้นตอนการทำงาน</a>
       </p>
     </section>
@@ -296,9 +313,9 @@ const faqItems = [
     */}
     <section class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto">
       <div class="mx-auto max-w-3xl space-y-4 rounded-3xl bg-slate-50 border border-slate-200 p-10 text-center">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">พร้อมขอใบเสนอราคาแล้ว</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">อยากรู้ราคาของคุณเท่าไร</h2>
         <p class="text-slate-600 leading-relaxed">
-          เลือกสายที่ตรงกับงานของคุณ แบบฟอร์มในแต่ละหน้าถามเฉพาะสิ่งที่จำเป็นกับงานนั้นจริง ๆ
+          บอกแค่ไม่กี่ข้อ ทีมงานตอบกลับพร้อมราคา ไม่มีค่าใช้จ่ายและไม่มีการตื๊อ
         </p>
         <div class="flex flex-wrap justify-center gap-3 pt-2">
           <a href="/home-film#home-quote" class="rounded-xl bg-primary px-7 py-3.5 font-headline text-sm font-bold text-on-primary transition-opacity hover:opacity-90">
