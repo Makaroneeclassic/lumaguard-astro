@@ -11,8 +11,12 @@
 export interface LeadNotification {
   name: string;
   phone: string;
-  district: string;
+  /** building = งานอาคาร/บ้าน · car = งานฟิล์มรถยนต์ */
+  leadType?: string;
+  district?: string;
   propertyType?: string;
+  carBrand?: string;
+  carModel?: string;
   areaSize?: number | null;
   recommendedFilm?: string;
   utmSource?: string;
@@ -23,15 +27,26 @@ export interface LeadNotification {
 }
 
 function formatMessage(lead: LeadNotification): string {
+  const isCar = lead.leadType === 'car';
+
+  // หัวข้อบอกชนิดงานตั้งแต่บรรทัดแรก ทีมขายจะได้รู้ว่าต้องเปิดตารางราคาไหน
+  // ก่อนโทรกลับ ระหว่างงานอาคารที่คิดตามพื้นที่ กับงานรถที่คิดตามขนาดรถ
   const lines = [
-    '🔔 ลีดใหม่จากเว็บไซต์',
+    isCar ? '🚗 ลีดใหม่ — ฟิล์มรถยนต์' : '🏠 ลีดใหม่ — ฟิล์มบ้าน/อาคาร',
     '',
     `ชื่อ: ${lead.name}`,
     `โทร: ${lead.phone}`,
-    `เขต/พื้นที่: ${lead.district}`,
   ];
 
-  if (lead.propertyType) lines.push(`ประเภท: ${lead.propertyType}`);
+  if (isCar) {
+    lines.push(`รถ: ${[lead.carBrand, lead.carModel].filter(Boolean).join(' ') || '-'}`);
+    // งานรถเป็นบริการไปติดถึงที่ แต่ช่องนี้ไม่บังคับ จึงแสดงเฉพาะเมื่อลูกค้าแจ้งมา
+    if (lead.district) lines.push(`เขต/พื้นที่: ${lead.district}`);
+  } else {
+    lines.push(`เขต/พื้นที่: ${lead.district ?? '-'}`);
+  }
+
+  if (!isCar && lead.propertyType) lines.push(`ประเภท: ${lead.propertyType}`);
   if (lead.areaSize) lines.push(`พื้นที่: ${lead.areaSize} ตร.ฟุต`);
   if (lead.recommendedFilm) lines.push(`ฟิล์มที่แนะนำ: ${lead.recommendedFilm}`);
 
@@ -97,7 +112,10 @@ async function sendEmail(lead: LeadNotification, message: string): Promise<void>
       // ใช้งานจริงต้องยืนยันโดเมนใน Resend แล้วตั้ง LEAD_NOTIFY_FROM
       from: import.meta.env.LEAD_NOTIFY_FROM || 'LUMAGUARD <onboarding@resend.dev>',
       to: [to],
-      subject: `ลีดใหม่: ${lead.name} (${lead.district})`,
+      subject:
+        lead.leadType === 'car'
+          ? `ลีดใหม่ ฟิล์มรถ: ${lead.name} (${[lead.carBrand, lead.carModel].filter(Boolean).join(' ') || 'ไม่ระบุรถ'})`
+          : `ลีดใหม่: ${lead.name} (${lead.district ?? 'ไม่ระบุเขต'})`,
       text: message,
     }),
   });

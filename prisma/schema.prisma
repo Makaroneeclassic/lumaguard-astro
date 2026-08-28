@@ -63,9 +63,21 @@ model Lead {
   id           String   @id @default(uuid())
   name         String
   phone        String
-  district     String
-  propertyType String
+
+  /// building = งานอาคาร/บ้าน · car = งานฟิล์มรถยนต์
+  /// ค่าเริ่มต้นเป็น building เพื่อให้ลีดเก่าที่เก็บไว้ก่อนมีงานรถยังอ่านได้ถูก
+  leadType     String   @default("building")
+
+  /// สองช่องนี้เคยบังคับ เพราะตอนนั้นมีแต่งานอาคาร
+  /// งานรถไม่มีทั้งเขตพื้นที่และประเภทอาคาร จึงต้องยอมให้ว่างได้
+  district     String?
+  propertyType String?
   areaSize     Float?
+
+  /// เฉพาะงานรถ — ทีมขายต้องรู้ยี่ห้อกับรุ่นก่อนเสนอราคา
+  /// เพราะราคาคิดตามขนาดรถ ไม่ใช่ตามพื้นที่กระจก
+  carBrand     String?
+  carModel     String?
   status          String   @default("new")
   estimatedArea   Float?
   recommendedFilm String?

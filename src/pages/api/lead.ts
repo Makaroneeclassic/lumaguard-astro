@@ -21,8 +21,19 @@ const leadValidation = z.object({
   eventId: z.string().nullish(),
   name: z.string().min(2, 'Name is required'),
   phone: z.string().min(9, 'Phone is required'),
-  district: z.string().min(2, 'District is required'),
-  propertyType: z.string().nullish().transform((v) => v ?? 'Condo'),
+
+  /**
+   * ช่องที่บังคับต่างกันตามชนิดงาน
+   *
+   * งานอาคารต้องรู้เขตพื้นที่ถึงจะนัดเข้าวัดหน้างานได้ ส่วนงานรถต้องรู้ยี่ห้อ
+   * กับรุ่นถึงจะเสนอราคาได้ เพราะคิดตามขนาดรถไม่ใช่พื้นที่กระจก
+   * บังคับทั้งสองชุดกับทุกงานไม่ได้ จึงตรวจแยกกันใน superRefine ข้างล่าง
+   */
+  leadType: z.enum(['building', 'car']).nullish().transform((v) => v ?? 'building'),
+  district: z.string().nullish(),
+  propertyType: z.string().nullish(),
+  carBrand: z.string().nullish(),
+  carModel: z.string().nullish(),
   areaSize: z.union([z.number(), z.string()]).nullish(),
   estimatedArea: z.union([z.number(), z.string()]).nullish(),
   recommendedFilm: z.string().nullish(),
@@ -34,6 +45,19 @@ const leadValidation = z.object({
   gaClientId: z.string().nullish(),
   landingPage: z.string().nullish(),
   website_url: z.string().nullish() // Honeypot field
+}).superRefine((data, ctx) => {
+  if (data.leadType === 'car') {
+    if (!data.carBrand || data.carBrand.trim().length < 2) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['carBrand'], message: 'Car brand is required' });
+    }
+    if (!data.carModel || data.carModel.trim().length < 1) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['carModel'], message: 'Car model is required' });
+    }
+    return;
+  }
+  if (!data.district || data.district.trim().length < 2) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['district'], message: 'District is required' });
+  }
 });
 
 export const POST: APIRoute = async ({ request }) => {
@@ -62,6 +86,8 @@ export const POST: APIRoute = async ({ request }) => {
         name: 'ชื่อ-นามสกุล',
         phone: 'เบอร์โทรศัพท์',
         district: 'เขต/อำเภอ',
+        carBrand: 'ยี่ห้อรถ',
+        carModel: 'รุ่นรถ',
       };
       const missing = [...new Set(parsed.error.issues.map((i) => String(i.path[0])))]
         .map((f) => labels[f])
@@ -115,8 +141,11 @@ export const POST: APIRoute = async ({ request }) => {
           where: { id: recent.id },
           data: {
             name: data.name || recent.name,
+            leadType: data.leadType || recent.leadType,
             district: data.district || recent.district,
             propertyType: data.propertyType || recent.propertyType,
+            carBrand: data.carBrand || recent.carBrand,
+            carModel: data.carModel || recent.carModel,
             areaSize: data.areaSize ? parseFloat(String(data.areaSize)) : recent.areaSize,
             estimatedArea: data.estimatedArea
               ? parseFloat(String(data.estimatedArea))
@@ -137,8 +166,13 @@ export const POST: APIRoute = async ({ request }) => {
         data: {
           name: data.name,
           phone: data.phone,
+          leadType: data.leadType,
           district: data.district,
-          propertyType: data.propertyType || 'Condo',
+          // งานอาคารยังเดาเป็น Condo ได้เพราะเป็นงานส่วนใหญ่ ส่วนงานรถไม่มีค่านี้
+          propertyType:
+            data.leadType === 'car' ? null : data.propertyType || 'Condo',
+          carBrand: data.carBrand,
+          carModel: data.carModel,
           areaSize: data.areaSize ? parseFloat(String(data.areaSize)) : null,
           status: 'new',
           estimatedArea: data.estimatedArea ? parseFloat(String(data.estimatedArea)) : null,
@@ -234,8 +268,11 @@ export const POST: APIRoute = async ({ request }) => {
       notifyNewLead({
         name: data.name,
         phone: data.phone,
-        district: data.district,
-        propertyType: data.propertyType,
+        leadType: data.leadType,
+        district: data.district ?? undefined,
+        propertyType: data.propertyType ?? undefined,
+        carBrand: data.carBrand ?? undefined,
+        carModel: data.carModel ?? undefined,
         areaSize: data.areaSize ? parseFloat(String(data.areaSize)) : null,
         recommendedFilm: data.recommendedFilm,
         utmSource: data.utmSource,

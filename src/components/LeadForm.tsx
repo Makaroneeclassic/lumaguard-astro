@@ -19,10 +19,18 @@ function readGaClientId(): string | undefined {
 
 interface LeadFormProps {
   tone?: "default" | "sky";
+  /**
+   * ชนิดงานที่ฟอร์มนี้รับ
+   *
+   * งานอาคารต้องรู้เขตพื้นที่เพื่อนัดเข้าวัดหน้างาน ส่วนงานรถต้องรู้ยี่ห้อกับรุ่น
+   * เพราะราคาคิดตามขนาดรถ ถามครบทุกช่องทั้งสองแบบจะกลายเป็นฟอร์มยาวที่คนกรอกไม่จบ
+   */
+  variant?: "building" | "car";
 }
 
-export default function LeadForm({ tone = "default" }: LeadFormProps) {
+export default function LeadForm({ tone = "default", variant = "building" }: LeadFormProps) {
   const sky = tone === "sky";
+  const isCar = variant === "car";
 
   const shellClass = sky
     ? "bg-accent-50/70 p-6 sm:p-8 md:p-10 rounded-2xl border border-accent-200 relative overflow-hidden max-w-4xl mx-auto"
@@ -44,6 +52,8 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
     district: "",
     propertyType: "Condo",
     areaSize: "",
+    carBrand: "",
+    carModel: "",
   });
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -51,9 +61,15 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.district) {
+    const missing = !formData.name || !formData.phone
+      || (isCar ? !formData.carBrand || !formData.carModel : !formData.district);
+    if (missing) {
       setStatus("error");
-      setErrorMessage("กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน (ชื่อ, เบอร์โทร, เขตพื้นที่)");
+      setErrorMessage(
+        isCar
+          ? "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน (ชื่อ, เบอร์โทร, ยี่ห้อรถ, รุ่นรถ)"
+          : "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน (ชื่อ, เบอร์โทร, เขตพื้นที่)",
+      );
       return;
     }
 
@@ -76,7 +92,15 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          areaSize: formData.areaSize ? parseFloat(formData.areaSize) : null,
+          leadType: variant,
+          // ไม่ส่งช่องของอีกฝั่งไปด้วย ไม่งั้นลีดงานรถจะมี propertyType ติดไป
+          // แล้วในหลังบ้านจะดูเหมือนงานคอนโดทั้งที่เป็นงานรถ
+          // ส่วนเขตพื้นที่ใช้ร่วมกันได้ งานรถก็ต้องรู้ว่าจะขับไปที่ไหน
+          district: formData.district || null,
+          propertyType: isCar ? null : formData.propertyType,
+          carBrand: isCar ? formData.carBrand : null,
+          carModel: isCar ? formData.carModel : null,
+          areaSize: isCar || !formData.areaSize ? null : parseFloat(formData.areaSize),
           estimatedArea,
           recommendedFilm,
           // ส่ง client id ของ GA4 ไปด้วย เพื่อให้ event ที่ยิงจากเซิร์ฟเวอร์
@@ -196,6 +220,69 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
               />
             </div>
 
+            {isCar ? (
+              <>
+                <div className="space-y-2">
+                  <label htmlFor="lead-car-brand" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    ยี่ห้อรถ *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    id="lead-car-brand"
+                    placeholder="เช่น Toyota, Honda, Isuzu"
+                    value={formData.carBrand}
+                    onChange={(e) => setFormData({ ...formData, carBrand: e.target.value })}
+                    disabled={status === "submitting"}
+                    className={fieldClass}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="lead-car-model" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    รุ่นรถ *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    id="lead-car-model"
+                    placeholder="เช่น Yaris Ativ, CR-V, D-Max Cab"
+                    value={formData.carModel}
+                    onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
+                    disabled={status === "submitting"}
+                    className={fieldClass}
+                  />
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    ใช้ประเมินขนาดรถเพื่อเสนอราคาเหมาทั้งคัน
+                  </p>
+                </div>
+
+                {/*
+                  งานรถเป็นบริการไปติดถึงที่ ทีมงานต้องรู้ว่าจะไปที่ไหน
+                  แต่ไม่บังคับ เพราะคนที่แค่อยากรู้ราคายังไม่จำเป็นต้องบอกที่อยู่
+                  และการเพิ่มช่องบังคับทุกช่องคือวิธีทำให้คนกรอกไม่จบ
+                */}
+                <div className="space-y-2">
+                  <label htmlFor="lead-car-district" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    เขต / อำเภอ ที่ให้เข้าไปติดตั้ง
+                  </label>
+                  <input
+                    type="text"
+                    id="lead-car-district"
+                    autoComplete="address-level2"
+                    placeholder="เช่น หลักสี่, บางนา (ไม่บังคับ)"
+                    value={formData.district}
+                    onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                    disabled={status === "submitting"}
+                    className={fieldClass}
+                  />
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    เราเข้าไปติดตั้งถึงที่ — แจ้งไว้ล่วงหน้าจะนัดคิวได้เร็วขึ้น
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
             <div className="space-y-2">
               <label htmlFor="lead-district" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 เขต / อำเภอ (ที่ตั้งอาคาร) *
@@ -245,6 +332,8 @@ export default function LeadForm({ tone = "default" }: LeadFormProps) {
                 className={fieldClass}
               />
             </div>
+              </>
+            )}
           </div>
 
           {/*

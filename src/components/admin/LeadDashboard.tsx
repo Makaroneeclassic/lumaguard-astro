@@ -4,17 +4,19 @@ import { useState } from "react";
 import {
   User, Phone, MapPin, Building, Square, Calendar,
   Archive, Check, X, Target, BarChart2, ArrowRight,
-  Clock, ShieldAlert, FileText, Globe, Inbox
-} from "lucide-react";
+  Clock, ShieldAlert, FileText, Globe, Inbox, Car } from "lucide-react";
 import { useToast } from "./ToastProvider";
 
 interface Lead {
   id: string;
   name: string;
   phone: string;
-  district: string;
-  propertyType: string;
+  leadType?: string | null;
+  district: string | null;
+  propertyType: string | null;
   areaSize: number | null;
+  carBrand?: string | null;
+  carModel?: string | null;
   status: string;
   createdAt: Date;
   estimatedArea?: number | null;
@@ -156,7 +158,18 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
                     </td>
                     <td className="p-5 font-bold font-headline">{lead.name}</td>
                     <td className="p-5 font-mono text-on-surface-variant">{lead.phone}</td>
-                    <td className="p-5 text-on-surface-variant">{lead.district}</td>
+                    <td className="p-5 text-on-surface-variant">
+                      {lead.leadType === "car" ? (
+                        <span className="inline-flex items-center gap-2">
+                          <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">
+                            รถ
+                          </span>
+                          {[lead.carBrand, lead.carModel].filter(Boolean).join(" ") || "-"}
+                        </span>
+                      ) : (
+                        lead.district || "-"
+                      )}
+                    </td>
                     <td className="p-5 text-center">
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
@@ -256,6 +269,37 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
                       </a>
                     </div>
 
+                    {/*
+                      ลีดงานรถไม่มีทั้งประเภทอาคารและเขตพื้นที่ ถ้าใช้กล่องชุดเดิม
+                      จะขึ้นว่า "ร้านค้า/พาณิชย์" กับ "เขต undefined" ซึ่งอ่านแล้วเข้าใจผิด
+                      ว่าเป็นงานอาคารที่ข้อมูลหาย
+                    */}
+                    {selectedLead.leadType === "car" ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 space-y-1">
+                          <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">ยี่ห้อรถ</span>
+                          <span className="text-sm font-bold text-on-surface flex items-center gap-1.5">
+                            <Car className="w-4 h-4 text-primary shrink-0" /> {selectedLead.carBrand || "-"}
+                          </span>
+                        </div>
+
+                        <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 space-y-1">
+                          <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">รุ่นรถ</span>
+                          <span className="text-sm font-bold text-on-surface flex items-center gap-1.5">
+                            <Car className="w-4 h-4 text-primary shrink-0" /> {selectedLead.carModel || "-"}
+                          </span>
+                        </div>
+
+                        {selectedLead.district && (
+                          <div className="col-span-2 p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 space-y-1">
+                            <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">เขตพื้นที่ที่ให้เข้าไปติดตั้ง</span>
+                            <span className="text-sm font-bold text-on-surface flex items-center gap-1.5">
+                              <MapPin className="w-4 h-4 text-primary shrink-0" /> เขต {selectedLead.district}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 space-y-1">
                         <span className="block text-[10px] text-on-surface-variant/60 font-bold uppercase">ประเภทอสังหาฯ</span>
@@ -278,6 +322,7 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
                         </span>
                       </div>
                     </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                       {selectedLead.areaSize && (
