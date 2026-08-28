@@ -1,0 +1,286 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar.astro';
+import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd.astro';
+import ProductMatrix from '@/components/ProductMatrix';
+import LeadForm from '@/components/LeadForm';
+import { ALL_PRODUCTS } from '@/lib/products';
+import { getSeriesByCategory } from '@/lib/series';
+import { CAR_PRICES, CAR_SIZES, getCarPrice, formatBaht } from '@/lib/carPrices';
+import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
+import { getPageSeo } from '@/lib/pageSeo';
+
+/**
+ * หน้าขายฟิล์มรถยนต์
+ *
+ * แยกจาก /products เพราะ "ฟิล์มกรองแสงรถยนต์ ราคา" กับ "ฟิล์มกรองแสงบ้าน ราคา"
+ * เป็นคนละคำค้นที่หน้าเดียวจับได้ไม่ดีทั้งคู่ และคนที่เข้ามาหาฟิล์มรถไม่ควรต้อง
+ * เลื่อนผ่านเครื่องคิดราคาตามพื้นที่กระจกซึ่งใช้กับรถไม่ได้
+ *
+ * วางไว้ระดับบนสุดไม่ใช่ใต้ /products เพราะ /products/[series].astro เป็น
+ * dynamic route อยู่แล้ว การเพิ่ม /products/[category] ที่ระดับเดียวกันจะชนกัน
+ */
+const carSeries = getSeriesByCategory('automotive');
+const carSeriesNames = new Set(carSeries.map((s) => s.dbName));
+const carProducts = ALL_PRODUCTS.filter((p) => carSeriesNames.has(p.series));
+
+// ราคาถูกที่สุดในไลน์ ใช้เป็นตัวเลข "เริ่มต้นที่" ทั้งหน้า คำนวณจากข้อมูลจริง
+// แทนที่จะพิมพ์ไว้ในข้อความแล้วลืมแก้ตอนราคาเปลี่ยน
+const startingPrice = Math.min(...CAR_PRICES.map((c) => c.S));
+
+const steps = [
+  {
+    no: '01',
+    title: 'แจ้งยี่ห้อและรุ่นรถ',
+    body: 'ราคาคิดเหมาทั้งคันตามขนาดรถ ไม่ได้คิดตามจำนวนบานหรือพื้นที่กระจก แจ้งแค่ยี่ห้อกับรุ่นก็รู้ราคาได้ทันที ไม่ต้องวัดอะไรเอง',
+  },
+  {
+    no: '02',
+    title: 'เลือกซีรีส์ฟิล์มและนัดวัน',
+    body: 'ทีมงานแนะนำซีรีส์ที่เหมาะกับการใช้งานจริง ทั้งความเข้มที่ต้องการ งบประมาณ และว่าจอดกลางแจ้งบ่อยแค่ไหน จากนั้นนัดวันเวลาที่คุณสะดวก',
+  },
+  {
+    no: '03',
+    title: 'เราเข้าไปติดตั้งถึงที่',
+    body: 'ไม่ต้องขับรถมาหาเรา ทีมช่างเข้าไปติดตั้งให้ถึงที่บ้านหรือที่ทำงาน ใช้เวลาประมาณ 2-3 ชั่วโมงต่อคัน รวมกระจกหน้าซึ่งเรารับติดด้วย',
+  },
+  {
+    no: '04',
+    title: 'ตรวจรับงานและรับประกัน',
+    body: 'ตรวจงานร่วมกันจนพอใจ พร้อมอธิบายข้อควรปฏิบัติในช่วงแรกและมอบการรับประกัน หากมีปัญหาหลังใช้งาน ทีมงานดูแลต่อเนื่อง',
+  },
+];
+
+const aftercare = [
+  {
+    title: 'ไม่เลื่อนกระจกลง 7 วันแรก',
+    body: 'กาวยังไม่เซ็ตตัวเต็มที่ การเลื่อนกระจกในช่วงนี้ทำให้ฟิล์มขยับหรือลอกที่ขอบได้',
+  },
+  {
+    title: 'ยังไม่เช็ดกระจกด้านในในช่วง 7 วันแรก',
+    body: 'ปล่อยให้แห้งสนิทก่อน และงดเปิดไล่ฝ้ากระจกหลังในช่วงนี้ด้วย เพราะความร้อนจากเส้นไล่ฝ้าอาจทำให้ฟิล์มขยับก่อนกาวเซ็ต',
+  },
+  {
+    title: 'ฝ้าหรือฟองน้ำเล็ก ๆ ในช่วงแรกเป็นเรื่องปกติ',
+    body: 'เป็นน้ำที่เหลืออยู่ระหว่างฟิล์มกับกระจก จะระเหยหายไปเองโดยทั่วไปภายใน 1-4 สัปดาห์ ขึ้นกับอากาศและแสงแดดที่รถได้รับ ระหว่างนี้ห้ามกด รีด หรือแกะ',
+  },
+  {
+    title: 'เลี่ยงน้ำยาเช็ดกระจกที่มีแอมโมเนีย',
+    body: 'แอมโมเนียทำให้ฟิล์มเปลี่ยนสีและเสื่อมสภาพเร็ว ใช้น้ำสบู่อ่อนกับผ้าไมโครไฟเบอร์ก็เพียงพอ',
+  },
+  {
+    title: 'ไม่ใช้ของแข็งขูดกระจกด้านใน',
+    body: 'ที่ขูดน้ำแข็ง แปรงแข็ง หรือฟองน้ำด้านหยาบ ทำให้ผิวฟิล์มเป็นรอยถาวร',
+  },
+  {
+    title: 'ล้างรถได้ตามปกติ',
+    body: 'ฟิล์มติดอยู่ด้านในจึงไม่โดนน้ำจากการล้างรถ แต่ช่วงสัปดาห์แรกเลี่ยงการฉีดน้ำแรงจ่อขอบกระจก',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'ติดฟิล์มรถใช้เวลานานเท่าไร',
+    a: 'ประมาณ 2-3 ชั่วโมงต่อคัน ขึ้นอยู่กับขนาดรถและจำนวนบานกระจก เราเข้าไปติดตั้งถึงที่ คุณจึงไม่ต้องเสียเวลาขับรถมาและนั่งรอที่ร้าน',
+  },
+  {
+    q: 'ต้องขับรถไปที่ร้านไหม',
+    a: 'ไม่ต้องครับ เราเป็นบริการเข้าไปติดตั้งถึงที่ ทั้งที่บ้านและที่ทำงาน แจ้งเขตพื้นที่ที่สะดวกมาตอนขอใบเสนอราคา ทีมงานจะนัดวันเวลาให้',
+  },
+  {
+    q: 'ติดกระจกบานหน้าด้วยได้ไหม',
+    a: 'ได้ครับ เรารับติดกระจกบานหน้าด้วย และรวมอยู่ในราคาเหมาทั้งคันแล้ว ไม่ได้คิดเพิ่มแยก',
+  },
+  {
+    q: 'ราคาคิดยังไง คิดตามจำนวนบานหรือเปล่า',
+    a: `คิดเหมาทั้งคันตามขนาดรถ ไม่ได้คิดรายบาน แบ่งเป็นสี่ขนาดคือ ${CAR_SIZES.map((s) => `${s.key} (${s.example})`).join(' · ')} ส่วนรถที่มีซันรูฟคิดเพิ่มจากราคาตามขนาด ราคาเริ่มต้นที่ ${formatBaht(startingPrice)}`,
+  },
+  {
+    q: 'รุ่นฟิล์มที่เข้มต่างกัน ราคาต่างกันไหม',
+    a: 'ไม่ต่างครับ ภายในซีรีส์เดียวกันทุกระดับความเข้มราคาเท่ากัน คุณจึงเลือกความเข้มจากการใช้งานจริงได้เลย ไม่ต้องเลือกเพราะราคา',
+  },
+  {
+    q: 'ติดฟิล์มแล้วเลื่อนกระจกได้เมื่อไร',
+    a: 'รอ 7 วันหลังติดตั้ง เพราะกาวยังเซ็ตตัวไม่เต็มที่ ถ้าเลื่อนกระจกก่อนอาจทำให้ฟิล์มขยับหรือลอกที่ขอบ ส่วนฝ้าหรือฟองเล็ก ๆ ที่เห็นในช่วงแรกเป็นน้ำที่ยังระเหยไม่หมด จะหายไปเองโดยทั่วไปภายใน 1-4 สัปดาห์',
+  },
+];
+
+const seo = await getPageSeo('/car-film', {
+  title: `ฟิล์มกรองแสงรถยนต์ ราคาเหมาทั้งคัน เริ่ม ${formatBaht(startingPrice)} | LUMAGUARD`,
+  description: `ฟิล์มกรองแสงรถยนต์ ${carSeries.length} ซีรีส์ ราคาเหมาทั้งคันตามขนาดรถ รวมกระจกหน้าและค่าติดตั้ง เข้าไปติดถึงที่ ใช้เวลา 2-3 ชั่วโมง ดูค่า TSER IRR และ UV ครบทุกรุ่น`,
+});
+const { title, description } = seo;
+---
+
+<Layout title={title} description={description}>
+  <JsonLd
+    schema={buildBreadcrumbSchema([
+      { name: 'หน้าแรก', url: '/' },
+      { name: 'ฟิล์มรถยนต์', url: '/car-film' },
+    ])}
+  />
+  <JsonLd schema={buildFaqSchema(faqItems)} />
+
+  <TopNavBar pathname={Astro.url.pathname} />
+
+  <main class="min-h-screen pt-24 pb-20">
+    <section class="max-w-4xl mx-auto px-6 text-center space-y-5">
+      <span class="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
+        เข้าไปติดตั้งถึงที่ · 2-3 ชั่วโมง
+      </span>
+      <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+        ฟิล์มกรองแสงรถยนต์ ราคาเหมาทั้งคัน
+      </h1>
+      <p class="text-slate-600 leading-relaxed">
+        {carSeries.length} ซีรีส์ ตั้งแต่นาโนเซรามิกจนถึงนาโนสปัตเตอร์
+        ราคาคิดตามขนาดรถไม่ใช่รายบาน รวมกระจกหน้าและค่าติดตั้งแล้ว
+        เริ่มต้น <strong class="text-slate-900">{formatBaht(startingPrice)}</strong>
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <a
+          href="#car-quote"
+          class="rounded-full bg-primary px-7 py-3 font-headline text-sm font-bold text-on-primary transition-opacity hover:opacity-90"
+        >
+          ขอใบเสนอราคาฟรี
+        </a>
+        <a
+          href="#car-price"
+          class="rounded-full border border-outline-variant/40 px-7 py-3 font-headline text-sm font-bold text-primary transition-colors hover:bg-surface-container-low"
+        >
+          ดูตารางราคา
+        </a>
+      </div>
+    </section>
+
+    <section id="car-price" class="max-w-6xl mx-auto px-6 mt-20 space-y-6 scroll-mt-24">
+      <div class="max-w-2xl space-y-2">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">ราคาทุกซีรีส์ แยกตามขนาดรถ</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          ราคาเหมาทั้งคัน รวมกระจกหน้าและค่าติดตั้งแล้ว
+          ภายในซีรีส์เดียวกันทุกระดับความเข้มราคาเท่ากัน
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-outline-variant/20">
+        <table class="w-full min-w-[640px] text-sm">
+          <caption class="sr-only">ราคาฟิล์มกรองแสงรถยนต์ทุกซีรีส์ แยกตามขนาดรถ</caption>
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant">
+              <th scope="col" class="px-5 py-3 text-left font-headline text-xs font-bold uppercase tracking-widest">ซีรีส์</th>
+              {CAR_SIZES.map((size) => (
+                <th scope="col" class="px-5 py-3 text-right font-headline text-xs font-bold uppercase tracking-widest">
+                  {size.key}
+                  <span class="block font-normal normal-case tracking-normal text-[11px] text-on-surface-variant/70">
+                    {size.example}
+                  </span>
+                </th>
+              ))}
+              <th scope="col" class="px-5 py-3 text-right font-headline text-xs font-bold uppercase tracking-widest">
+                ซันรูฟ
+                <span class="block font-normal normal-case tracking-normal text-[11px] text-on-surface-variant/70">
+                  คิดเพิ่ม
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {carSeries.map((series) => {
+              const price = getCarPrice(series.dbName);
+              if (!price) return null;
+              return (
+                <tr class="border-t border-outline-variant/15">
+                  <th scope="row" class="px-5 py-4 text-left">
+                    <a href={`/products/${series.slug}`} class="font-bold text-primary hover:underline">
+                      {series.displayName}
+                    </a>
+                    <span class="block text-[11px] font-normal text-on-surface-variant">{series.tag}</span>
+                  </th>
+                  {CAR_SIZES.map((size) => (
+                    <td class="px-5 py-4 text-right font-mono font-bold text-on-surface tabular-nums">
+                      {formatBaht(price[size.key])}
+                    </td>
+                  ))}
+                  <td class="px-5 py-4 text-right font-mono text-on-surface-variant tabular-nums">
+                    + {formatBaht(price.sunroof)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-on-surface-variant">
+        ไม่แน่ใจว่ารถของคุณอยู่ขนาดไหน — แจ้งยี่ห้อกับรุ่นมาในฟอร์มด้านล่าง ทีมงานตอบกลับพร้อมราคา
+      </p>
+    </section>
+
+    <section class="mt-24">
+      <ProductMatrix client:visible products={carProducts} lockCategory="automotive" />
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 mt-8 space-y-8">
+      <div class="max-w-2xl space-y-2">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">ขั้นตอนตั้งแต่ถามราคาจนติดตั้งเสร็จ</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          ไม่ต้องขับรถมาหาเรา และไม่ต้องวัดกระจกเอง
+        </p>
+      </div>
+      <ol class="grid grid-cols-1 gap-8 md:grid-cols-4">
+        {steps.map((step) => (
+          <li class="space-y-3">
+            <div class="flex h-12 w-16 items-center justify-center rounded-2xl bg-slate-100 shadow-inner">
+              <span class="text-xl font-extrabold text-slate-800">{step.no}</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900">{step.title}</h3>
+            <p class="text-sm font-light leading-relaxed text-slate-600">{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 mt-24 space-y-8">
+      <div class="max-w-2xl space-y-2">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">หลังติดตั้งเสร็จ ต้องดูแลยังไง</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          ช่วง 7 วันแรกสำคัญที่สุด เพราะกาวยังเซ็ตตัวไม่เต็มที่
+        </p>
+      </div>
+      <ul class="grid grid-cols-1 gap-5 md:grid-cols-3">
+        {aftercare.map((item) => (
+          <li class="space-y-2 rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-6">
+            <h3 class="text-sm font-bold text-on-surface">{item.title}</h3>
+            <p class="text-sm font-light leading-relaxed text-on-surface-variant">{item.body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="car-quote" class="mt-24 px-6 scroll-mt-24">
+      <div class="mx-auto mb-8 max-w-2xl space-y-2 text-center">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">ขอใบเสนอราคาฟิล์มรถ</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          แจ้งยี่ห้อกับรุ่นรถ ทีมงานตอบกลับพร้อมราคาเหมาทั้งคัน ไม่มีค่าใช้จ่าย
+        </p>
+      </div>
+      <LeadForm client:visible variant="car" />
+    </section>
+
+    <section class="mx-auto mt-24 max-w-4xl space-y-8 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-10">
+      <div class="mx-auto max-w-xl space-y-2 text-center">
+        <span class="text-xs font-bold uppercase tracking-widest text-accent-700">คำถามที่พบบ่อย (FAQS)</span>
+        <h2 class="text-2xl font-extrabold text-slate-900 sm:text-3xl">เรื่องที่ลูกค้าถามบ่อยก่อนติดฟิล์มรถ</h2>
+      </div>
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-6">
+            <h3 class="text-base font-bold text-slate-900">Q: {item.q}</h3>
+            <p class="text-justify text-sm font-light leading-relaxed text-slate-600">A: {item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer client:visible />
+</Layout>

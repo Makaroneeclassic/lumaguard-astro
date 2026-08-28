@@ -11,6 +11,13 @@ export { SERIES_LIST };
 
 interface ProductMatrixProps {
   products?: Product[];
+  /**
+   * ล็อกไว้ที่หมวดเดียวและซ่อนแท็บเลือกหมวด
+   *
+   * ใช้ในหน้าขายของแต่ละหมวด ซึ่งคนที่เข้ามาเลือกหมวดไปแล้วตั้งแต่หน้าก่อน
+   * การโชว์แท็บให้สลับไปหมวดอื่นตรงนั้นคือการชวนให้ออกจากเส้นทางที่กำลังจะซื้อ
+   */
+  lockCategory?: ProductCategory;
 }
 
 /**
@@ -23,9 +30,9 @@ const ACTIVE_CATEGORIES = CATEGORIES.filter(
   (c) => getSeriesByCategory(c.id).length > 0,
 );
 
-export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
+export default function ProductMatrix({ products = [], lockCategory }: ProductMatrixProps) {
   const [category, setCategory] = useState<ProductCategory>(
-    ACTIVE_CATEGORIES[0]?.id ?? "architectural",
+    lockCategory ?? ACTIVE_CATEGORIES[0]?.id ?? "architectural",
   );
   const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
   const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
@@ -183,7 +190,7 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
       </div>
 
       {/* Category Tabs — ตารางแยกตามหมวดสินค้า */}
-      {ACTIVE_CATEGORIES.length > 1 && (
+      {!lockCategory && ACTIVE_CATEGORIES.length > 1 && (
         <div
           role="tablist"
           aria-label="หมวดสินค้า"
