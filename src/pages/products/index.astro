@@ -6,11 +6,8 @@ import ProductMatrix from '@/components/ProductMatrix';
 import { ALL_PRODUCTS } from '@/lib/products';
 import { CATEGORIES, getSeriesByCategory } from '@/lib/series';
 import { getCarPrice, formatBaht } from '@/lib/carPrices';
-import FilmSelector from '@/components/FilmSelector';
-import PriceEstimator from '@/components/PriceEstimator';
 
 import { getPageSeo } from '@/lib/pageSeo';
-import { getEstimatorRates } from '@/lib/rates';
 const products = ALL_PRODUCTS;
 
 /**
@@ -27,12 +24,11 @@ const categoriesWithSeries = CATEGORIES.map((category) => ({
 const seriesCount = categoriesWithSeries.reduce((n, c) => n + c.series.length, 0);
 
 const seo = await getPageSeo('/products', {
-  title: `รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก ${modelCount} รุ่น | LUMAGUARD`,
-  description: `สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสง LUMAGUARD ครบทั้ง ${modelCount} รุ่นใน ${seriesCount} ซีรีส์ ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ ดูค่า VLT UVR IRR และ TSER ของทุกรุ่นในตารางเดียว`,
+  title: `เทียบสเปกฟิล์มกรองแสงทุกรุ่น ${modelCount} รุ่น ${seriesCount} ซีรีส์ | LUMAGUARD`,
+  description: `ตารางเทียบค่า VLT UVR IRR และ TSER ของฟิล์มกรองแสง LUMAGUARD ครบ ${modelCount} รุ่น ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ เลือกดูทีละหมวดหรือเทียบข้ามซีรีส์ในตารางเดียว`,
 });
 const { title, description } = seo;
 
-const estimatorRates = getEstimatorRates();
 ---
 
 <Layout title={title} description={description}>
@@ -41,11 +37,11 @@ const estimatorRates = getEstimatorRates();
   <main class="min-h-screen pt-24 pb-20 px-6 max-w-[1440px] mx-auto space-y-20">
     <div class="text-center max-w-3xl mx-auto space-y-4">
       <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-        เปรียบเทียบสเปกและรุ่นฟิล์มกรองแสง ({modelCount} รุ่น)
+        เทียบสเปกฟิล์มกรองแสงทุกรุ่น
       </h1>
       <p class="text-slate-600 text-base leading-relaxed">
-        ค่าสเปกจริงทุกรุ่นใน {seriesCount} ซีรีส์ ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ —
-        เลือกหมวดในตารางด้านล่างเพื่อเทียบเฉพาะกลุ่มที่คุณกำลังหา
+        ค่า VLT · UVR · IRR · TSER ของจริงครบ {modelCount} รุ่นใน {seriesCount} ซีรีส์
+        ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ — เลือกหมวดในตารางด้านล่างเพื่อเทียบเฉพาะกลุ่มที่กำลังหา
       </p>
     </div>
 
@@ -113,23 +109,32 @@ const estimatorRates = getEstimatorRates();
     </section>
 
     {/*
-      ตัวเลือกฟิล์มกับเครื่องประเมินราคาถามเรื่องห้องและคิดจากพื้นที่กระจกเป็น
-      ตารางฟุต ทั้งคู่จึงใช้ได้กับฟิล์มอาคารเท่านั้น ฟิล์มรถคิดเป็นคันหรือรายบาน
-      ต้องมีเครื่องมือของตัวเองแยกต่างหาก บอกไว้ให้ชัดดีกว่าปล่อยให้คนกรอกแล้ว
-      ได้ตัวเลขที่ใช้ไม่ได้
+      เครื่องเลือกฟิล์มกับเครื่องประเมินราคาย้ายไปอยู่ที่ /home-film แล้ว
+      ทั้งคู่ถามเรื่องห้องและคิดจากพื้นที่กระจกเป็นตารางฟุต จึงใช้ได้เฉพาะงานอาคาร
+      การวางไว้ในหน้าที่รวมทั้งสองหมวดทำให้คนที่มาดูฟิล์มรถกรอกแล้วได้ตัวเลขที่ผิด
     */}
-    <section id="consultation" class="pt-8">
-      <p class="mx-auto mb-6 max-w-2xl text-center text-sm text-on-surface-variant">
-        เครื่องมือสองตัวด้านล่างใช้กับ<strong>ฟิล์มบ้านและอาคาร</strong>เท่านั้น —
-        ฟิล์มรถยนต์คิดราคาเป็นคันหรือรายบาน
-        <a href="/contact" class="font-bold text-primary hover:underline">ทักมาขอใบเสนอราคา</a>ได้เลย
-      </p>
-      <FilmSelector client:visible />
-    </section>
+    <section class="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto w-full">
+      <a
+        href="/home-film"
+        class="group rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-7 transition-shadow hover:shadow-md space-y-2"
+      >
+        <h2 class="font-headline text-lg font-bold text-primary">พร้อมขอราคาฟิล์มบ้านและอาคาร</h2>
+        <p class="text-sm leading-relaxed text-on-surface-variant">
+          ประเมินราคาเบื้องต้นจากพื้นที่กระจก ตอบคำถามสามข้อให้ระบบแนะนำรุ่น และขอวัดหน้างานฟรี
+        </p>
+        <span class="inline-flex text-sm font-bold text-primary group-hover:underline">ไปหน้าฟิล์มบ้าน →</span>
+      </a>
 
-    {/* Price Estimator Section with top spacing */}
-    <section id="estimator" class="mt-20 md:mt-24 pt-8">
-      <PriceEstimator client:visible rates={estimatorRates} />
+      <a
+        href="/car-film"
+        class="group rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-7 transition-shadow hover:shadow-md space-y-2"
+      >
+        <h2 class="font-headline text-lg font-bold text-primary">พร้อมขอราคาฟิล์มรถยนต์</h2>
+        <p class="text-sm leading-relaxed text-on-surface-variant">
+          ราคาเหมาทั้งคันแยกตามขนาดรถ รวมกระจกหน้าและค่าติดตั้ง เข้าไปติดถึงที่
+        </p>
+        <span class="inline-flex text-sm font-bold text-primary group-hover:underline">ไปหน้าฟิล์มรถ →</span>
+      </a>
     </section>
   </main>
 

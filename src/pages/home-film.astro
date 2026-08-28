@@ -1,0 +1,201 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar.astro';
+import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd.astro';
+import ProductMatrix from '@/components/ProductMatrix';
+import FilmSelector from '@/components/FilmSelector';
+import PriceEstimator from '@/components/PriceEstimator';
+import LeadForm from '@/components/LeadForm';
+import { ALL_PRODUCTS, lowestPrice } from '@/lib/products';
+import { getSeriesByCategory } from '@/lib/series';
+import { buildBreadcrumbSchema, buildFaqSchema } from '@/lib/schema';
+import { getPageSeo } from '@/lib/pageSeo';
+import { getEstimatorRates } from '@/lib/rates';
+
+/**
+ * หน้าขายฟิล์มบ้านและอาคาร
+ *
+ * คู่กับ /car-film — แยกออกมาเพราะ "ฟิล์มกรองแสงบ้าน ราคา" กับ
+ * "ฟิล์มกรองแสงรถยนต์ ราคา" เป็นคนละคำค้นที่หน้าเดียวจับได้ไม่ดีทั้งคู่
+ *
+ * เครื่องมือเลือกฟิล์มกับเครื่องประเมินราคาย้ายมาอยู่ที่นี่ เพราะทั้งคู่ถามเรื่อง
+ * ห้องและคิดจากพื้นที่กระจกเป็นตารางฟุต ซึ่งใช้ได้เฉพาะงานอาคาร
+ * ส่วน /products เหลือเป็นเครื่องมือเทียบสเปกล้วน ๆ ของทุกหมวด
+ *
+ * ไม่ใส่ขั้นตอนการทำงานซ้ำในหน้านี้ เพราะ /services อธิบายไว้ครบแล้ว
+ * เขียนซ้ำจะกลายเป็นสองหน้าแย่งคำค้นเดียวกันเอง
+ */
+const homeSeries = getSeriesByCategory('architectural');
+const homeSeriesNames = new Set(homeSeries.map((s) => s.dbName));
+const homeProducts = ALL_PRODUCTS.filter((p) => homeSeriesNames.has(p.series));
+
+const seriesPrices = homeSeries.map((s) => ({ series: s, price: lowestPrice(s.dbName) }));
+const startingPrice = Math.min(...seriesPrices.map((s) => s.price).filter((p) => p > 0));
+
+const estimatorRates = await getEstimatorRates();
+
+const faqItems = [
+  {
+    q: 'ฟิล์มกรองแสงบ้านคิดราคายังไง',
+    a: `คิดตามพื้นที่กระจกจริงเป็นบาทต่อตารางฟุต เริ่มต้นที่ ฿${startingPrice}/ตร.ฟุต ทีมงานเข้าไปวัดหน้างานให้ฟรีก่อนเสนอราคา คุณจึงรู้ราคาที่แน่นอนก่อนตัดสินใจ ไม่ใช่ราคาประเมินคร่าว ๆ`,
+  },
+  {
+    q: 'ติดฟิล์มคอนโดต้องขออนุญาตนิติบุคคลไหม',
+    a: 'คอนโดส่วนใหญ่กำหนดสีและระดับความเข้มของฟิล์มที่ติดได้ เพื่อให้ภายนอกอาคารดูเป็นระเบียบเดียวกัน แนะนำให้สอบถามนิติบุคคลก่อน แล้วแจ้งข้อกำหนดมาให้ทีมงาน เราจะเลือกรุ่นที่อยู่ในเกณฑ์ให้',
+  },
+  {
+    q: 'ฟิล์มกรองแสงช่วยลดค่าไฟได้จริงไหม',
+    a: 'ช่วยได้ในทางที่แอร์ทำงานเบาลง เพราะฟิล์มสกัดความร้อนจากแสงแดดก่อนเข้าห้อง จะประหยัดได้มากน้อยขึ้นกับทิศทางแดด ขนาดกระจก และรุ่นฟิล์มที่เลือก ดูค่า TSER ในตารางเทียบประกอบได้ ยิ่งสูงยิ่งกันความร้อนรวมได้มาก',
+  },
+  {
+    q: 'ฟิล์มเข้มกับฟิล์มใส ต่างกันแค่ความมืดหรือเปล่า',
+    a: 'ไม่ใช่ครับ ค่าที่บอกความมืดคือ VLT ส่วนความสามารถกันความร้อนดูที่ TSER และ IRR ซึ่งเป็นคนละค่ากัน ฟิล์มใสรุ่นดีจึงกันร้อนได้มากกว่าฟิล์มเข้มรุ่นธรรมดา ถ้าอยากได้ทั้งวิวและความเย็น ให้ดูรุ่นที่ VLT สูงแต่ TSER สูงด้วย',
+  },
+  {
+    q: 'ติดตั้งใช้เวลานานไหม ต้องย้ายของออกจากบ้านหรือเปล่า',
+    a: 'ไม่ต้องย้ายของทั้งบ้าน ทีมงานขอพื้นที่เฉพาะรอบกระจกที่ติดตั้ง และดูแลความสะอาดหน้างานตลอดการทำงาน ระยะเวลาขึ้นกับจำนวนบานกระจก ทีมงานแจ้งให้ทราบตอนประเมินหน้างาน',
+  },
+];
+
+const seo = await getPageSeo('/home-film', {
+  title: `ฟิล์มกรองแสงบ้าน คอนโด อาคาร ราคาเริ่ม ฿${startingPrice}/ตร.ฟุต | LUMAGUARD`,
+  description: `ฟิล์มกรองแสงบ้านและอาคาร ${homeSeries.length} ซีรีส์ ${homeProducts.length} รุ่น คิดราคาตามพื้นที่กระจกจริง วัดหน้างานฟรี ประเมินราคาเบื้องต้นได้เองบนหน้านี้ พร้อมค่า VLT TSER IRR ครบทุกรุ่น`,
+});
+const { title, description } = seo;
+---
+
+<Layout title={title} description={description}>
+  <JsonLd
+    schema={buildBreadcrumbSchema([
+      { name: 'หน้าแรก', url: '/' },
+      { name: 'ฟิล์มบ้านและอาคาร', url: '/home-film' },
+    ])}
+  />
+  <JsonLd schema={buildFaqSchema(faqItems)} />
+
+  <TopNavBar pathname={Astro.url.pathname} />
+
+  <main class="min-h-screen pt-24 pb-20">
+    <section class="max-w-4xl mx-auto px-6 text-center space-y-5">
+      <span class="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
+        วัดหน้างานฟรี · ไม่มีค่าใช้จ่าย
+      </span>
+      <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+        ฟิล์มกรองแสงบ้าน คอนโด และอาคาร
+      </h1>
+      <p class="text-slate-600 leading-relaxed">
+        {homeSeries.length} ซีรีส์ {homeProducts.length} รุ่น ตั้งแต่เซรามิกจนถึงสปัตเตอร์เคลือบโลหะมีค่า
+        คิดราคาตามพื้นที่กระจกจริง เริ่มต้น
+        <strong class="text-slate-900">฿{startingPrice}/ตร.ฟุต</strong>
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <a
+          href="#home-quote"
+          class="rounded-full bg-primary px-7 py-3 font-headline text-sm font-bold text-on-primary transition-opacity hover:opacity-90"
+        >
+          ขอวัดหน้างานฟรี
+        </a>
+        <a
+          href="#home-estimator"
+          class="rounded-full border border-outline-variant/40 px-7 py-3 font-headline text-sm font-bold text-primary transition-colors hover:bg-surface-container-low"
+        >
+          ประเมินราคาเบื้องต้น
+        </a>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 mt-20 space-y-6">
+      <div class="max-w-2xl space-y-2">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">ราคาเริ่มต้นของแต่ละซีรีส์</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          ทุกระดับความเข้มในซีรีส์เดียวกันราคาเท่ากัน เลือกความเข้มจากการใช้งานจริงได้เลย
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-outline-variant/20">
+        <table class="w-full min-w-[560px] text-sm">
+          <caption class="sr-only">ราคาเริ่มต้นของฟิล์มกรองแสงอาคารแต่ละซีรีส์</caption>
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant">
+              <th scope="col" class="px-5 py-3 text-left font-headline text-xs font-bold uppercase tracking-widest">ซีรีส์</th>
+              <th scope="col" class="px-5 py-3 text-left font-headline text-xs font-bold uppercase tracking-widest">เทคโนโลยี</th>
+              <th scope="col" class="px-5 py-3 text-right font-headline text-xs font-bold uppercase tracking-widest">ราคา / ตร.ฟุต</th>
+            </tr>
+          </thead>
+          <tbody>
+            {seriesPrices.map(({ series, price }) => (
+              <tr class="border-t border-outline-variant/15">
+                <th scope="row" class="px-5 py-4 text-left">
+                  <a href={`/products/${series.slug}`} class="font-bold text-primary hover:underline">
+                    {series.displayName}
+                  </a>
+                </th>
+                <td class="px-5 py-4 text-on-surface-variant">{series.tag}</td>
+                <td class="px-5 py-4 text-right font-mono font-bold text-on-surface tabular-nums">
+                  {price > 0 ? `฿${price.toLocaleString('en-US')}` : 'สอบถามราคา'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-on-surface-variant">
+        ราคานี้เป็นราคาเริ่มต้นต่อตารางฟุต ราคาจริงขึ้นกับพื้นที่กระจกและความยากของหน้างาน
+        ทีมงานเข้าไปวัดให้ฟรีก่อนเสนอราคา
+      </p>
+    </section>
+
+    <section class="mt-24 px-6">
+      <FilmSelector client:visible />
+    </section>
+
+    <section class="mt-24">
+      <ProductMatrix client:visible products={homeProducts} lockCategory="architectural" />
+    </section>
+
+    <section id="home-estimator" class="mt-8 px-6 scroll-mt-24">
+      <PriceEstimator client:visible rates={estimatorRates} />
+    </section>
+
+    <section class="max-w-4xl mx-auto px-6 mt-24">
+      <div class="rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-8 space-y-3 text-center">
+        <h2 class="text-xl font-bold font-headline text-on-surface">อยากรู้ว่าหน้างานจริงทำงานยังไง</h2>
+        <p class="text-sm leading-relaxed text-on-surface-variant">
+          ตั้งแต่นัดวัดพื้นที่ เลือกฟิล์ม ติดตั้ง ไปจนถึงตรวจรับงานและการรับประกัน
+          เราเขียนไว้ครบทุกขั้นตอน
+        </p>
+        <a href="/services" class="inline-flex text-sm font-bold text-primary hover:underline">
+          ดูขั้นตอนการทำงานทั้งหมด →
+        </a>
+      </div>
+    </section>
+
+    <section id="home-quote" class="mt-24 px-6 scroll-mt-24">
+      <div class="mx-auto mb-8 max-w-2xl space-y-2 text-center">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900">ขอวัดหน้างานและใบเสนอราคาฟรี</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          แจ้งเขตพื้นที่และประเภทอาคาร ทีมงานติดต่อกลับเพื่อนัดวันเข้าวัดพื้นที่จริง ไม่มีค่าใช้จ่าย
+        </p>
+      </div>
+      <LeadForm client:visible />
+    </section>
+
+    <section class="mx-auto mt-24 max-w-4xl space-y-8 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-10">
+      <div class="mx-auto max-w-xl space-y-2 text-center">
+        <span class="text-xs font-bold uppercase tracking-widest text-accent-700">คำถามที่พบบ่อย (FAQS)</span>
+        <h2 class="text-2xl font-extrabold text-slate-900 sm:text-3xl">เรื่องที่ลูกค้าถามบ่อยก่อนติดฟิล์มบ้าน</h2>
+      </div>
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <div class="space-y-2 rounded-2xl border border-slate-200 bg-white p-6">
+            <h3 class="text-base font-bold text-slate-900">Q: {item.q}</h3>
+            <p class="text-justify text-sm font-light leading-relaxed text-slate-600">A: {item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer client:visible />
+</Layout>
