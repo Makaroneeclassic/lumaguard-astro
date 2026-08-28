@@ -1,4 +1,5 @@
 import data from '@/data/car-prices.json';
+import modelData from '@/data/car-models.json';
 
 /**
  * ราคาฟิล์มรถ คิดเหมาต่อคันแยกตามขนาดรถ
@@ -38,3 +39,23 @@ export const getCarPrice = (seriesDbName: string): CarPrice | undefined =>
   CAR_PRICES.find((c) => c.series === seriesDbName);
 
 export const formatBaht = (n: number): string => `฿${n.toLocaleString('en-US')}`;
+
+/**
+ * ยี่ห้อและรุ่นรถให้เลือกในฟอร์มขอใบเสนอราคา
+ *
+ * ให้เลือกจากรายการแทนพิมพ์เอง เพราะลูกค้าพิมพ์กันคนละแบบ (CRV / CR-V / crv)
+ * แล้วทีมขายต้องมานั่งเดาว่าคือรุ่นเดียวกันไหม การเลือกจากรายการทำให้ค่าที่เก็บ
+ * เป็นรูปแบบเดียวกันทั้งหมด และจัดกลุ่มดูภายหลังได้ว่ารถรุ่นไหนถามเข้ามาบ่อย
+ *
+ * รายการนี้ปรับปรุงจากแท็บ "car models" ในชีต ด้วย npm run products:sync
+ * ฟอร์มมีตัวเลือก "อื่น ๆ" ให้พิมพ์เองเสมอ รถที่ไม่มีในรายการจึงไม่ตกหล่น
+ */
+export interface CarBrand {
+  brand: string;
+  models: string[];
+}
+
+export const CAR_BRANDS: CarBrand[] = modelData as CarBrand[];
+
+export const modelsOfBrand = (brand: string): string[] =>
+  CAR_BRANDS.find((b) => b.brand === brand)?.models ?? [];

@@ -41,6 +41,9 @@ const SERIES_OUT = 'src/data/series.json';
 const CATEGORY_TAB = process.env.CATEGORIES_SHEET_TAB ?? 'categories';
 const CATEGORY_OUT = 'src/data/categories.json';
 
+const CAR_MODEL_TAB = process.env.CAR_MODELS_SHEET_TAB ?? 'car models';
+const CAR_MODEL_OUT = 'src/data/car-models.json';
+
 const apply = process.argv.includes('--apply');
 const fileArg = process.argv.indexOf('--file');
 
@@ -403,6 +406,33 @@ function toCarPrices(rows: Record<string, string>[]): CarPrice[] {
   return out;
 }
 
+async function syncCarModels(): Promise<void> {
+  const rows = await readTab(CAR_MODEL_TAB, 'brand');
+  if (!rows) return;
+
+  const next = rows
+    .map((row) => ({
+      brand: (row.brand ?? '').trim(),
+      // รุ่นคั่นด้วยจุลภาคในเซลล์เดียว แบบเดียวกับคอลัมน์ tags ของชีตบทความ
+      // เพราะยี่ห้อหนึ่งมีสิบกว่ารุ่น แยกเป็นรายแถวจะกลายเป็นร้อยแถวให้เลื่อนหา
+      models: (row.models ?? '')
+        .split(',')
+        .map((m) => m.trim())
+        .filter(Boolean),
+    }))
+    .filter((b) => b.brand && b.models.length);
+
+  if (next.length === 0) {
+    console.log(`\nข้ามรุ่นรถ — ไม่พบแถวที่ใช้ได้ในแท็บ "${CAR_MODEL_TAB}"`);
+    return;
+  }
+
+  console.log(
+    `\nรุ่นรถ: ${next.length} ยี่ห้อ · ${next.reduce((n, b) => n + b.models.length, 0)} รุ่น`,
+  );
+  writeIfChanged(CAR_MODEL_OUT, next, '   ');
+}
+
 async function syncCarPrices(): Promise<Set<string>> {
   let csv: string;
   try {
@@ -513,6 +543,7 @@ async function main() {
   const current: Product[] = JSON.parse(readFileSync(OUT, 'utf8'));
   const { added, removed, changed } = diff(current, next);
   const carSeries = await syncCarPrices();
+  await syncCarModels();
 
   console.log(`\nอ่านจาก Sheet ได้ ${next.length} รายการ (ของเดิม ${current.length})`);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { CAR_BRANDS, modelsOfBrand } from "@/lib/carPrices";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { getTrafficSourceData } from "@/lib/utmTracker";
 
@@ -55,6 +56,32 @@ export default function LeadForm({ tone = "default", variant = "building" }: Lea
     carBrand: "",
     carModel: "",
   });
+  /**
+   * ยี่ห้อกับรุ่นเลือกจากรายการ แต่ยังพิมพ์เองได้เมื่อไม่มีในรายการ
+   *
+   * ถ้าบังคับเลือกอย่างเดียว รถที่รายการยังไม่ครอบคลุมจะกรอกฟอร์มไม่ได้เลย
+   * ซึ่งแปลว่าเสียลีดไปฟรี ๆ ตัวเลือก "อื่น ๆ" จึงต้องมีเสมอ
+   */
+  const [brandIsOther, setBrandIsOther] = useState(false);
+  const [modelIsOther, setModelIsOther] = useState(false);
+  const OTHER = "__other__";
+  const modelOptions = brandIsOther ? [] : modelsOfBrand(formData.carBrand);
+
+  const handleBrandChange = (value: string) => {
+    const other = value === OTHER;
+    setBrandIsOther(other);
+    setModelIsOther(other);
+    // เปลี่ยนยี่ห้อแล้วรุ่นเดิมย่อมใช้ไม่ได้ ต้องล้างทิ้ง ไม่งั้นจะส่ง
+    // Honda CR-V ไปพร้อมยี่ห้อ Toyota ได้
+    setFormData({ ...formData, carBrand: other ? "" : value, carModel: "" });
+  };
+
+  const handleModelChange = (value: string) => {
+    const other = value === OTHER;
+    setModelIsOther(other);
+    setFormData({ ...formData, carModel: other ? "" : value });
+  };
+
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -226,32 +253,65 @@ export default function LeadForm({ tone = "default", variant = "building" }: Lea
                   <label htmlFor="lead-car-brand" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                     ยี่ห้อรถ *
                   </label>
-                  <input
-                    type="text"
-                    required
+                  <select
                     id="lead-car-brand"
-                    placeholder="เช่น Toyota, Honda, Isuzu"
-                    value={formData.carBrand}
-                    onChange={(e) => setFormData({ ...formData, carBrand: e.target.value })}
+                    value={brandIsOther ? OTHER : formData.carBrand}
+                    onChange={(e) => handleBrandChange(e.target.value)}
                     disabled={status === "submitting"}
                     className={fieldClass}
-                  />
+                  >
+                    <option value="">— เลือกยี่ห้อ —</option>
+                    {CAR_BRANDS.map((b) => (
+                      <option key={b.brand} value={b.brand}>
+                        {b.brand}
+                      </option>
+                    ))}
+                    <option value={OTHER}>อื่น ๆ (พิมพ์เอง)</option>
+                  </select>
+                  {brandIsOther && (
+                    <input
+                      type="text"
+                      aria-label="พิมพ์ยี่ห้อรถ"
+                      placeholder="พิมพ์ยี่ห้อรถ"
+                      value={formData.carBrand}
+                      onChange={(e) => setFormData({ ...formData, carBrand: e.target.value })}
+                      disabled={status === "submitting"}
+                      className={fieldClass}
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="lead-car-model" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                     รุ่นรถ *
                   </label>
-                  <input
-                    type="text"
-                    required
-                    id="lead-car-model"
-                    placeholder="เช่น Yaris Ativ, CR-V, D-Max Cab"
-                    value={formData.carModel}
-                    onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
-                    disabled={status === "submitting"}
-                    className={fieldClass}
-                  />
+                  {modelOptions.length > 0 && !modelIsOther ? (
+                    <select
+                      id="lead-car-model"
+                      value={formData.carModel}
+                      onChange={(e) => handleModelChange(e.target.value)}
+                      disabled={status === "submitting"}
+                      className={fieldClass}
+                    >
+                      <option value="">— เลือกรุ่น —</option>
+                      {modelOptions.map((m) => (
+                        <option key={m} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                      <option value={OTHER}>อื่น ๆ (พิมพ์เอง)</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      id="lead-car-model"
+                      placeholder={formData.carBrand ? "พิมพ์ชื่อรุ่น" : "เลือกยี่ห้อก่อน"}
+                      value={formData.carModel}
+                      onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
+                      disabled={status === "submitting" || !formData.carBrand}
+                      className={fieldClass}
+                    />
+                  )}
                   <p className="text-xs text-slate-500 leading-relaxed">
                     ใช้ประเมินขนาดรถเพื่อเสนอราคาเหมาทั้งคัน
                   </p>

@@ -1,0 +1,206 @@
+[
+  {
+    "brand": "Toyota",
+    "models": [
+      "Yaris",
+      "Yaris Ativ",
+      "Yaris Cross",
+      "Vios",
+      "Altis",
+      "Corolla Cross",
+      "Camry",
+      "C-HR",
+      "Veloz",
+      "Avanza",
+      "Innova",
+      "Fortuner",
+      "Hilux Revo",
+      "Alphard"
+    ]
+  },
+  {
+    "brand": "Honda",
+    "models": [
+      "City",
+      "City Hatchback",
+      "Civic",
+      "Accord",
+      "Jazz",
+      "WR-V",
+      "HR-V",
+      "BR-V",
+      "CR-V"
+    ]
+  },
+  {
+    "brand": "Isuzu",
+    "models": [
+      "D-Max",
+      "D-Max Cab",
+      "MU-X"
+    ]
+  },
+  {
+    "brand": "Mitsubishi",
+    "models": [
+      "Mirage",
+      "Attrage",
+      "Xpander",
+      "Xforce",
+      "Triton",
+      "Pajero Sport",
+      "Outlander"
+    ]
+  },
+  {
+    "brand": "Nissan",
+    "models": [
+      "Almera",
+      "Note",
+      "Kicks",
+      "Navara",
+      "Terra",
+      "X-Trail"
+    ]
+  },
+  {
+    "brand": "Mazda",
+    "models": [
+      "Mazda2",
+      "Mazda3",
+      "CX-3",
+      "CX-30",
+      "CX-5",
+      "CX-8",
+      "BT-50"
+    ]
+  },
+  {
+    "brand": "Ford",
+    "models": [
+      "Ranger",
+      "Ranger Raptor",
+      "Everest"
+    ]
+  },
+  {
+    "brand": "MG",
+    "models": [
+      "MG3",
+      "MG5",
+      "MG ZS",
+      "MG HS",
+      "MG VS",
+      "MG EP",
+      "MG4"
+    ]
+  },
+  {
+    "brand": "BYD",
+    "models": [
+      "Atto 3",
+      "Dolphin",
+      "Seal",
+      "Sealion 6",
+      "M6"
+    ]
+  },
+  {
+    "brand": "Hyundai",
+    "models": [
+      "Creta",
+      "Staria",
+      "H-1",
+      "Ioniq 5"
+    ]
+  },
+  {
+    "brand": "Kia",
+    "models": [
+      "Sonet",
+      "Seltos",
+      "Carnival",
+      "EV6"
+    ]
+  },
+  {
+    "brand": "Suzuki",
+    "models": [
+      "Celerio",
+      "Swift",
+      "Ciaz",
+      "Ertiga",
+      "XL7"
+    ]
+  },
+  {
+    "brand": "Subaru",
+    "models": [
+      "XV",
+      "Forester",
+      "Outback"
+    ]
+  },
+  {
+    "brand": "GWM",
+    "models": [
+      "Haval H6",
+      "Haval Jolion",
+      "Ora Good Cat",
+      "Tank 300"
+    ]
+  },
+  {
+    "brand": "Chevrolet",
+    "models": [
+      "Colorado",
+      "Trailblazer",
+      "Captiva"
+    ]
+  },
+  {
+    "brand": "BMW",
+    "models": [
+      "Series 3",
+      "Series 5",
+      "X1",
+      "X3",
+      "X5"
+    ]
+  },
+  {
+    "brand": "Mercedes-Benz",
+    "models": [
+      "C-Class",
+      "E-Class",
+      "GLA",
+      "GLC",
+      "GLE"
+    ]
+  },
+  {
+    "brand": "Volvo",
+    "models": [
+      "S60",
+      "XC40",
+      "XC60",
+      "XC90"
+    ]
+  },
+  {
+    "brand": "Lexus",
+    "models": [
+      "ES",
+      "NX",
+      "RX",
+      "LM"
+    ]
+  },
+  {
+    "brand": "Tesla",
+    "models": [
+      "Model 3",
+      "Model Y"
+    ]
+  }
+]
