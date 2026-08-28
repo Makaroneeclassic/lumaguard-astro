@@ -5,19 +5,9 @@ import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import LeadForm from '@/components/LeadForm';
 import PriceEstimator from '@/components/PriceEstimator';
-import { prisma } from '@/lib/db';
 import { MapPin, Phone, MessageSquare } from 'lucide-react';
 
 import { getEstimatorRates } from '@/lib/rates';
-let globalSettings: any = null;
-try {
-  globalSettings = await prisma.seoGlobal.findUnique({
-    where: { id: 'global' },
-  });
-} catch (e) {
-  console.warn("Database connection failed for contact page.");
-}
-
 const faqItems = [
   {
     q: "ฟิล์มกรองแสงคอนโดและบ้านควรใช้แบบไหนดีที่สุด?",
@@ -65,7 +55,7 @@ const estimatorRates = await getEstimatorRates();
           <Phone className="w-6 h-6" />
         </div>
         <h2 class="text-lg font-bold text-slate-900">สายด่วนบริการ</h2>
-        <p class="text-slate-700 text-base font-bold">{globalSettings?.businessPhone || "098-353-9369"}</p>
+        <p class="text-slate-700 text-base font-bold">{BUSINESS.telephoneDisplay}</p>
       </div>
 
       <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
@@ -81,7 +71,7 @@ const estimatorRates = await getEstimatorRates();
           <MapPin className="w-6 h-6" />
         </div>
         <h2 class="text-lg font-bold text-slate-900">ที่ตั้งสำนักงานใหญ่</h2>
-        <p class="text-slate-700 text-base font-bold">{globalSettings?.businessAddress || "หลักสี่ กรุงเทพฯ"}</p>
+        <p class="text-slate-700 text-base font-bold">{BUSINESS.addressDisplay}</p>
       </div>
     </div>
 

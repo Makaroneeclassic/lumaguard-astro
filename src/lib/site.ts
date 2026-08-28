@@ -47,6 +47,19 @@ export const BUSINESS = {
   },
 
   /**
+   * ที่อยู่แบบบรรทัดเดียวสำหรับแสดงบนหน้าเว็บ
+   *
+   * ประกอบจากช่องเดียวกับที่ส่งให้ schema.org ไม่ได้พิมพ์ซ้ำอีกชุด เพราะ NAP
+   * ที่เขียนคนละแบบระหว่างข้อความบนหน้ากับข้อมูลโครงสร้างเป็นสัญญาณว่าข้อมูล
+   * ของกิจการเดียวกันไม่สอดคล้อง ซึ่งทำให้ Local SEO อ่อนลง
+   */
+  get addressDisplay(): string {
+    return [this.address.streetAddress, this.address.addressLocality, this.address.addressRegion]
+      .filter(Boolean)
+      .join(' ');
+  },
+
+  /**
    * เวลาทำการ ต้องตรงกับที่กรอกใน Google Business Profile
    *
    * ถ้าสองที่ไม่ตรงกัน Google อาจแสดงคำว่าเปิดหรือปิดอยู่ผิดจากความจริง
