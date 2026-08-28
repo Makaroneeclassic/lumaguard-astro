@@ -91,9 +91,15 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
     <div className="space-y-8">
       {/* Header section */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-outline-variant/10 pb-6">
+        {/*
+          หัวข้อสองบรรทัดนี้วางอยู่บนพื้นหลัง bg-slate-900 ของหน้า /admin โดยตรง
+          ไม่ได้อยู่ในการ์ดสีอ่อนเหมือนส่วนอื่น การใช้โทเคน text-on-surface ซึ่งเป็น
+          สีเข้มของธีมสว่าง จึงกลายเป็นตัวหนังสือสีเข้มบนพื้นเข้มจนอ่านแทบไม่ออก
+          ใช้สีเดียวกับหัวข้ออื่นในหน้านั้นแทน
+        */}
         <div>
-          <h1 className="text-3xl font-headline font-black text-on-surface">ระบบคุมยอด Lead & ลูกค้าสนใจ</h1>
-          <p className="text-xs text-on-surface-variant font-light mt-0.5">
+          <h1 className="text-3xl font-headline font-black text-white">ระบบคุมยอด Lead &amp; ลูกค้าสนใจ</h1>
+          <p className="text-xs text-slate-400 font-light mt-0.5">
             ติดตามข้อมูลติดต่อ และเส้นทางความต้องการของลูกค้า (Customer Journey) เพื่อส่งต่อข้อมูลให้ทีมขาย
           </p>
         </div>
