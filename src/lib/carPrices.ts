@@ -1,5 +1,5 @@
 import data from '@/data/car-prices.json';
-import modelData from '@/data/car-models.json';
+import brandData from '@/data/car-brands.json';
 
 /**
  * ราคาฟิล์มรถ คิดเหมาต่อคันแยกตามขนาดรถ
@@ -41,21 +41,15 @@ export const getCarPrice = (seriesDbName: string): CarPrice | undefined =>
 export const formatBaht = (n: number): string => `฿${n.toLocaleString('en-US')}`;
 
 /**
- * ยี่ห้อและรุ่นรถให้เลือกในฟอร์มขอใบเสนอราคา
+ * ยี่ห้อรถให้เลือกในฟอร์มขอใบเสนอราคา
  *
- * ให้เลือกจากรายการแทนพิมพ์เอง เพราะลูกค้าพิมพ์กันคนละแบบ (CRV / CR-V / crv)
- * แล้วทีมขายต้องมานั่งเดาว่าคือรุ่นเดียวกันไหม การเลือกจากรายการทำให้ค่าที่เก็บ
- * เป็นรูปแบบเดียวกันทั้งหมด และจัดกลุ่มดูภายหลังได้ว่ารถรุ่นไหนถามเข้ามาบ่อย
+ * เก็บเฉพาะยี่ห้อ ไม่เก็บรุ่น เพราะยี่ห้อเปลี่ยนปีละไม่กี่ครั้งจึงดูแลไหว
+ * ส่วนชื่อรุ่นเปลี่ยนตลอดและมีเป็นร้อยชื่อ ทุกชื่อคือจุดที่จะกลายเป็นข้อมูลเก่า
+ * และรุ่นที่ตกหล่นคือลูกค้าที่ต้องกด "อื่น ๆ" — ให้พิมพ์เองตรง ๆ จบกว่า
  *
- * รายการนี้ปรับปรุงจากแท็บ "car models" ในชีต ด้วย npm run products:sync
- * ฟอร์มมีตัวเลือก "อื่น ๆ" ให้พิมพ์เองเสมอ รถที่ไม่มีในรายการจึงไม่ตกหล่น
+ * ประโยชน์ที่ยังได้อยู่คือยี่ห้อสะกดเป็นรูปแบบเดียวกันทั้งหมด
+ * จัดกลุ่มดูภายหลังได้ว่ายี่ห้อไหนถามเข้ามาบ่อยที่สุด
+ *
+ * ปรับปรุงจากแท็บ "car brands" ในชีต ด้วย npm run products:sync
  */
-export interface CarBrand {
-  brand: string;
-  models: string[];
-}
-
-export const CAR_BRANDS: CarBrand[] = modelData as CarBrand[];
-
-export const modelsOfBrand = (brand: string): string[] =>
-  CAR_BRANDS.find((b) => b.brand === brand)?.models ?? [];
+export const CAR_BRANDS: string[] = brandData as string[];
