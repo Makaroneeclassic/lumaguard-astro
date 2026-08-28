@@ -5,8 +5,9 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import PriceEstimator from '@/components/PriceEstimator';
 import { ALL_PRODUCTS } from '@/lib/products';
-import { SERIES, type SeriesDetail } from '@/lib/series';
+import { SERIES, CATEGORIES, getSeries, type SeriesDetail } from '@/lib/series';
 import { buildBreadcrumbSchema } from '@/lib/schema';
+import { getCarPrice, CAR_SIZES, formatBaht } from '@/lib/carPrices';
 import { SITE_URL, BUSINESS, absoluteUrl } from '@/lib/site';
 
 import { getEstimatorRates } from '@/lib/rates';
@@ -52,16 +53,23 @@ const breadcrumb = [
 ];
 
 const title = `${series.displayName} — ${series.tag} | LUMAGUARD`;
+/** ฟิล์มรถคิดราคาเหมาต่อคันตามขนาดรถ เก็บคนละที่กับราคาต่อตารางฟุตของฝั่งอาคาร */
+const carPrice = series.category === 'automotive' ? getCarPrice(series.dbName) : undefined;
+
 const description = hasPrices
   ? `${series.subtitle} ราคาเริ่มต้น ฿${startingPrice.toLocaleString()}/ตร.ฟุต พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์`
-  : `${series.subtitle} พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์ ปรึกษาและประเมินราคาหน้างานฟรี`;
+  : carPrice && products.length > 0
+    ? `${series.subtitle} ราคาเหมาทั้งคันเริ่มต้น ${formatBaht(carPrice.S)} แยกตามขนาดรถ พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่น`
+    : carPrice
+      ? `${series.subtitle} ราคาเหมาทั้งคันเริ่มต้น ${formatBaht(carPrice.S)} แยกตามขนาดรถ รวมค่าติดตั้ง สอบถามรายละเอียดเพิ่มเติมได้ทุกวัน`
+      : `${series.subtitle} พร้อมตารางสเปก VLT, IRR, UVR และ TSER ครบทุกรุ่นในซีรีส์ ปรึกษาและประเมินราคาหน้างานฟรี`;
 
 const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: series.displayName,
   description: series.description,
-  category: 'ฟิล์มกรองแสงอาคาร',
+  category: series.category === 'automotive' ? 'ฟิล์มกรองแสงรถยนต์' : 'ฟิล์มกรองแสงอาคาร',
   brand: { '@type': 'Brand', name: BUSINESS.name },
   url: canonical,
   // ประกาศ offers เฉพาะเมื่ออ่านราคาได้จริง การส่งราคาที่ผิดไปให้ Google
@@ -77,24 +85,92 @@ const productSchema = {
       seller: { '@id': `${SITE_URL}/#organization` },
     },
   }),
+  // ฝั่งรถราคาเป็นเหมาต่อคัน ช่วงราคาจึงคือรถเล็กสุดถึงรถใหญ่สุด
+  ...(!hasPrices && carPrice && {
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'THB',
+      lowPrice: carPrice.S,
+      highPrice: carPrice.XL,
+      offerCount: CAR_SIZES.length,
+      availability: 'https://schema.org/InStock',
+      seller: { '@id': `${SITE_URL}/#organization` },
+    },
+  }),
 };
 
-const FEATURES = [
-  {
-    heading: 'การสกัดความร้อนสูงสุด',
-    body: 'สกัดกั้นอินฟราเรดและความร้อนรังสีโซลาร์อย่างเต็มเปี่ยม ช่วยลดอุณหภูมิผิวสัมผัสกระจกภายในอาคารและประหยัดพลังงานแอร์ได้อย่างชัดเจน',
-  },
-  {
-    heading: 'ป้องกันรังสี UV 99.9%',
-    body: 'ปกป้องดูแลครอบครัวของคุณจากโรคผิวหนัง และยับยั้งการซีดจางเสียสภาพของชิ้นงานศิลปะ ตลอดจนเฟอร์นิเจอร์ไม้ราคาแพงในบ้าน',
-  },
-  {
-    heading: 'ไม่กวนคลื่นสัญญาณดิจิทัล',
-    body: 'โครงสร้างฟิล์มผ่านการสังเคราะห์ทางวิศวกรรม ช่วยให้คลื่นวิทยุ สัญญาณ 5G สัญญาณ Wi-Fi และเครื่องส่งสัญญาณ EasyPass ผ่านได้ 100% ไร้กังวล',
-  },
-];
+/**
+ * จุดขายสามข้อ แยกตามหมวดสินค้า
+ *
+ * ชุดเดิมพูดถึงแอร์ในอาคารและเฟอร์นิเจอร์ไม้ในบ้านล้วน ๆ พอมีซีรีส์รถยนต์
+ * เข้ามาใช้เทมเพลตหน้าเดียวกัน ข้อความชุดนั้นจะไปโผล่บนหน้าฟิล์มรถทั้งที่
+ * ไม่เกี่ยวอะไรกับรถเลย
+ */
+const FEATURES_BY_CATEGORY = {
+  architectural: [
+    {
+      heading: 'การสกัดความร้อนสูงสุด',
+      body: 'สกัดกั้นอินฟราเรดและความร้อนรังสีโซลาร์อย่างเต็มเปี่ยม ช่วยลดอุณหภูมิผิวสัมผัสกระจกภายในอาคารและประหยัดพลังงานแอร์ได้อย่างชัดเจน',
+    },
+    {
+      heading: 'ป้องกันรังสี UV 99.9%',
+      body: 'ปกป้องดูแลครอบครัวของคุณจากโรคผิวหนัง และยับยั้งการซีดจางเสียสภาพของชิ้นงานศิลปะ ตลอดจนเฟอร์นิเจอร์ไม้ราคาแพงในบ้าน',
+    },
+    {
+      heading: 'ไม่กวนคลื่นสัญญาณดิจิทัล',
+      body: 'โครงสร้างฟิล์มผ่านการสังเคราะห์ทางวิศวกรรม ช่วยให้คลื่นวิทยุ สัญญาณ 5G สัญญาณ Wi-Fi และเครื่องส่งสัญญาณ EasyPass ผ่านได้ 100% ไร้กังวล',
+    },
+  ],
+  safety: [
+    {
+      heading: 'ยึดเศษกระจกไว้กับที่',
+      body: 'เมื่อกระจกแตก ชั้นฟิล์มจะยึดเศษไว้ไม่ให้ร่วงกระจาย ลดความเสี่ยงบาดเจ็บจากเศษกระจกที่ตกลงมา',
+    },
+    {
+      heading: 'เพิ่มเวลาให้การงัดแงะ',
+      body: 'กระจกที่ติดฟิล์มนิรภัยต้องใช้แรงและเวลามากขึ้นกว่าจะทะลุเข้าไปได้ เป็นด่านหน่วงที่ทำให้การบุกรุกยากขึ้น',
+    },
+    {
+      heading: 'ติดตั้งได้กับกระจกเดิม',
+      body: 'ไม่ต้องรื้อเปลี่ยนกระจกทั้งบาน ติดตั้งทับกระจกที่ใช้อยู่ได้เลย',
+    },
+  ],
+  automotive: [
+    {
+      heading: 'สกัดความร้อนก่อนเข้าห้องโดยสาร',
+      body: 'ทุกรุ่นในไลน์รถยนต์กันรังสีอินฟราเรดช่วง 1000-1700 นาโนเมตรได้ 93-99% ซึ่งเป็นช่วงคลื่นที่พาความร้อนเข้าห้องโดยสารมากที่สุด',
+    },
+    {
+      heading: 'ป้องกันรังสี UV 99%',
+      body: 'ลดการสัมผัสรังสี UV ขณะขับขี่ และชะลอการซีดกรอบของเบาะ แผงคอนโซล และพวงมาลัย',
+    },
+    {
+      heading: 'ความหนา 2 มิล เท่ากันทุกรุ่น',
+      body: 'ทุกรุ่นหนา 2 มิล (50 ไมครอน) เท่ากัน เลือกได้ที่ระดับความเข้มและเทคโนโลยีโดยไม่ต้องแลกความหนาทิ้ง',
+    },
+  ],
+} as const;
 
-const estimatorRates = await getEstimatorRates();
+const FEATURES = FEATURES_BY_CATEGORY[series.category];
+
+/**
+ * ซีรีส์ฝั่งตรงข้ามที่เป็นฟิล์มม้วนเดียวกัน
+ *
+ * นับจำนวนรุ่นของทั้งสองฝั่งมาเทียบด้วย เพราะฟิล์มม้วนเดียวกันไม่ได้แปลว่ามี
+ * ระดับความเข้มให้เลือกเท่ากัน เช่นฝั่งรถมีรุ่นใสสว่างสำหรับกระจกหน้าที่ฝั่ง
+ * อาคารไม่ได้สต๊อกไว้ ถ้าเขียนว่า "เหมือนกันทุกอย่าง" ก็จะเป็นข้อมูลที่ผิด
+ */
+const twin = series.sameFilmAs ? getSeries(series.sameFilmAs) : undefined;
+const twinProducts = twin
+  ? ALL_PRODUCTS.filter((p) => p.series === twin.dbName)
+  : [];
+const twinCategoryLabel = twin
+  ? CATEGORIES.find((c) => c.id === twin.category)?.label
+  : undefined;
+
+/** เครื่องประเมินราคาคิดจากพื้นที่กระจกเป็นตารางฟุต จึงใช้ได้กับหมวดอาคารเท่านั้น */
+const showEstimator = series.category === 'architectural';
+const estimatorRates = showEstimator ? await getEstimatorRates() : {};
 ---
 
 <Layout title={title} description={description}>
@@ -163,14 +239,94 @@ const estimatorRates = await getEstimatorRates();
               ฟิล์มชุดนี้มีราคาเริ่มต้นเพียง <strong>฿{startingPrice.toLocaleString()} / ตารางฟุต</strong>
               (คิดตามพื้นที่กระจกจริง) พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
             </>
-          ) : (
+          ) : showEstimator ? (
             <>
               คิดราคาตามพื้นที่กระจกจริง พร้อมการรับประกันคุณภาพจากแบรนด์ยาวนานสูงสุดถึง 10-15 ปี
               ทีมงานประเมินราคาหน้างานให้ฟรี
             </>
+          ) : carPrice ? (
+            <>
+              ราคาเหมาทั้งคัน รวมค่าติดตั้งแล้ว เริ่มต้น <strong>{formatBaht(carPrice.S)}</strong>
+              ขึ้นอยู่กับขนาดรถ — ดูตารางด้านล่าง
+            </>
+          ) : (
+            <>
+              ฟิล์มรถยนต์คิดราคาเป็นคันหรือรายบาน ขึ้นอยู่กับรุ่นรถและจำนวนบานที่ติด
+              แจ้งรุ่นรถมาได้เลย ทีมงานเสนอราคาให้ฟรี
+            </>
           )}
         </p>
       </div>
+
+      {carPrice && (
+        <div class="rounded-2xl border border-outline-variant/20 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <caption class="sr-only">ราคาเหมาทั้งคันของ {series.displayName} แยกตามขนาดรถ</caption>
+              <thead>
+                <tr class="bg-surface-container-low text-on-surface-variant">
+                  <th scope="col" class="px-5 py-3 text-left font-headline text-xs font-bold uppercase tracking-widest">
+                    ขนาดรถ
+                  </th>
+                  <th scope="col" class="px-5 py-3 text-right font-headline text-xs font-bold uppercase tracking-widest">
+                    ราคาเหมาทั้งคัน
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {CAR_SIZES.map((size) => (
+                  <tr class="border-t border-outline-variant/15">
+                    <th scope="row" class="px-5 py-3 text-left font-bold text-on-surface">
+                      {size.key}
+                      {size.example && (
+                        <span class="ml-2 font-normal text-xs text-on-surface-variant">{size.example}</span>
+                      )}
+                    </th>
+                    <td class="px-5 py-3 text-right font-mono font-bold text-primary tabular-nums">
+                      {formatBaht(carPrice[size.key])}
+                    </td>
+                  </tr>
+                ))}
+                <tr class="border-t border-outline-variant/30 bg-surface-container-lowest">
+                  <th scope="row" class="px-5 py-3 text-left font-bold text-on-surface">
+                    ซันรูฟ
+                    <span class="ml-2 font-normal text-xs text-on-surface-variant">คิดเพิ่มจากราคาข้างบน</span>
+                  </th>
+                  <td class="px-5 py-3 text-right font-mono font-bold text-primary tabular-nums">
+                    + {formatBaht(carPrice.sunroof)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="border-t border-outline-variant/15 bg-surface-container-lowest px-5 py-3 text-xs text-on-surface-variant">
+            ราคาเท่ากันทุกระดับความเข้มในซีรีส์นี้ —
+            ไม่แน่ใจว่ารถของคุณอยู่ขนาดไหน{' '}
+            <a href="/contact" class="font-bold text-primary hover:underline">แจ้งรุ่นรถมาถามได้เลย</a>
+          </p>
+        </div>
+      )}
+
+      {twin && (
+        <div class="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 space-y-3">
+          <h3 class="font-headline font-bold text-on-surface text-sm">
+            ฟิล์มม้วนเดียวกันกับ {twin.displayName}
+          </h3>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            เนื้อฟิล์มและค่าสเปกของสองซีรีส์นี้เป็นตัวเดียวกัน เราแยกชื่อตามตลาดที่ใช้งาน
+            เพราะวิธีคิดราคาและระดับความเข้มที่สต๊อกไว้ต่างกัน{' '}
+            — {series.displayName} สำหรับ{series.category === 'automotive' ? 'รถยนต์' : 'บ้านและอาคาร'}
+            มี {products.length} รุ่น ส่วน {twin.displayName} สำหรับ{twinCategoryLabel === 'ฟิล์มรถยนต์' ? 'รถยนต์' : 'บ้านและอาคาร'}
+            มี {twinProducts.length} รุ่น
+          </p>
+          <a
+            href={`/products/${twin.slug}`}
+            class="inline-flex text-xs font-bold text-primary hover:underline"
+          >
+            ดู {twin.displayName} →
+          </a>
+        </div>
+      )}
     </section>
 
     <section class="max-w-7xl mx-auto px-6 mb-28">
@@ -215,9 +371,11 @@ const estimatorRates = await getEstimatorRates();
       )}
     </section>
 
-    <section class="max-w-7xl mx-auto px-6 mb-28">
-      <PriceEstimator client:visible rates={estimatorRates} />
-    </section>
+    {showEstimator && (
+      <section class="max-w-7xl mx-auto px-6 mb-28">
+        <PriceEstimator client:visible rates={estimatorRates} />
+      </section>
+    )}
 
     <section class="max-w-4xl mx-auto px-6 text-center bg-surface-container-low p-12 rounded-3xl border border-outline-variant/10 space-y-6">
       <h2 class="text-3xl font-bold font-headline text-primary">

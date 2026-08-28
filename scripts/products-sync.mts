@@ -25,13 +25,36 @@ const SHEET_ID = process.env.PRODUCTS_SHEET_ID ?? '1uD7tzXHfi4UruWMVSIyOTQNff0nY
 const SHEET_TAB = process.env.PRODUCTS_SHEET_TAB ?? 'products';
 const OUT = 'src/data/products.json';
 
+/**
+ * ราคาฟิล์มรถอยู่คนละแท็บ เพราะคิดคนละหน่วยกับฟิล์มอาคาร
+ *
+ * ฝั่งอาคารเป็นบาทต่อตารางฟุตซึ่งลงในคอลัมน์ price ของแต่ละรุ่นได้ตรง ๆ
+ * ส่วนฝั่งรถเป็นราคาเหมาต่อคันแยกตามขนาดรถ ซึ่งเป็นค่าระดับซีรีส์ไม่ใช่ระดับรุ่น
+ * ยัดลงตารางเดียวกันจะได้ราคาซ้ำกันห้าแถวต่อหนึ่งซีรีส์
+ */
+const CAR_TAB = process.env.CAR_PRICES_SHEET_TAB ?? 'car price';
+const CAR_OUT = 'src/data/car-prices.json';
+const CAR_SIZES = ['S', 'M', 'L', 'XL'] as const;
+
+const SERIES_TAB = process.env.SERIES_SHEET_TAB ?? 'series';
+const SERIES_OUT = 'src/data/series.json';
+const CATEGORY_TAB = process.env.CATEGORIES_SHEET_TAB ?? 'categories';
+const CATEGORY_OUT = 'src/data/categories.json';
+
 const apply = process.argv.includes('--apply');
 const fileArg = process.argv.indexOf('--file');
 
 /** คอลัมน์ที่ขาดไม่ได้ ถ้าไม่ครบแปลว่าหัวตารางผิดหรือดึงผิดแท็บ */
 const REQUIRED = ['name', 'series', 'vlt'] as const;
 
-const SERIES_LIST = ['Element', 'Shield', 'Zenith', 'Nexus', 'Apex', 'Guardian'];
+/**
+ * ชื่อซีรีส์ที่ยอมรับ — เติมจากแท็บ series ตอนรันจริง
+ *
+ * เดิมเป็นสำเนาที่ต้องแก้ให้ตรงกับ src/lib/products.ts ด้วยมือทุกครั้งที่เพิ่ม
+ * ซีรีส์ พอลืมแก้ที่ใดที่หนึ่งแถวใหม่จะถูกตีตกทั้งที่ประกาศไว้แล้วในเว็บ
+ * ตอนนี้ชีตเป็นต้นทางเดียว ทั้งสคริปต์และเว็บอ่านจากที่เดียวกัน
+ */
+let SERIES_LIST: string[] = [];
 
 interface Product {
   id: string;
@@ -81,14 +104,14 @@ function cleanPercent(v: unknown): string {
 /** ช่องที่เป็นค่าเปอร์เซ็นต์ทั้งหมด */
 const PERCENT_FIELDS = ['vlt', 'uvr', 'irr', 'irr2', 'tser'] as const;
 
-async function readCsv(): Promise<string> {
-  if (fileArg > -1) {
+async function readCsv(tab: string = SHEET_TAB): Promise<string> {
+  if (fileArg > -1 && tab === SHEET_TAB) {
     const path = process.argv[fileArg + 1];
     if (!path) throw new Error('ใส่ --file แล้วต้องตามด้วยชื่อไฟล์');
     return readFileSync(path, 'utf8');
   }
 
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_TAB)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(
@@ -177,6 +200,257 @@ function toProducts(rows: Record<string, string>[]): Product[] {
   return out;
 }
 
+interface CategoryRow { id: string; label: string; blurb: string }
+interface SeriesRow {
+  slug: string;
+  dbName: string;
+  displayName: string;
+  category: string;
+  tag: string;
+  subtitle: string;
+  description: string;
+  theme: string;
+  sameFilmAs?: string;
+}
+
+/**
+ * อ่านแท็บใดแท็บหนึ่งแล้วคืนแถวที่พาร์สแล้ว
+ *
+ * ชื่อแท็บที่ไม่มีอยู่จริงจะถูก Google ปัดไปใช้แท็บแรกแทนที่จะแจ้ง error
+ * จึงต้องเช็คคอลัมน์บังคับก่อนเสมอ ไม่งั้นจะเอาข้อมูลผิดแท็บไปเขียนทับของดี
+ */
+async function readTab(
+  tab: string,
+  mustHave: string,
+): Promise<Record<string, string>[] | null> {
+  let csv: string;
+  try {
+    csv = await readCsv(tab);
+  } catch {
+    console.log(`\nข้ามแท็บ "${tab}" — อ่านไม่ได้`);
+    return null;
+  }
+
+  const parsed = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const headers = parsed.meta.fields?.map((f) => f.trim()) ?? [];
+  if (!headers.includes(mustHave)) {
+    console.log(`\nข้ามแท็บ "${tab}" — ไม่มีคอลัมน์ ${mustHave} (ได้แท็บผิดมา?)`);
+    return null;
+  }
+  return parsed.data;
+}
+
+/** เขียนไฟล์เมื่อข้อมูลเปลี่ยนจริงเท่านั้น จะได้ไม่มี diff เปล่า ๆ ใน git */
+function writeIfChanged(out: string, next: unknown, label: string): boolean {
+  let current: unknown = null;
+  try {
+    current = JSON.parse(readFileSync(out, 'utf8'));
+  } catch {
+    /* ยังไม่มีไฟล์ */
+  }
+  if (JSON.stringify(current) === JSON.stringify(next)) {
+    console.log(`${label}: ไม่มีอะไรเปลี่ยน`);
+    return false;
+  }
+  if (apply) {
+    writeFileSync(out, JSON.stringify(next, null, 2) + '\n', 'utf8');
+    console.log(`✓ เขียน ${out} แล้ว`);
+  }
+  return true;
+}
+
+async function syncCategories(): Promise<string[]> {
+  const rows = await readTab(CATEGORY_TAB, 'id');
+  if (!rows) return [];
+
+  const next: CategoryRow[] = [];
+  for (const [i, row] of rows.entries()) {
+    const id = (row.id ?? '').trim();
+    if (!id) continue;
+    if (!/^[a-z][a-z0-9-]*$/.test(id)) {
+      console.log(`   ⚠ แถว ${i + 2}: id "${id}" ต้องเป็นตัวพิมพ์เล็ก ตัวเลข และขีดกลางเท่านั้น`);
+      continue;
+    }
+    next.push({ id, label: (row.label ?? '').trim(), blurb: (row.blurb ?? '').trim() });
+  }
+
+  if (next.length === 0) {
+    console.log(`\nข้ามหมวดสินค้า — ไม่พบแถวที่ใช้ได้ในแท็บ "${CATEGORY_TAB}"`);
+    return [];
+  }
+
+  console.log(`\nหมวดสินค้า: ${next.length} หมวด — ${next.map((c) => c.label).join(' · ')}`);
+  writeIfChanged(CATEGORY_OUT, next, '   ');
+  return next.map((c) => c.id);
+}
+
+async function syncSeries(categoryIds: string[]): Promise<string[]> {
+  // เช็คด้วย dbName ไม่ใช่ slug เพราะแท็บบทความก็มีคอลัมน์ slug เหมือนกัน
+  // เวลา Google ปัดไปแท็บแรกให้ ตัวกันจะไม่ทำงานถ้าเช็คด้วยชื่อที่ซ้ำกันได้
+  const rows = await readTab(SERIES_TAB, 'dbName');
+  if (!rows) return [];
+
+  const next: SeriesRow[] = [];
+  const problems: string[] = [];
+
+  for (const [i, row] of rows.entries()) {
+    const line = i + 2;
+    const slug = (row.slug ?? '').trim().toLowerCase();
+    if (!slug) continue;
+
+    const get = (k: string) => (row[k] ?? '').trim();
+    const missing = ['dbName', 'displayName', 'category', 'tag', 'subtitle', 'description'].filter(
+      (k) => !get(k),
+    );
+    if (missing.length) {
+      problems.push(`แถว ${line} (${slug}): ขาด ${missing.join(', ')}`);
+      continue;
+    }
+    if (categoryIds.length && !categoryIds.includes(get('category'))) {
+      problems.push(
+        `แถว ${line} (${slug}): หมวด "${get('category')}" ไม่มีในแท็บ ${CATEGORY_TAB}`,
+      );
+      continue;
+    }
+
+    next.push({
+      slug,
+      dbName: get('dbName'),
+      displayName: get('displayName'),
+      category: get('category'),
+      tag: get('tag'),
+      subtitle: get('subtitle'),
+      description: get('description'),
+      theme: get('theme'),
+      ...(get('sameFilmAs') ? { sameFilmAs: get('sameFilmAs').toLowerCase() } : {}),
+    });
+  }
+
+  if (problems.length) {
+    console.log(`\n⚠ แท็บ ${SERIES_TAB}`);
+    problems.forEach((p) => console.log(`   ${p}`));
+  }
+  if (next.length === 0) {
+    console.log(`\nข้ามซีรีส์ — ไม่พบแถวที่ใช้ได้ในแท็บ "${SERIES_TAB}"`);
+    return [];
+  }
+
+  const byCat = new Map<string, number>();
+  next.forEach((s) => byCat.set(s.category, (byCat.get(s.category) ?? 0) + 1));
+  console.log(
+    `\nซีรีส์: ${next.length} ซีรีส์ — ` +
+      [...byCat].map(([c, n]) => `${c} ${n}`).join(' · '),
+  );
+  writeIfChanged(SERIES_OUT, next, '   ');
+  return next.map((s) => s.dbName);
+}
+
+interface CarPrice {
+  series: string;
+  S: number;
+  M: number;
+  L: number;
+  XL: number;
+  sunroof: number;
+}
+
+/** ราคารถกรอกกันหลายแบบ "8,900" "฿8900" "8900 บาท" ตัดให้เหลือตัวเลขก่อน */
+const toBaht = (v: unknown): number => Number(String(v ?? '').replace(/[^\d.]/g, ''));
+
+function toCarPrices(rows: Record<string, string>[]): CarPrice[] {
+  const out: CarPrice[] = [];
+  const problems: string[] = [];
+
+  rows.forEach((row, i) => {
+    const line = i + 2;
+    const series = (row.series ?? '').trim();
+    if (!series) return; // แถวว่าง ข้ามเงียบ ๆ
+
+    if (!SERIES_LIST.includes(series)) {
+      problems.push(`แถว ${line}: ซีรีส์ "${series}" ไม่อยู่ในรายการ`);
+      return;
+    }
+
+    const sizes = CAR_SIZES.map((k) => toBaht(row[k]));
+    if (sizes.some((n) => !Number.isFinite(n) || n <= 0)) {
+      problems.push(`แถว ${line}: ${series} มีช่องขนาดรถที่อ่านเป็นราคาไม่ได้ — ข้ามทั้งแถว`);
+      return;
+    }
+
+    // ราคาต้องไล่จากรถเล็กไปรถใหญ่ ถ้าสลับกันแปลว่ากรอกผิดคอลัมน์
+    for (let k = 1; k < sizes.length; k++) {
+      if (sizes[k] < sizes[k - 1]) {
+        problems.push(
+          `แถว ${line}: ${series} ราคา ${CAR_SIZES[k]} (${sizes[k]}) ถูกกว่า ${CAR_SIZES[k - 1]} (${sizes[k - 1]}) — สลับคอลัมน์หรือเปล่า`,
+        );
+      }
+    }
+
+    out.push({
+      series,
+      S: sizes[0],
+      M: sizes[1],
+      L: sizes[2],
+      XL: sizes[3],
+      sunroof: toBaht(row.sunroof),
+    });
+  });
+
+  if (problems.length) {
+    console.log('\n⚠ แท็บราคารถ');
+    problems.forEach((p) => console.log(`   ${p}`));
+  }
+  return out;
+}
+
+async function syncCarPrices(): Promise<Set<string>> {
+  let csv: string;
+  try {
+    csv = await readCsv(CAR_TAB);
+  } catch {
+    console.log(`\nข้ามราคารถ — อ่านแท็บ "${CAR_TAB}" ไม่ได้`);
+    return new Set();
+  }
+
+  const parsed = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const headers = parsed.meta.fields?.map((f) => f.trim()) ?? [];
+  // ชื่อแท็บที่ไม่มีอยู่จริงจะถูก Google ปัดไปใช้แท็บแรกแทนที่จะแจ้ง error
+  // ถ้าหัวตารางไม่มีคอลัมน์ series แปลว่าได้แท็บผิดมา อย่าเขียนทับของเดิม
+  if (!headers.includes('series')) {
+    console.log(`\nข้ามราคารถ — แท็บ "${CAR_TAB}" ไม่มีคอลัมน์ series (ได้แท็บผิดมา?)`);
+    return new Set();
+  }
+
+  const next = toCarPrices(parsed.data);
+  if (next.length === 0) {
+    console.log(`\nข้ามราคารถ — ไม่พบแถวที่ใช้ได้ในแท็บ "${CAR_TAB}"`);
+    return new Set();
+  }
+
+  let current: CarPrice[] = [];
+  try {
+    current = JSON.parse(readFileSync(CAR_OUT, 'utf8'));
+  } catch {
+    /* ยังไม่มีไฟล์ ถือว่าเริ่มจากศูนย์ */
+  }
+
+  const seriesWithCarPrice = new Set(next.map((c) => c.series));
+  const same = JSON.stringify(current) === JSON.stringify(next);
+  console.log(`\nราคารถ: อ่านได้ ${next.length} ซีรีส์${same ? ' (ไม่มีอะไรเปลี่ยน)' : ''}`);
+  if (same) return seriesWithCarPrice;
+
+  next.forEach((c) =>
+    console.log(
+      `   ${c.series.padEnd(11)} S ${c.S} · M ${c.M} · L ${c.L} · XL ${c.XL} · ซันรูฟ +${c.sunroof}`,
+    ),
+  );
+
+  if (!apply) return seriesWithCarPrice;
+  writeFileSync(CAR_OUT, JSON.stringify(next, null, 2) + '\n', 'utf8');
+  console.log(`✓ เขียน ${CAR_OUT} แล้ว`);
+  return seriesWithCarPrice;
+}
+
 function diff(before: Product[], after: Product[]) {
   const byId = (list: Product[]) => new Map(list.map((p) => [p.id, p]));
   const a = byId(before);
@@ -198,6 +472,25 @@ function diff(before: Product[], after: Product[]) {
 }
 
 async function main() {
+  // ต้องอ่านหมวดกับซีรีส์ก่อน เพราะทั้งสองอย่างเป็นตัวตรวจของแถวสินค้า
+  const categoryIds = await syncCategories();
+  const seriesNames = await syncSeries(categoryIds);
+
+  /**
+   * ถ้าอ่านแท็บ series ไม่ได้ ให้ถอยไปใช้ไฟล์ที่มีอยู่แทนการล้มทั้งงาน
+   *
+   * ระหว่างที่ยังสร้างแท็บไม่เสร็จ การซิงก์สินค้ากับราคารถต้องทำงานได้ตามปกติ
+   * ถ้าปล่อยให้ throw จะกลายเป็นว่าเพิ่มฟีเจอร์แล้วของเดิมใช้ไม่ได้
+   */
+  SERIES_LIST = seriesNames.length
+    ? seriesNames
+    : (JSON.parse(readFileSync(SERIES_OUT, 'utf8')) as Array<{ dbName: string }>).map(
+        (r) => r.dbName,
+      );
+  if (!seriesNames.length) {
+    console.log(`   ใช้ ${SERIES_OUT} ที่มีอยู่แทน (${SERIES_LIST.length} ซีรีส์)`);
+  }
+
   const csv = await readCsv();
   const parsed = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
@@ -219,6 +512,7 @@ async function main() {
 
   const current: Product[] = JSON.parse(readFileSync(OUT, 'utf8'));
   const { added, removed, changed } = diff(current, next);
+  const carSeries = await syncCarPrices();
 
   console.log(`\nอ่านจาก Sheet ได้ ${next.length} รายการ (ของเดิม ${current.length})`);
 
@@ -239,7 +533,8 @@ async function main() {
     return;
   }
 
-  const noPrice = next.filter((p) => !p.price);
+  // ซีรีส์ที่มีราคาในแท็บรถไม่ต้องมีราคาต่อตารางฟุต การเตือนจะกลายเป็นเสียงรบกวน
+  const noPrice = next.filter((p) => !p.price && !carSeries.has(p.series));
   if (noPrice.length) {
     console.log(`\n⚠ ยังไม่มีราคา ${noPrice.length} รายการ: ${noPrice.map((p) => p.name).join(', ')}`);
   }

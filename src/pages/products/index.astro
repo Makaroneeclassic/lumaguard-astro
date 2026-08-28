@@ -4,7 +4,8 @@ import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
 import ProductMatrix from '@/components/ProductMatrix';
 import { ALL_PRODUCTS } from '@/lib/products';
-import { SERIES } from '@/lib/series';
+import { CATEGORIES, getSeriesByCategory } from '@/lib/series';
+import { getCarPrice, formatBaht } from '@/lib/carPrices';
 import FilmSelector from '@/components/FilmSelector';
 import PriceEstimator from '@/components/PriceEstimator';
 
@@ -12,9 +13,22 @@ import { getPageSeo } from '@/lib/pageSeo';
 import { getEstimatorRates } from '@/lib/rates';
 const products = ALL_PRODUCTS;
 
+/**
+ * นับจากข้อมูลจริงแทนที่จะพิมพ์ตัวเลขไว้ในข้อความ
+ *
+ * หัวข้อกับ description เคยเขียน "18 รุ่นใน 6 ซีรีส์" ไว้ตรง ๆ ซึ่งกลายเป็นข้อมูล
+ * ผิดทันทีที่เพิ่มซีรีส์ใหม่ และไม่มีอะไรเตือนให้รู้ตัว
+ */
+const modelCount = products.length;
+const categoriesWithSeries = CATEGORIES.map((category) => ({
+  ...category,
+  series: getSeriesByCategory(category.id),
+})).filter((category) => category.series.length > 0);
+const seriesCount = categoriesWithSeries.reduce((n, c) => n + c.series.length, 0);
+
 const seo = await getPageSeo('/products', {
-  title: "รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก 18 รุ่น | LUMAGUARD",
-  description: "สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสงบ้านและคอนโด LUMAGUARD ครบทั้ง 18 รุ่นใน 6 ซีรีส์ Element, Shield, Zenith, Nexus, Apex, Guardian เพื่อการกันความร้อนสูงสุด",
+  title: `รุ่นฟิล์มทั้งหมด & ตารางเปรียบเทียบสเปก ${modelCount} รุ่น | LUMAGUARD`,
+  description: `สำรวจและเปรียบเทียบสเปกฟิล์มกรองแสง LUMAGUARD ครบทั้ง ${modelCount} รุ่นใน ${seriesCount} ซีรีส์ ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ ดูค่า VLT UVR IRR และ TSER ของทุกรุ่นในตารางเดียว`,
 });
 const { title, description } = seo;
 
@@ -27,10 +41,11 @@ const estimatorRates = getEstimatorRates();
   <main class="min-h-screen pt-24 pb-20 px-6 max-w-[1440px] mx-auto space-y-20">
     <div class="text-center max-w-3xl mx-auto space-y-4">
       <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-        เปรียบเทียบสเปกและรุ่นฟิล์มกรองแสง (18 รุ่น)
+        เปรียบเทียบสเปกและรุ่นฟิล์มกรองแสง ({modelCount} รุ่น)
       </h1>
       <p class="text-slate-600 text-base leading-relaxed">
-        คัดสรรเทคโนโลยีฟิล์มกรองแสงที่ดีที่สุดสำหรับบ้านและคอนโด ทั้ง 6 ซีรีส์ (Element, Shield, Zenith, Nexus, Apex, Guardian) ป้องกันความร้อนสูงสุดและถนอมสายตา
+        ค่าสเปกจริงทุกรุ่นใน {seriesCount} ซีรีส์ ทั้งฟิล์มบ้านอาคารและฟิล์มรถยนต์ —
+        เลือกหมวดในตารางด้านล่างเพื่อเทียบเฉพาะกลุ่มที่คุณกำลังหา
       </p>
     </div>
 
@@ -41,7 +56,7 @@ const estimatorRates = getEstimatorRates();
       ในเว็บลิงก์เข้าไปเลย ผู้ใช้จึงหาไม่เจอ และ Google ก็ให้น้ำหนักหน้าที่ไม่มี
       ลิงก์ภายในชี้ถึงน้อยกว่าปกติ ส่วนนี้จึงเป็นทางเข้าหลักของทั้งหกหน้า
     */}
-    <section aria-labelledby="series-heading" class="space-y-8">
+    <section aria-labelledby="series-heading" class="space-y-12">
       <div class="text-center max-w-2xl mx-auto space-y-3">
         <h2 id="series-heading" class="text-2xl sm:text-3xl md:text-4xl font-black text-on-surface tracking-tight">
           เจาะลึกรายซีรีส์
@@ -51,8 +66,16 @@ const estimatorRates = getEstimatorRates();
         </p>
       </div>
 
+      {categoriesWithSeries.map((category) => (
+      <div class="space-y-5">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-outline-variant/20 pb-3">
+          <h3 class="font-headline text-lg font-bold text-on-surface">{category.label}</h3>
+          <p class="text-sm text-on-surface-variant">{category.blurb}</p>
+        </div>
       <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {SERIES.map((series) => (
+        {category.series.map((series) => {
+        const car = getCarPrice(series.dbName);
+        return (
           <li>
             <a
               href={`/products/${series.slug}`}
@@ -62,23 +85,45 @@ const estimatorRates = getEstimatorRates();
                 <span class="text-[10px] font-bold uppercase tracking-widest text-accent-700">
                   {series.tag}
                 </span>
-                <h3 class="font-headline text-xl font-bold text-primary">
+                <h4 class="font-headline text-xl font-bold text-primary">
                   {series.displayName}
-                </h3>
+                </h4>
                 <p class="text-sm leading-relaxed text-on-surface-variant line-clamp-3">
                   {series.subtitle}
                 </p>
               </div>
-              <span class="text-sm font-bold text-primary group-hover:underline">
-                ดูสเปกทุกรุ่น →
-              </span>
+              <div class="space-y-1">
+                {car && (
+                  <p class="text-sm text-on-surface-variant">
+                    เหมาทั้งคันเริ่มต้น{' '}
+                    <span class="font-bold text-on-surface tabular-nums">{formatBaht(car.S)}</span>
+                  </p>
+                )}
+                <span class="text-sm font-bold text-primary group-hover:underline">
+                  ดูสเปกทุกรุ่น →
+                </span>
+              </div>
             </a>
           </li>
-        ))}
+        );
+        })}
       </ul>
+      </div>
+      ))}
     </section>
 
+    {/*
+      ตัวเลือกฟิล์มกับเครื่องประเมินราคาถามเรื่องห้องและคิดจากพื้นที่กระจกเป็น
+      ตารางฟุต ทั้งคู่จึงใช้ได้กับฟิล์มอาคารเท่านั้น ฟิล์มรถคิดเป็นคันหรือรายบาน
+      ต้องมีเครื่องมือของตัวเองแยกต่างหาก บอกไว้ให้ชัดดีกว่าปล่อยให้คนกรอกแล้ว
+      ได้ตัวเลขที่ใช้ไม่ได้
+    */}
     <section id="consultation" class="pt-8">
+      <p class="mx-auto mb-6 max-w-2xl text-center text-sm text-on-surface-variant">
+        เครื่องมือสองตัวด้านล่างใช้กับ<strong>ฟิล์มบ้านและอาคาร</strong>เท่านั้น —
+        ฟิล์มรถยนต์คิดราคาเป็นคันหรือรายบาน
+        <a href="/contact" class="font-bold text-primary hover:underline">ทักมาขอใบเสนอราคา</a>ได้เลย
+      </p>
       <FilmSelector client:visible />
     </section>
 

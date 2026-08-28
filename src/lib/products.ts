@@ -1,4 +1,5 @@
 import data from '@/data/products.json';
+import { SERIES, getSeriesByCategory } from '@/lib/series';
 
 /**
  * แหล่งข้อมูลสินค้าแหล่งเดียวของทั้งเว็บ
@@ -31,16 +32,28 @@ export interface Product {
   isPopular?: boolean;
 }
 
-export const SERIES_LIST = ['Element', 'Shield', 'Zenith', 'Nexus', 'Apex', 'Guardian'] as const;
+/** ชื่อซีรีส์ทั้งหมดที่ระบบรู้จัก เรียงตามลำดับแถวในชีต */
+export const SERIES_LIST: string[] = SERIES.map((s) => s.dbName);
 
 export const ALL_PRODUCTS: Product[] = data as Product[];
 
-/** สินค้าที่เลือกให้ขึ้นหน้าแรก ถ้าไม่ได้ติ๊กไว้เลยให้ใช้ตัวแรกของแต่ละซีรีส์แทน */
+/** ชื่อซีรีส์เฉพาะหมวดอาคาร — ใช้กับเครื่องมือที่คิดราคาเป็นตารางฟุต */
+export const ARCHITECTURAL_SERIES: string[] = getSeriesByCategory('architectural').map(
+  (s) => s.dbName,
+);
+
+/**
+ * สินค้าที่เลือกให้ขึ้นหน้าแรก ถ้าไม่ได้ติ๊กไว้เลยให้ใช้ตัวแรกของแต่ละซีรีส์แทน
+ *
+ * ทางสำรองจำกัดไว้เฉพาะซีรีส์อาคาร เพราะหน้าแรกทั้งหน้าพูดเรื่องบ้านและคอนโด
+ * ถ้าปล่อยให้ไล่ทุกซีรีส์ วันที่เพิ่มฟิล์มรถเข้ามาหน้าแรกจะมีรุ่นรถโผล่ขึ้นมาเอง
+ * โดยไม่มีใครสั่ง
+ */
 export function getHomepageProducts(): Product[] {
   const picked = ALL_PRODUCTS.filter((p) => p.showOnHomepage);
   if (picked.length > 0) return picked;
 
-  return SERIES_LIST.map((s) => ALL_PRODUCTS.find((p) => p.series === s)).filter(
+  return ARCHITECTURAL_SERIES.map((s) => ALL_PRODUCTS.find((p) => p.series === s)).filter(
     (p): p is Product => Boolean(p),
   );
 }
@@ -66,7 +79,12 @@ export function technologyOf(series: string): string {
   return getProductsBySeries(series)[0]?.technology ?? '';
 }
 
-/** ลำดับความพรีเมียมของซีรีส์ เรียงจากราคาถูกไปแพง ใช้ตัดสินว่าตัวไหนคือรุ่นท็อป */
-export function seriesByPrice(): string[] {
-  return [...SERIES_LIST].sort((a, b) => lowestPrice(a) - lowestPrice(b));
+/**
+ * ลำดับความพรีเมียมของซีรีส์ เรียงจากราคาถูกไปแพง ใช้ตัดสินว่าตัวไหนคือรุ่นท็อป
+ *
+ * เทียบเฉพาะภายในหมวดเดียวกัน เพราะราคาฟิล์มอาคารเป็นบาทต่อตารางฟุต
+ * ส่วนฟิล์มรถคิดเป็นคัน เอามาเรียงรวมกันจะได้ลำดับที่ไม่มีความหมาย
+ */
+export function seriesByPrice(list: readonly string[] = ARCHITECTURAL_SERIES): string[] {
+  return [...list].sort((a, b) => lowestPrice(a) - lowestPrice(b));
 }

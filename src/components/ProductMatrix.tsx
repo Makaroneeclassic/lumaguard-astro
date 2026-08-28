@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CheckSquare, Square, Columns } from "lucide-react";
 import { ALL_PRODUCTS, SERIES_LIST, type Product } from "@/lib/products";
+import { CATEGORIES, getSeriesByCategory, type ProductCategory } from "@/lib/series";
 
 // ส่งออกต่อเพื่อความเข้ากันได้กับที่อื่นที่เคยนำเข้าจากไฟล์นี้
 export type { Product };
@@ -12,14 +13,46 @@ interface ProductMatrixProps {
   products?: Product[];
 }
 
+/**
+ * หมวดที่มีซีรีส์อยู่จริงเท่านั้น
+ *
+ * หมวดฟิล์มนิรภัยประกาศไว้แล้วแต่ยังไม่มีซีรีส์สักตัว การโชว์แท็บเปล่า ๆ
+ * ทำให้คนกดแล้วเจอตารางว่าง แท็บจะโผล่เองทันทีที่เพิ่มซีรีส์แรกของหมวดนั้น
+ */
+const ACTIVE_CATEGORIES = CATEGORIES.filter(
+  (c) => getSeriesByCategory(c.id).length > 0,
+);
 
 export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
+  const [category, setCategory] = useState<ProductCategory>(
+    ACTIVE_CATEGORIES[0]?.id ?? "architectural",
+  );
   const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
   const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
 
-  const displayProducts = products.length > 0 ? products : ALL_PRODUCTS;
+  const allProducts = products.length > 0 ? products : ALL_PRODUCTS;
 
-  const activeSeriesList = SERIES_LIST;
+  // ซีรีส์ของหมวดที่กำลังดู — ใช้ทั้งเป็นปุ่มกรองและเป็นลำดับแถวในตาราง
+  const activeSeriesList = useMemo(
+    () => getSeriesByCategory(category).map((s) => s.dbName),
+    [category],
+  );
+
+  /**
+   * ตารางเทียบข้ามหมวดไม่ได้ ค่าที่เทียบคนละความหมาย
+   *
+   * ฟิล์มอาคารกับฟิล์มรถใช้หน่วยราคาคนละแบบและติดตั้งบนกระจกคนละชนิด
+   * การวางรวมกัน 35 รุ่นในตารางเดียวทำให้เทียบอะไรไม่ได้เลย
+   */
+  const displayProducts = useMemo(
+    () => allProducts.filter((p) => activeSeriesList.includes(p.series)),
+    [allProducts, activeSeriesList],
+  );
+
+  const handleCategoryChange = (next: ProductCategory) => {
+    setCategory(next);
+    setSelectedSeries([]);
+  };
 
   const handleSeriesClick = (seriesName: string) => {
     if (isCompareMode) {
@@ -105,6 +138,16 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
         return "bg-amber-50 text-amber-800 border-amber-200";
       case "Guardian":
         return "bg-accent-50 text-accent-700 border-accent-200";
+      case "Vanguard":
+        return "bg-neutral-100 text-neutral-700 border-neutral-300";
+      case "Metallique":
+        return "bg-zinc-100 text-zinc-700 border-zinc-300";
+      case "Matrix":
+        return "bg-sky-50 text-sky-700 border-sky-200";
+      case "Stellar":
+        return "bg-violet-50 text-violet-700 border-violet-200";
+      case "Crystalux":
+        return "bg-teal-50 text-teal-700 border-teal-200";
       default:
         return "bg-slate-100 text-slate-600 border-slate-200";
     }
@@ -138,6 +181,37 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
           <span>{isCompareMode ? "โหมดกรองทีละซีรีส์" : "เปิดโหมดเปรียบเทียบหลายซีรีส์"}</span>
         </button>
       </div>
+
+      {/* Category Tabs — ตารางแยกตามหมวดสินค้า */}
+      {ACTIVE_CATEGORIES.length > 1 && (
+        <div
+          role="tablist"
+          aria-label="หมวดสินค้า"
+          className="flex flex-wrap gap-2 mb-4 border-b border-slate-200"
+        >
+          {ACTIVE_CATEGORIES.map((c) => {
+            const isActive = c.id === category;
+            return (
+              <button
+                key={c.id}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => handleCategoryChange(c.id)}
+                className={`px-4 py-3 min-h-[48px] font-headline font-bold text-sm transition-all cursor-pointer border-b-2 -mb-px ${
+                  isActive
+                    ? "border-primary text-primary"
+                    : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                {c.label}
+                <span className="ml-2 font-normal text-xs text-slate-400">
+                  {getSeriesByCategory(c.id).length} ซีรีส์
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Tabs / Selection Chips Wrapper */}
       <div className="flex flex-wrap items-center gap-2 mb-6 p-2 rounded-2xl bg-slate-100/80 border border-slate-200/60">
@@ -187,7 +261,9 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
       <div className="block md:hidden space-y-4">
         {filteredProducts.length === 0 ? (
           <div className="bg-white p-8 text-center rounded-2xl border border-slate-200 text-slate-500 text-xs font-light">
-            ไม่มีสินค้าตรงตามซีรีส์ที่เลือก กรุณาเลือกซีรีส์อื่นในการเปรียบเทียบ
+            {selectedSeries.length === 1
+              ? `${selectedSeries[0]} Series ยังไม่มีข้อมูลสเปก — อยู่ระหว่างรวบรวมจากผู้ผลิต`
+              : "ไม่มีสินค้าตรงตามซีรีส์ที่เลือก กรุณาเลือกซีรีส์อื่นในการเปรียบเทียบ"}
           </div>
         ) : (
           filteredProducts.map((product) => (
@@ -266,7 +342,9 @@ export default function ProductMatrix({ products = [] }: ProductMatrixProps) {
             {filteredProducts.length === 0 ? (
               <tr>
                 <td colSpan={6} className="p-12 text-center text-slate-600 font-light">
-                  ไม่มีสินค้าตรงตามซีรีส์ที่เลือก กรุณาเลือกซีรีส์อื่นในการเปรียบเทียบ
+                  {selectedSeries.length === 1
+              ? `${selectedSeries[0]} Series ยังไม่มีข้อมูลสเปก — อยู่ระหว่างรวบรวมจากผู้ผลิต`
+              : "ไม่มีสินค้าตรงตามซีรีส์ที่เลือก กรุณาเลือกซีรีส์อื่นในการเปรียบเทียบ"}
                 </td>
               </tr>
             ) : (
