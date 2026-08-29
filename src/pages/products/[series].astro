@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd.astro';
 import PriceEstimator from '@/components/PriceEstimator';
 import { ALL_PRODUCTS } from '@/lib/products';
-import { SERIES, CATEGORIES, getSeries, type SeriesDetail } from '@/lib/series';
+import { SERIES, type SeriesDetail } from '@/lib/series';
 import { buildBreadcrumbSchema } from '@/lib/schema';
 import { getCarPrice, CAR_SIZES, formatBaht } from '@/lib/carPrices';
 import { SITE_URL, BUSINESS, absoluteUrl } from '@/lib/site';
@@ -153,21 +153,6 @@ const FEATURES_BY_CATEGORY = {
 
 const FEATURES = FEATURES_BY_CATEGORY[series.category];
 
-/**
- * ซีรีส์ฝั่งตรงข้ามที่เป็นฟิล์มม้วนเดียวกัน
- *
- * นับจำนวนรุ่นของทั้งสองฝั่งมาเทียบด้วย เพราะฟิล์มม้วนเดียวกันไม่ได้แปลว่ามี
- * ระดับความเข้มให้เลือกเท่ากัน เช่นฝั่งรถมีรุ่นใสสว่างสำหรับกระจกหน้าที่ฝั่ง
- * อาคารไม่ได้สต๊อกไว้ ถ้าเขียนว่า "เหมือนกันทุกอย่าง" ก็จะเป็นข้อมูลที่ผิด
- */
-const twin = series.sameFilmAs ? getSeries(series.sameFilmAs) : undefined;
-const twinProducts = twin
-  ? ALL_PRODUCTS.filter((p) => p.series === twin.dbName)
-  : [];
-const twinCategoryLabel = twin
-  ? CATEGORIES.find((c) => c.id === twin.category)?.label
-  : undefined;
-
 /** เครื่องประเมินราคาคิดจากพื้นที่กระจกเป็นตารางฟุต จึงใช้ได้กับหมวดอาคารเท่านั้น */
 const showEstimator = series.category === 'architectural';
 const estimatorRates = showEstimator ? await getEstimatorRates() : {};
@@ -307,26 +292,6 @@ const estimatorRates = showEstimator ? await getEstimatorRates() : {};
         </div>
       )}
 
-      {twin && (
-        <div class="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 space-y-3">
-          <h3 class="font-headline font-bold text-on-surface text-sm">
-            ฟิล์มม้วนเดียวกันกับ {twin.displayName}
-          </h3>
-          <p class="text-xs text-on-surface-variant leading-relaxed">
-            เนื้อฟิล์มและค่าสเปกของสองซีรีส์นี้เป็นตัวเดียวกัน เราแยกชื่อตามตลาดที่ใช้งาน
-            เพราะวิธีคิดราคาและระดับความเข้มที่สต๊อกไว้ต่างกัน{' '}
-            — {series.displayName} สำหรับ{series.category === 'automotive' ? 'รถยนต์' : 'บ้านและอาคาร'}
-            มี {products.length} รุ่น ส่วน {twin.displayName} สำหรับ{twinCategoryLabel === 'ฟิล์มรถยนต์' ? 'รถยนต์' : 'บ้านและอาคาร'}
-            มี {twinProducts.length} รุ่น
-          </p>
-          <a
-            href={`/products/${twin.slug}`}
-            class="inline-flex text-xs font-bold text-primary hover:underline"
-          >
-            ดู {twin.displayName} →
-          </a>
-        </div>
-      )}
     </section>
 
     <section class="max-w-7xl mx-auto px-6 mb-28">
