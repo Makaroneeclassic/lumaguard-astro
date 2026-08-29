@@ -17,7 +17,15 @@ const ogImage = new URL(image, Astro.site).href;
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex,nofollow" />}
+{/*
+  ใช้ follow ไม่ใช่ nofollow
+
+  noindex บอกว่าอย่าเอาหน้านี้เข้าผลค้นหา ส่วน nofollow บอกว่าอย่าเดินตามลิงก์
+  ในหน้านี้เลย ซึ่งเป็นคนละเรื่องกัน หน้าที่ซ่อนชั่วคราวยังมีลิงก์ไปหน้าขายและ
+  บทความอื่นอยู่ การใส่ nofollow ทำให้ลิงก์เหล่านั้นไม่ส่งน้ำหนักต่อไปไหนเลย
+  ทั้งที่เราแค่ไม่อยากให้ตัวหน้านี้ติดอันดับ
+*/}
+{noindex && <meta name="robots" content="noindex,follow" />}
 
 <meta property="og:type" content={type} />
 <meta property="og:title" content={title} />

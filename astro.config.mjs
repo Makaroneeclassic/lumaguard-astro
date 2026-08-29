@@ -18,15 +18,26 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 const BLOG_DIR = 'src/content/blog';
 const blogLastmod = new Map();
 
+/**
+ * บทความที่ตั้ง noindex ไว้ ต้องไม่ถูกประกาศใน sitemap
+ *
+ * sitemap คือการบอก Google ว่า "หน้าพวกนี้อยากให้เก็บ" ส่วน noindex บอกว่า
+ * "อย่าเก็บหน้านี้" การส่งทั้งสองอย่างพร้อมกันคือสัญญาณที่ขัดกันเอง
+ * และทำให้ Google เสียเวลาไล่เก็บหน้าที่เราไม่ได้อยากให้เก็บตั้งแต่แรก
+ */
+const noindexBlogSlugs = new Set();
+
 if (existsSync(BLOG_DIR)) {
   for (const file of readdirSync(BLOG_DIR)) {
     if (!/\.mdx?$/.test(file)) continue;
     const raw = readFileSync(`${BLOG_DIR}/${file}`, 'utf8');
     const fm = raw.split('---')[1] ?? '';
+    const slug = file.replace(/\.mdx?$/, '');
     const updated = fm.match(/^updatedDate:\s*(\S+)/m)?.[1];
     const published = fm.match(/^pubDate:\s*(\S+)/m)?.[1];
     const date = (updated ?? published)?.replace(/['"]/g, '');
-    if (date) blogLastmod.set(file.replace(/\.mdx?$/, ''), new Date(date).toISOString());
+    if (date) blogLastmod.set(slug, new Date(date).toISOString());
+    if (/^noindex:\s*true\s*$/m.test(fm)) noindexBlogSlugs.add(slug);
   }
 }
 
@@ -78,7 +89,11 @@ export default defineConfig({
     mdx(),
     sitemap({
       // sitemap ต้องไม่ประกาศหน้าที่ตั้ง noindex ไว้ — เป็นสัญญาณที่ขัดกันเอง
-      filter: (page) => !page.includes('/admin') && !page.includes('/thank-you'),
+      filter: (page) => {
+        if (page.includes('/admin') || page.includes('/thank-you')) return false;
+        const slug = page.match(/\/blog\/([^/]+)\/?$/)?.[1];
+        return !(slug && noindexBlogSlugs.has(slug));
+      },
       serialize(item) {
         const slug = item.url.match(/\/blog\/([^/]+)\/?$/)?.[1];
         const lastmod = slug && blogLastmod.get(slug);
