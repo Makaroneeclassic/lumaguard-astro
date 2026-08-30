@@ -102,6 +102,7 @@ const parsed = Papa.parse<Record<string, string>>(csv, {
   transformHeader: (h) => h.trim(),
 });
 
+
 const rows = parsed.data.filter((r) => (r.slug ?? "").trim());
 
 // ชีตที่ยังไม่มีบทความเป็นสถานะปกติของงานที่รันตามเวลาทุกวัน ไม่ใช่ความผิดพลาด
@@ -332,7 +333,18 @@ for (const [i, row] of rows.entries()) {
   if (tags.length) fm.push(`tags: [${tags.map(yamlStr).join(", ")}]`);
 
   fm.push("draft: false");
-  if (bool(row.noindex)) fm.push("noindex: true");
+  /**
+   * คอลัมน์ในชีตถามเชิงบวกว่า "ให้ค้นเจอใน Google ไหม" ไม่ใช่ถามกลับด้าน
+   *
+   * ของเดิมคอลัมน์ชื่อ noindex ซึ่งการตอบ TRUE แปลว่า "ใช่ ไม่ต้อง index"
+   * เป็นคำถามปฏิเสธซ้อนปฏิเสธที่คนกรอกเข้าใจสลับกันได้ง่ายมาก และเคยทำให้
+   * บทความที่ตั้งใจจะให้ติดอันดับถูกซ่อนจาก Google โดยไม่มีใครรู้ตัว
+   *
+   * ค่าเริ่มต้นคือให้ค้นเจอ ช่องที่เว้นว่างจึงไม่ต้องแก้อะไร
+   * จะซ่อนบทความต้องพิมพ์ FALSE ลงไปอย่างชัดเจนเท่านั้น
+   */
+  const showInGoogle = (row.showInGoogle ?? "").trim();
+  if (/^(false|no|ไม่|0)$/i.test(showInGoogle)) fm.push("noindex: true");
 
   // คอลัมน์ faq รูปแบบ "คำถาม | คำตอบ" บรรทัดละหนึ่งข้อ
   const faqLines = (row.faq ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
