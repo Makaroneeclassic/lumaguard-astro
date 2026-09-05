@@ -1,23 +1,11 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import { CLUSTERS } from './lib/clusters';
 
-/**
- * Cluster ของเนื้อหา — ทุกบทความต้องสังกัด cluster เดียว
- *
- * โครงตาม topical map ของ LumaGuard: ฟิล์มอาคารเป็นแกนหลัก
- * และ PPF รถยนต์เป็นสายเสริม การบังคับเป็น enum ทำให้เพิ่ม cluster ใหม่
- * ต้องตั้งใจ ไม่ใช่พิมพ์ผิดแล้วเกิด cluster ใหม่โดยไม่รู้ตัว
- */
-export const CLUSTERS = [
-  'architectural-film',   // ฟิล์มอาคาร/บ้าน/คอนโด — pillar หลัก
-  'energy-saving',        // ลดความร้อน ประหยัดค่าไฟ
-  'safety-security',      // ฟิล์มนิรภัย กันกระจกแตก
-  'privacy',              // ฟิล์มฝ้า ทึบแสง
-  'film-technology',      // นาโนเซรามิก ค่า VLT/TSER/IRR สเปกฟิล์ม
-  'ppf-automotive',       // ฟิล์มใสกันรอยรถยนต์ — สายเสริม
-  'care-maintenance',     // ดูแลรักษา ปัญหาหลังติดตั้ง
-] as const;
+// นิยามจริงย้ายไป src/lib/clusters.ts เพราะฟอร์มใน /admin/blog ต้องใช้
+// รายการเดียวกัน แต่ import ไฟล์นี้จากฝั่งเบราว์เซอร์ไม่ได้ (ติด astro/loaders)
+export { CLUSTERS };
 
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),

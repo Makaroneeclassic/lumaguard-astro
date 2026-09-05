@@ -74,6 +74,13 @@ export default defineConfig({
     webAnalytics: {
       enabled: true,
     },
+
+    /**
+     * /admin/blog ให้ AI เขียนบทความยาวซึ่งใช้เวลาได้ถึง 2-3 นาที
+     * ค่า default ของ Vercel ฆ่า function ก่อนเขียนเสร็จ ทำให้กด Generate
+     * แล้วได้ error ทั้งที่โมเดลกำลังทำงานปกติ
+     */
+    maxDuration: 300,
   }),
 
   // ต้องตรงกับโดเมนจริง มิฉะนั้น canonical/OG/sitemap จะชี้ไปโดเมนอื่น

@@ -16,6 +16,7 @@ const upstashToken = env("UPSTASH_REDIS_REST_TOKEN");
 
 let leadRatelimit: Ratelimit | null = null;
 let adminRatelimit: Ratelimit | null = null;
+let aiRatelimit: Ratelimit | null = null;
 
 if (upstashUrl && upstashToken) {
   try {
@@ -40,6 +41,19 @@ if (upstashUrl && upstashToken) {
       redis,
       limiter: Ratelimit.slidingWindow(10, "15 m"),
       prefix: "rl:admin",
+    });
+
+    /**
+     * เครื่องมือเขียนบทความใน /admin/blog
+     *
+     * ห้าสิบครั้งต่อห้านาที — ค่าเดียวกับ extension เดิม (SERP Spy หนึ่งรอบ
+     * ใช้หลาย request) ผู้เรียกผ่านด่าน session admin มาแล้ว ตัวนี้กันแค่
+     * สคริปต์หลุดวนลูปไม่ให้เผาเครดิต OpenRouter ของผู้ใช้จนหมด
+     */
+    aiRatelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(50, "5 m"),
+      prefix: "rl:ai",
     });
 
     console.log("[ratelimit] ใช้ Upstash — นับรวมทุก instance");
@@ -83,12 +97,12 @@ export function memoryRatelimit(
   return { success: true, remaining: limit - bucket.count, reset: bucket.reset };
 }
 
-export async function checkRateLimit(req: Request, type: "lead" | "admin"): Promise<{ success: boolean; remaining: number }> {
+export async function checkRateLimit(req: Request, type: "lead" | "admin" | "ai"): Promise<{ success: boolean; remaining: number }> {
   const ip = getClientIp(req);
   const key = `${type}:${ip}`;
 
   {
-    const limiter = type === "lead" ? leadRatelimit : adminRatelimit;
+    const limiter = type === "lead" ? leadRatelimit : type === "ai" ? aiRatelimit : adminRatelimit;
     if (limiter) {
       try {
         const result = await limiter.limit(ip);
@@ -101,8 +115,8 @@ export async function checkRateLimit(req: Request, type: "lead" | "admin"): Prom
 
   // Fallback to in-memory rate limiting
   // ค่าเดียวกับฝั่ง Upstash เพื่อให้พฤติกรรมไม่ต่างกันตอนไม่มี Upstash
-  const limit = type === "lead" ? 5 : 10;
-  const windowMs = type === "lead" ? 60 * 60 * 1000 : 15 * 60 * 1000;
+  const limit = type === "lead" ? 5 : type === "ai" ? 50 : 10;
+  const windowMs = type === "lead" ? 60 * 60 * 1000 : type === "ai" ? 5 * 60 * 1000 : 15 * 60 * 1000;
   const result = memoryRatelimit(key, limit, windowMs);
   return { success: result.success, remaining: result.remaining };
 }

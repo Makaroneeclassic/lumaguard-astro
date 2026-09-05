@@ -29,6 +29,9 @@ interface ImportMetaEnv {
   readonly RESEND_API_KEY?: string;
   readonly LEAD_NOTIFY_EMAIL?: string;
   readonly LEAD_NOTIFY_FROM?: string;
+  readonly GITHUB_TOKEN?: string;
+  readonly GITHUB_REPO_OWNER?: string;
+  readonly GITHUB_REPO_NAME?: string;
 }
 
 interface ImportMeta {

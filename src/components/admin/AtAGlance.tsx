@@ -5,10 +5,11 @@ import { Inbox, BookOpen, Package, FolderOpen, LayoutDashboard } from "lucide-re
  *
  * เดิมทั้งสี่การ์ดเป็นลิงก์ โดยสามอันชี้ไป /admin/blog, /admin/products
  * และ /admin/portfolio ซึ่งไม่เคยมีหน้าเหล่านั้นอยู่จริง กดแล้วเจอ 404 ทุกครั้ง
+ * จึงถอดลิงก์ออกทั้งหมด
  *
- * บทความจัดการผ่าน Google Sheet แล้วซิงก์ลง git ส่วนสินค้ากับผลงานมีแผน
- * จะย้ายไปทางเดียวกัน จึงจะไม่มีหน้าจัดการในระบบหลังบ้าน ตัวเลขยังมีประโยชน์
- * ในการดูว่าข้อมูลเข้าระบบครบไหม จึงเก็บไว้แต่ไม่ทำเป็นลิงก์
+ * ตอนนี้ /admin/blog มีจริงแล้ว (เครื่องมือเขียนบทความด้วย AI) การ์ดบทความ
+ * จึงกลับมาเป็นลิงก์ ส่วนสินค้ากับผลงานยังจัดการผ่านไฟล์ใน git ตามเดิม
+ * การ์ดของสองอย่างนั้นจึงยังเป็นตัวเลขเฉย ๆ
  */
 interface Props {
   stats: {
@@ -29,7 +30,7 @@ export default function AtAGlance({ stats }: Props) {
       value: stats.leadsTotal,
       badge: stats.leadsNew > 0 ? `ใหม่ ${stats.leadsNew}` : null,
     },
-    { key: "posts", icon: BookOpen, label: "บทความ", value: stats.posts, badge: null },
+    { key: "posts", icon: BookOpen, label: "บทความ", value: stats.posts, badge: "เขียนด้วย AI", href: "/admin/blog" },
     { key: "products", icon: Package, label: "สินค้า", value: stats.products, badge: null },
     { key: "portfolio", icon: FolderOpen, label: "ผลงาน", value: stats.portfolio, badge: null },
   ];
@@ -43,11 +44,8 @@ export default function AtAGlance({ stats }: Props) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {tiles.map((tile) => {
           const Icon = tile.icon;
-          return (
-            <div
-              key={tile.key}
-              className="flex flex-col gap-2 p-4 rounded-2xl border border-outline-variant/20 bg-surface-container-low"
-            >
+          const inner = (
+            <>
               <div className="flex items-center justify-between">
                 <Icon className="w-5 h-5 text-on-surface-variant" />
                 {tile.badge && (
@@ -60,6 +58,17 @@ export default function AtAGlance({ stats }: Props) {
                 {tile.value.toLocaleString("th-TH")}
               </span>
               <p className="text-xs text-on-surface-variant font-light">{tile.label}</p>
+            </>
+          );
+          const cls =
+            "flex flex-col gap-2 p-4 rounded-2xl border border-outline-variant/20 bg-surface-container-low";
+          return "href" in tile && tile.href ? (
+            <a key={tile.key} href={tile.href} className={`${cls} transition-shadow hover:shadow-md`}>
+              {inner}
+            </a>
+          ) : (
+            <div key={tile.key} className={cls}>
+              {inner}
             </div>
           );
         })}
