@@ -56,6 +56,27 @@ export async function getFile(path: string): Promise<GitHubFile | null> {
   };
 }
 
+export interface DirEntry {
+  name: string;
+  path: string;
+}
+
+/** รายชื่อไฟล์ในโฟลเดอร์ — คืน [] เมื่อโฟลเดอร์ไม่มีอยู่ */
+export async function listDir(path: string): Promise<DirEntry[]> {
+  const { token, owner, repo } = config();
+  const res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=main`,
+    { headers: headers(token) },
+  );
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error(`GitHub อ่านโฟลเดอร์ไม่สำเร็จ (HTTP ${res.status})`);
+  const data = await res.json();
+  if (!Array.isArray(data)) return [];
+  return data
+    .filter((e: { type: string }) => e.type === "file")
+    .map((e: { name: string; path: string }) => ({ name: e.name, path: e.path }));
+}
+
 export interface PutFileResult {
   commitUrl: string;
 }

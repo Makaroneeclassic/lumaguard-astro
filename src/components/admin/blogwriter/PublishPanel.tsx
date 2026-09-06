@@ -12,7 +12,7 @@ import { useToast } from "../ToastProvider";
 import { CLUSTERS } from "@/lib/clusters";
 import { publishPayloadSchema } from "@/lib/blogwriter/validation";
 import { extractFaqFromMarkdown } from "@/lib/blogwriter/markdown";
-import { publishPost } from "./api";
+import { publishPost, type EditablePost } from "./api";
 import { uploadImage } from "./imageUpload";
 import type { GeneratedResult } from "./GeneratorForm";
 import type { TopicalMapRow } from "@/lib/blogwriter/topicalMap";
@@ -40,9 +40,10 @@ function todayISO(): string {
   return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
 }
 
-export default function PublishPanel({ result, pickedRow }: {
+export default function PublishPanel({ result, pickedRow, existingPost }: {
   result: GeneratedResult;
   pickedRow: TopicalMapRow | null;
+  existingPost?: EditablePost | null;
 }) {
   const toast = useToast();
 
@@ -86,6 +87,35 @@ export default function PublishPanel({ result, pickedRow }: {
      */
     const articleFaq = extractFaqFromMarkdown(result.markdown);
     if (articleFaq.length) setFaq(articleFaq);
+
+    if (existingPost) {
+      // โหมดแก้ไข — เติมทุกช่องจาก frontmatter เดิมของไฟล์ใน repo
+      const fm = existingPost.frontmatter as Record<string, unknown>;
+      const str = (v: unknown) => (typeof v === "string" ? v : "");
+      const arr = (v: unknown) => (Array.isArray(v) ? v.join(", ") : "");
+      setSlug(existingPost.slug);
+      setSecondaryKeywords(arr(fm.secondaryKeywords));
+      if ((CLUSTERS as readonly string[]).includes(str(fm.cluster))) setCluster(str(fm.cluster));
+      setPillar(str(fm.pillar));
+      if (str(fm.relatedServiceUrl).startsWith("/")) setRelatedServiceUrl(str(fm.relatedServiceUrl));
+      if (/^\d{4}-\d{2}-\d{2}/.test(str(fm.pubDate))) setPubDate(str(fm.pubDate).slice(0, 10));
+      setHeroImage(str(fm.heroImage));
+      setHeroAlt(str(fm.heroAlt));
+      if (typeof fm.heroWidth === "number" && typeof fm.heroHeight === "number") {
+        setHeroSize({ w: fm.heroWidth, h: fm.heroHeight });
+      }
+      if (str(fm.author)) setAuthor(str(fm.author));
+      setTags(arr(fm.tags));
+      setShowInGoogle(fm.noindex !== true);
+      // บทเก่าที่เผยแพร่แล้ว draft=false → ติ๊กเผยแพร่ให้ตรงสถานะจริง
+      setPublishNow(fm.draft !== true);
+      // เนื้อหาเดิมมี CTA อยู่แล้วหรือไม่ก็ตาม อย่าแทรกซ้ำอัตโนมัติ
+      setInsertCta(false);
+      const existingFaq = Array.isArray(fm.faq) ? (fm.faq as FaqRow[]) : [];
+      if (existingFaq.length) setFaq(existingFaq);
+      else if (articleFaq.length) setFaq(articleFaq);
+      return;
+    }
 
     if (pickedRow) {
       setSlug(pickedRow.slug);
@@ -202,6 +232,12 @@ export default function PublishPanel({ result, pickedRow }: {
       pillar: pillar.trim() || undefined,
       relatedServiceUrl: relatedServiceUrl.trim(),
       pubDate,
+      /**
+       * โหมดแก้ไข: ประทับ updatedDate เป็นวันนี้เสมอ — ค่านี้ไหลไปเป็น
+       * lastmod ใน sitemap ซึ่งบอก Google ให้กลับมาเก็บฉบับแก้แล้ว
+       * (เหตุผลเดียวกับคอมเมนต์ใน astro.config.mjs)
+       */
+      updatedDate: existingPost ? todayISO() : undefined,
       heroImage: heroImage.trim() || undefined,
       heroAlt: heroAlt.trim() || undefined,
       heroWidth: heroImage.trim() && heroSize ? heroSize.w : undefined,
@@ -215,7 +251,7 @@ export default function PublishPanel({ result, pickedRow }: {
         : undefined,
     }),
     [title, description, primaryKeyword, secondaryKeywords, cluster, pillar, relatedServiceUrl,
-     pubDate, heroImage, heroAlt, heroSize, author, tags, publishNow, showInGoogle, faq],
+     pubDate, heroImage, heroAlt, heroSize, author, tags, publishNow, showInGoogle, faq, existingPost],
   );
 
   /**
@@ -237,7 +273,13 @@ export default function PublishPanel({ result, pickedRow }: {
   }, [markdown, insertCta, relatedServiceUrl]);
 
   async function handleSave(overwrite = false) {
-    const payload = { slug: slug.trim(), frontmatter, markdownBody: finalMarkdown, overwrite };
+    // โหมดแก้ไขคือการเขียนทับโดยเจตนา ไม่ต้องถามยืนยัน slug ซ้ำ
+    const payload = {
+      slug: slug.trim(),
+      frontmatter,
+      markdownBody: finalMarkdown,
+      overwrite: overwrite || Boolean(existingPost),
+    };
 
     const check = publishPayloadSchema.safeParse(payload);
     if (!check.success) {
@@ -271,7 +313,9 @@ export default function PublishPanel({ result, pickedRow }: {
   return (
     <div className="rounded-xl border border-emerald-700/50 bg-emerald-950/10 p-4 md:p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <p className="font-bold text-emerald-300">💾 บันทึกลงบล็อก</p>
+        <p className="font-bold text-emerald-300">
+          {existingPost ? `✏️ แก้ไขบทความ /blog/${existingPost.slug}` : "💾 บันทึกลงบล็อก"}
+        </p>
         <p className="text-xs text-slate-500">commit → GitHub → Vercel deploy อัตโนมัติ</p>
       </div>
 
@@ -462,7 +506,11 @@ export default function PublishPanel({ result, pickedRow }: {
         disabled={saving}
         className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white py-3 rounded-xl font-bold transition-colors"
       >
-        {saving ? "⏳ กำลังบันทึก..." : publishNow ? "🚀 บันทึกและเผยแพร่ขึ้นเว็บ" : "💾 บันทึกเป็น Draft"}
+        {saving
+          ? "⏳ กำลังบันทึก..."
+          : existingPost
+            ? publishNow ? "✏️ บันทึกการแก้ไขขึ้นเว็บ" : "✏️ บันทึกการแก้ไขเป็น Draft"
+            : publishNow ? "🚀 บันทึกและเผยแพร่ขึ้นเว็บ" : "💾 บันทึกเป็น Draft"}
       </button>
 
       {done && (

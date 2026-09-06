@@ -35,6 +35,79 @@ export interface BlogFrontmatter {
 const yamlStr = (v: string) =>
   `"${v.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r?\n/g, " ")}"`;
 
+export interface ParsedMdx {
+  frontmatter: Partial<BlogFrontmatter> & Record<string, unknown>;
+  body: string;
+}
+
+/**
+ * แกะไฟล์ .mdx กลับเป็น frontmatter + เนื้อหา สำหรับโหมดแก้ไขบทความเก่า
+ *
+ * ไม่ใช่ YAML parser เต็มรูป — รองรับเฉพาะรูปแบบที่ buildMdxFile กับ
+ * blog-sync.mts เขียน (ค่าใน quote, array บรรทัดเดียว, บล็อก faq)
+ * ซึ่งครอบคลุมทุกไฟล์ใน src/content/blog เพราะทุกไฟล์มาจากสองทางนี้
+ */
+export function parseMdxFile(raw: string): ParsedMdx | null {
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  if (!m) return null;
+  const body = raw.slice(m[0].length).trim();
+
+  const unquote = (s: string): string => {
+    s = s.trim();
+    if (s.startsWith('"') && s.endsWith('"') && s.length >= 2) {
+      return s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+    }
+    return s;
+  };
+
+  const fm: Record<string, unknown> = {};
+  const lines = m[1].split(/\r?\n/);
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (/^faq:\s*$/.test(line)) {
+      const faq: { q: string; a: string }[] = [];
+      i++;
+      while (i < lines.length && /^\s/.test(lines[i])) {
+        const qm = lines[i].match(/^\s*-\s*q:\s*(.*)$/);
+        if (qm) {
+          const q = unquote(qm[1]);
+          const am = lines[i + 1]?.match(/^\s*a:\s*(.*)$/);
+          if (am) {
+            faq.push({ q, a: unquote(am[1]) });
+            i += 2;
+            continue;
+          }
+        }
+        i++;
+      }
+      fm.faq = faq;
+      continue;
+    }
+
+    const kv = line.match(/^(\w+):\s*(.*)$/);
+    if (kv) {
+      const [, key, rawVal] = kv;
+      const val = rawVal.trim();
+      if (val.startsWith("[")) {
+        fm[key] = [...val.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) =>
+          x[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\"),
+        );
+      } else if (val === "true" || val === "false") {
+        fm[key] = val === "true";
+      } else if (/^\d+$/.test(val)) {
+        fm[key] = Number(val);
+      } else {
+        fm[key] = unquote(val);
+      }
+    }
+    i++;
+  }
+
+  return { frontmatter: fm as ParsedMdx["frontmatter"], body };
+}
+
 export function buildMdxFile(fm: BlogFrontmatter, markdownBody: string): string {
   const lines: string[] = [
     "---",

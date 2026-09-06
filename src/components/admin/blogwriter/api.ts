@@ -93,7 +93,7 @@ export interface PublishRequest {
   frontmatter: {
     title: string; description: string; primaryKeyword: string;
     secondaryKeywords: string[]; cluster: string; pillar?: string;
-    relatedServiceUrl: string; pubDate: string; heroImage?: string;
+    relatedServiceUrl: string; pubDate: string; updatedDate?: string; heroImage?: string;
     heroAlt?: string; author?: string; tags: string[];
     draft: boolean; noindex: boolean; faq?: { q: string; a: string }[];
   };
@@ -107,6 +107,24 @@ export interface PublishResult {
   commitUrl: string;
   blogUrl: string;
   updated: boolean;
+}
+
+/** ข้อมูลบทความเก่าที่โหลดมาแก้ไข */
+export interface EditablePost {
+  slug: string;
+  frontmatter: Record<string, unknown>;
+  body: string;
+}
+
+export async function fetchPostList(): Promise<{ slug: string }[]> {
+  const res = await fetch('/api/admin/blogwriter/posts');
+  const data = await parseJsonResponse(res);
+  return data.posts ?? [];
+}
+
+export async function fetchPost(slug: string): Promise<EditablePost> {
+  const res = await fetch(`/api/admin/blogwriter/posts?slug=${encodeURIComponent(slug)}`);
+  return (await parseJsonResponse(res)) as EditablePost;
 }
 
 export async function publishPost(payload: PublishRequest): Promise<PublishResult> {
