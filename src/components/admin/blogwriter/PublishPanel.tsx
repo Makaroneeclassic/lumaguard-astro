@@ -7,11 +7,12 @@
  * (content.config.ts) ก่อนกดบันทึก ค่าถูก prefill จากผลลัพธ์ AI +
  * แถว topical map ที่เลือกไว้ + FAQ จาก SERP Spy
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ToastProvider";
 import { CLUSTERS } from "@/lib/clusters";
 import { publishPayloadSchema } from "@/lib/blogwriter/validation";
 import { publishPost } from "./api";
+import { uploadImage } from "./imageUpload";
 import type { GeneratedResult } from "./GeneratorForm";
 import type { TopicalMapRow } from "@/lib/blogwriter/topicalMap";
 
@@ -55,6 +56,10 @@ export default function PublishPanel({ result, pickedRow }: {
   const [pubDate, setPubDate] = useState(todayISO());
   const [heroImage, setHeroImage] = useState("");
   const [heroAlt, setHeroAlt] = useState("");
+  const [heroSize, setHeroSize] = useState<{ w: number; h: number } | null>(null);
+  const [heroUploading, setHeroUploading] = useState(false);
+  const [bodyUploading, setBodyUploading] = useState(false);
+  const markdownRef = useRef<HTMLTextAreaElement | null>(null);
   const [author, setAuthor] = useState("ทีมงานวิศวกร LUMAGUARD");
   const [tags, setTags] = useState("");
   const [publishNow, setPublishNow] = useState(false);
@@ -99,6 +104,72 @@ export default function PublishPanel({ result, pickedRow }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
+  // ── อัพโหลดรูป ─────────────────────────────────────────────────
+  function requireSlug(): string | null {
+    const s = slug.trim();
+    if (!/^[a-z0-9-]+$/.test(s)) {
+      toast.error("กรอก slug (ตัวอักษร a-z, 0-9, ขีดกลาง) ก่อนอัพโหลดรูป — ใช้ตั้งชื่อไฟล์");
+      return null;
+    }
+    return s;
+  }
+
+  async function handleHeroUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    const s = requireSlug();
+    if (!file || !s) return;
+    setHeroUploading(true);
+    try {
+      const img = await uploadImage(file, s, "hero");
+      setHeroImage(img.path);
+      setHeroSize({ w: img.width, h: img.height });
+      toast.success("อัพโหลดรูปหน้าปกแล้ว — อย่าลืมใส่ Hero Alt อธิบายรูป");
+    } catch (err) {
+      toast.error(`อัพโหลดรูปหน้าปก: ${(err as Error).message}`);
+    } finally {
+      setHeroUploading(false);
+    }
+  }
+
+  /**
+   * แทรกรูปในเนื้อหา ณ ตำแหน่งเคอร์เซอร์ในช่อง markdown
+   * ถ้าไม่ได้คลิกไว้ จะแทรกหลังจบ section แรก (ตำแหน่งที่คนอ่านเริ่มล้า
+   * และรูปช่วยพักสายตาได้พอดี)
+   */
+  async function handleBodyUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    const s = requireSlug();
+    if (!file || !s) return;
+    setBodyUploading(true);
+    try {
+      const img = await uploadImage(file, s, "body");
+      const alt = window.prompt("คำอธิบายรูป (alt) — สำคัญกับ SEO และคนใช้ screen reader:", "") ?? "";
+      const snippet = `\n![${alt}](${img.path})\n`;
+      const ta = markdownRef.current;
+      setMarkdown((prev) => {
+        // แทรกที่เคอร์เซอร์ถ้าผู้ใช้คลิกไว้ในช่องเนื้อหา
+        if (ta && ta.selectionStart > 0) {
+          const at = ta.selectionStart;
+          return prev.slice(0, at) + snippet + prev.slice(at);
+        }
+        // ไม่ได้คลิก → แทรกก่อนขึ้น H2 ตัวที่สอง (จบ section แรกพอดี)
+        const lines = prev.split("\n");
+        const h2s = lines.reduce<number[]>((acc, l, i) => (/^##\s/.test(l) ? [...acc, i] : acc), []);
+        if (h2s.length >= 2) {
+          return [...lines.slice(0, h2s[1]), snippet.trim(), "", ...lines.slice(h2s[1])].join("\n");
+        }
+        return prev + snippet;
+      });
+      toast.success("แทรกรูปในเนื้อหาแล้ว — เลื่อนดูและย้ายบรรทัด ![...](...) ได้ตามใจ");
+    } catch (err) {
+      toast.error(`อัพโหลดรูปเนื้อหา: ${(err as Error).message}`);
+    } finally {
+      setBodyUploading(false);
+    }
+  }
+
   function useSerpFaq() {
     const entities = result.serpData?.faq_schema?.mainEntity ?? [];
     const rows = entities
@@ -123,6 +194,8 @@ export default function PublishPanel({ result, pickedRow }: {
       pubDate,
       heroImage: heroImage.trim() || undefined,
       heroAlt: heroAlt.trim() || undefined,
+      heroWidth: heroImage.trim() && heroSize ? heroSize.w : undefined,
+      heroHeight: heroImage.trim() && heroSize ? heroSize.h : undefined,
       author: author.trim() || "ทีมงานวิศวกร LUMAGUARD",
       tags: list(tags).slice(0, 4),
       draft: !publishNow,
@@ -132,7 +205,7 @@ export default function PublishPanel({ result, pickedRow }: {
         : undefined,
     }),
     [title, description, primaryKeyword, secondaryKeywords, cluster, pillar, relatedServiceUrl,
-     pubDate, heroImage, heroAlt, author, tags, publishNow, showInGoogle, faq],
+     pubDate, heroImage, heroAlt, heroSize, author, tags, publishNow, showInGoogle, faq],
   );
 
   /**
@@ -249,14 +322,29 @@ export default function PublishPanel({ result, pickedRow }: {
           <input value={pubDate} onChange={(e) => setPubDate(e.target.value)} className={inputCls} />
         </div>
 
-        <div className="space-y-1">
-          <label className="text-xs text-slate-400">Hero Image (path ใต้ /public เช่น /images/blog/x.webp — ไม่บังคับ)</label>
-          <input value={heroImage} onChange={(e) => setHeroImage(e.target.value)} className={inputCls} />
+        <div className="space-y-1 md:col-span-2">
+          <label className="text-xs text-slate-400">รูปหน้าปก (Hero — แสดงบนสุดของบทความ ไม่บังคับ)</label>
+          <div className="flex items-center gap-2 flex-wrap">
+            <label className={`cursor-pointer text-white px-3 py-2 rounded-lg text-xs transition-colors ${heroUploading ? "bg-slate-600 pointer-events-none" : "bg-sky-700 hover:bg-sky-600"}`}>
+              {heroUploading ? "⏳ กำลังอัพโหลด..." : "🖼️ อัพโหลดรูปหน้าปก"}
+              <input type="file" accept="image/*" onChange={handleHeroUpload} className="hidden" disabled={heroUploading} />
+            </label>
+            {heroImage ? (
+              <span className="text-xs text-emerald-400 break-all">
+                ✅ {heroImage}{heroSize ? ` (${heroSize.w}×${heroSize.h})` : ""}
+                <button type="button" onClick={() => { setHeroImage(""); setHeroSize(null); }} className="ml-2 text-red-400 hover:text-red-300">
+                  ลบ
+                </button>
+              </span>
+            ) : (
+              <span className="text-xs text-slate-500">ระบบย่อ+แปลงเป็น WebP และอัพขึ้นเว็บให้เอง</span>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-1">
-          <label className="text-xs text-slate-400">Hero Alt (บังคับเมื่อมีรูป)</label>
-          <input value={heroAlt} onChange={(e) => setHeroAlt(e.target.value)} className={inputCls} />
+        <div className="space-y-1 md:col-span-2">
+          <label className="text-xs text-slate-400">Hero Alt — คำอธิบายรูปหน้าปก (บังคับเมื่อมีรูป)</label>
+          <input value={heroAlt} onChange={(e) => setHeroAlt(e.target.value)} className={inputCls} placeholder="เช่น ช่างกำลังติดฟิล์มกรองแสงบนกระจกบ้าน" />
         </div>
 
         <div className="space-y-1">
@@ -304,13 +392,25 @@ export default function PublishPanel({ result, pickedRow }: {
 
       {/* เนื้อหา markdown แก้ได้ */}
       <div className="space-y-1">
-        <label className="text-xs text-slate-400">เนื้อหา (Markdown — แก้ได้ก่อนบันทึก)</label>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <label className="text-xs text-slate-400">เนื้อหา (Markdown — แก้ได้ก่อนบันทึก)</label>
+          <label className={`cursor-pointer text-white px-3 py-1.5 rounded-lg text-xs transition-colors ${bodyUploading ? "bg-slate-600 pointer-events-none" : "bg-sky-700 hover:bg-sky-600"}`}>
+            {bodyUploading ? "⏳ กำลังอัพโหลด..." : "🖼️ แทรกรูปในเนื้อหา"}
+            <input type="file" accept="image/*" onChange={handleBodyUpload} className="hidden" disabled={bodyUploading} />
+          </label>
+        </div>
         <textarea
+          ref={markdownRef}
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
           rows={14}
           className={`${inputCls} font-mono text-xs`}
         />
+        <p className="text-xs text-slate-500">
+          💡 ตำแหน่งรูปที่ดี: คลิกวางเคอร์เซอร์ใต้หัวข้อ ## ที่อยากให้มีรูปก่อนกดแทรก —
+          แนะนำใต้ H2 แรก (พักสายตาหลังบทนำ) และใต้ H2 ที่อธิบายขั้นตอน/เปรียบเทียบ
+          ถ้าไม่คลิก ระบบจะแทรกให้ท้าย section แรกอัตโนมัติ รูปเป็นบรรทัด <code className="text-slate-400">![คำอธิบาย](/images/blog/...)</code> ย้ายไปวางบรรทัดไหนก็ได้
+        </p>
       </div>
 
       {/* ตัวเลือก */}

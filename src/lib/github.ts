@@ -63,14 +63,20 @@ export interface PutFileResult {
 /**
  * เขียนไฟล์เข้า branch main — สร้างใหม่หรือทับของเดิม
  * ถ้าทับของเดิมต้องส่ง sha ของไฟล์ปัจจุบัน (GitHub ใช้กันเขียนชนกัน)
+ *
+ * content รับได้ทั้งข้อความ (encode เป็น utf8) และ Buffer (ไฟล์ binary
+ * เช่นรูป — ห้ามผ่าน utf8 เพราะ byte ที่ไม่ใช่ข้อความจะเพี้ยน)
  */
 export async function putFile(
   path: string,
-  content: string,
+  content: string | Buffer,
   message: string,
   sha?: string,
 ): Promise<PutFileResult> {
   const { token, owner, repo } = config();
+  const base64 = Buffer.isBuffer(content)
+    ? content.toString("base64")
+    : Buffer.from(content, "utf8").toString("base64");
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
     {
@@ -78,7 +84,7 @@ export async function putFile(
       headers: { ...headers(token), "Content-Type": "application/json" },
       body: JSON.stringify({
         message,
-        content: Buffer.from(content, "utf8").toString("base64"),
+        content: base64,
         branch: "main",
         ...(sha ? { sha } : {}),
       }),

@@ -63,6 +63,8 @@ export function findDisallowedLinks(markdown: string, allowedPaths: Set<string>)
   for (const match of markdown.matchAll(/\]\(([^)\s]+)\)/g)) {
     const url = match[1];
     if (url.startsWith('#')) continue; // ลิงก์ในหน้าเดียวกัน
+    // รูปประกอบที่อัพโหลดผ่านหน้า admin — อยู่ในโฟลเดอร์รูปบทความเสมอ
+    if (url.startsWith('/images/blog/')) continue;
     const path = url.split('#')[0].replace(/\/$/, '') || '/';
     if (!url.startsWith('/') || !allowedPaths.has(path)) bad.push(url);
   }
