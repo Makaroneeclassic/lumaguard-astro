@@ -116,7 +116,7 @@ export interface EditablePost {
   body: string;
 }
 
-export async function fetchPostList(): Promise<{ slug: string }[]> {
+export async function fetchPostList(): Promise<{ slug: string; title: string; draft: boolean }[]> {
   const res = await fetch('/api/admin/blogwriter/posts');
   const data = await parseJsonResponse(res);
   return data.posts ?? [];

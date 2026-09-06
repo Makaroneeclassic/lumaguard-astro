@@ -9,6 +9,7 @@
  *   GET /api/admin/blogwriter/posts?slug=xxx   → frontmatter + เนื้อหาของบทนั้น
  */
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import { getFile, listDir } from '@/lib/github';
 import { parseMdxFile } from '@/lib/blogwriter/mdx';
 import { htmlToMarkdown } from '@/lib/blogwriter/markdown';
@@ -26,10 +27,26 @@ export const GET: APIRoute = async (context) => {
 
   try {
     if (!slug) {
-      const files = await listDir(BLOG_DIR);
+      /**
+       * รายชื่อไฟล์เอาจาก repo (ครบเสมอ รวมบทที่เพิ่ง commit) ส่วน title
+       * กับสถานะ draft เติมจาก collection ที่ bundle มาตอน deploy —
+       * บทที่ใหม่กว่า deploy ล่าสุดจะยังไม่มี title แสดง slug ไปก่อน
+       * ดีกว่าไล่ดาวน์โหลดทุกไฟล์จาก GitHub ซึ่งช้าและเปลืองโควตา API
+       */
+      const [files, collection] = await Promise.all([
+        listDir(BLOG_DIR),
+        getCollection('blog').catch(() => []),
+      ]);
+      const meta = new Map(
+        collection.map((p) => [p.id, { title: p.data.title, draft: p.data.draft }]),
+      );
       const posts = files
         .filter((f) => /\.mdx?$/.test(f.name))
-        .map((f) => ({ slug: f.name.replace(/\.mdx?$/, '') }));
+        .map((f) => {
+          const s = f.name.replace(/\.mdx?$/, '');
+          const m = meta.get(s);
+          return { slug: s, title: m?.title ?? '', draft: m?.draft ?? false };
+        });
       return json({ posts }, 200);
     }
 

@@ -13,7 +13,7 @@ export default function PostPicker({ onPick, onClose }: {
   onClose: () => void;
 }) {
   const toast = useToast();
-  const [posts, setPosts] = useState<{ slug: string }[] | null>(null);
+  const [posts, setPosts] = useState<{ slug: string; title: string; draft: boolean }[] | null>(null);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -29,7 +29,9 @@ export default function PostPicker({ onPick, onClose }: {
   const filtered = useMemo(() => {
     if (!posts) return [];
     const q = search.trim().toLowerCase();
-    return q ? posts.filter((p) => p.slug.includes(q)) : posts;
+    return q
+      ? posts.filter((p) => p.slug.includes(q) || p.title.toLowerCase().includes(q))
+      : posts;
   }, [posts, search]);
 
   return (
@@ -46,7 +48,7 @@ export default function PostPicker({ onPick, onClose }: {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ค้นหาจาก slug"
+            placeholder="ค้นหาจากชื่อบทความหรือ slug"
             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none"
           />
           <p className="text-xs text-slate-500">
@@ -64,9 +66,24 @@ export default function PostPicker({ onPick, onClose }: {
               key={p.slug}
               type="button"
               onClick={() => onPick(p.slug)}
-              className="w-full text-left px-4 py-3 hover:bg-slate-800/60 transition-colors"
+              className="w-full text-left px-4 py-3 hover:bg-slate-800/60 transition-colors space-y-0.5"
             >
-              <span className="text-sm text-slate-200 font-mono">/blog/{p.slug}</span>
+              <span className="flex items-center gap-2">
+                <span className="text-sm text-slate-100 font-medium">
+                  {p.title || p.slug}
+                </span>
+                {p.draft && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-600/30 text-amber-300 shrink-0">
+                    draft
+                  </span>
+                )}
+                {!p.title && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-600/30 text-sky-300 shrink-0">
+                    ใหม่ — รอ deploy
+                  </span>
+                )}
+              </span>
+              <span className="block text-xs text-slate-500 font-mono">/blog/{p.slug}</span>
             </button>
           ))}
         </div>
