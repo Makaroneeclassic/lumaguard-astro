@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ToastProvider";
 import { CLUSTERS } from "@/lib/clusters";
 import { publishPayloadSchema } from "@/lib/blogwriter/validation";
+import { extractFaqFromMarkdown } from "@/lib/blogwriter/markdown";
 import { publishPost } from "./api";
 import { uploadImage } from "./imageUpload";
 import type { GeneratedResult } from "./GeneratorForm";
@@ -78,6 +79,14 @@ export default function PublishPanel({ result, pickedRow }: {
     setMarkdown(result.markdown);
     setDone(null);
 
+    /**
+     * ดึง FAQ จาก section "คำถามที่พบบ่อย" ที่ AI เขียนในบทความมาเติมให้เลย
+     * — ตรงกับเนื้อหาจริงมากกว่า FAQ จากชีต จึงใช้เป็นตัวหลัก ถ้าบทความ
+     * ไม่มี section FAQ ค่อยถอยไปใช้ของชีต (ด้านล่าง)
+     */
+    const articleFaq = extractFaqFromMarkdown(result.markdown);
+    if (articleFaq.length) setFaq(articleFaq);
+
     if (pickedRow) {
       setSlug(pickedRow.slug);
       setSecondaryKeywords(pickedRow.secondaryKeywords);
@@ -88,8 +97,9 @@ export default function PublishPanel({ result, pickedRow }: {
       if (pickedRow.author) setAuthor(pickedRow.author);
       setTags(pickedRow.tags);
       setShowInGoogle(pickedRow.showInGoogle);
+      // FAQ จากชีตใช้เฉพาะเมื่อบทความไม่มี section FAQ ของตัวเอง
       const sheetFaq = parseSheetFaq(pickedRow.faq);
-      if (sheetFaq.length) setFaq(sheetFaq);
+      if (!articleFaq.length && sheetFaq.length) setFaq(sheetFaq);
     } else {
       // เดา slug จาก keyword — ใช้ได้เฉพาะอักษรละติน ผู้ใช้แก้เองได้
       const guess = result.focusKeyword
@@ -360,11 +370,28 @@ export default function PublishPanel({ result, pickedRow }: {
 
       {/* FAQ */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-xs text-slate-400">FAQ (ลง schema FAQPage ให้ Google อัตโนมัติ)</label>
-          <button type="button" onClick={useSerpFaq} className="text-xs text-violet-400 hover:text-violet-300">
-            🕵️ ใช้ FAQ จาก SERP Spy
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                const extracted = extractFaqFromMarkdown(markdown);
+                if (!extracted.length) {
+                  toast.warning('ไม่พบ section "คำถามที่พบบ่อย" ในเนื้อหา — ต้องเป็นหัวข้อ ## และคำถามเป็น ###');
+                  return;
+                }
+                setFaq(extracted);
+                toast.success(`ดึง FAQ ${extracted.length} ข้อจากเนื้อหาแล้ว`);
+              }}
+              className="text-xs text-emerald-400 hover:text-emerald-300"
+            >
+              📄 ดึงจากเนื้อหา
+            </button>
+            <button type="button" onClick={useSerpFaq} className="text-xs text-violet-400 hover:text-violet-300">
+              🕵️ ใช้ FAQ จาก SERP Spy
+            </button>
+          </div>
         </div>
         {faq.map((f, i) => (
           <div key={i} className="flex gap-2">

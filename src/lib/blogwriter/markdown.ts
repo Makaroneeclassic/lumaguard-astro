@@ -52,6 +52,60 @@ export function htmlToMarkdown(value: string): string {
   return markdown.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
+/**
+ * ดึงคำถาม-คำตอบจาก section FAQ ในเนื้อหา markdown
+ *
+ * บทความที่ AI เขียนมี H2 "คำถามที่พบบ่อย" พร้อม H3 เป็นคำถามอยู่แล้ว
+ * (template สั่งไว้) — ดึงมาเติม faq: frontmatter อัตโนมัติ เพื่อให้
+ * FaqSection กับ FAQ JSON-LD schema ทำงานโดยไม่ต้อง copy มือ
+ *
+ * คำตอบถูกล้าง markdown (ตัวหนา/ลิงก์/รายการ) ออกเพราะปลายทางคือ
+ * schema.org ที่ Google อ่าน — ต้องเป็นข้อความเปล่า
+ */
+export function extractFaqFromMarkdown(markdown: string): { q: string; a: string }[] {
+  const lines = markdown.split('\n');
+
+  // หา H2 ที่เป็นหัวข้อ FAQ (ไทยหรืออังกฤษ)
+  const faqHeading = /^##\s+.*(คำถามที่พบบ่อย|FAQ|Frequently Asked)/i;
+  const start = lines.findIndex((l) => faqHeading.test(l));
+  if (start === -1) return [];
+
+  const faq: { q: string; a: string }[] = [];
+  let question = '';
+  let answer: string[] = [];
+
+  const push = () => {
+    const a = answer.join(' ').trim();
+    if (question && a) faq.push({ q: question, a });
+    question = '';
+    answer = [];
+  };
+
+  for (let i = start + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^##\s/.test(line)) break; // จบ section FAQ
+    const h3 = line.match(/^###\s+(.+)$/);
+    if (h3) {
+      push();
+      question = cleanInlineMarkdown(h3[1]);
+      continue;
+    }
+    if (question && line.trim()) answer.push(cleanInlineMarkdown(line.trim()));
+  }
+  push();
+  return faq;
+}
+
+/** ถอด markdown ที่ใช้ในบรรทัด (ตัวหนา เอียง ลิงก์ bullet) ให้เหลือข้อความเปล่า */
+function cleanInlineMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^[-*]\s+/, '')
+    .trim();
+}
+
 export function boldClusterKeywords(markdown: string, clusterKeywords: string): string {
   const keywords = [...new Set(clusterKeywords.split(/[,\n]+/)
     .map((keyword) => keyword.trim())
