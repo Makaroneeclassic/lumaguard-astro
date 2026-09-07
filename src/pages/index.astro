@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import TopNavBar from '@/components/TopNavBar.astro';
 import Footer from '@/components/Footer';
+import { getPublishedPosts } from '@/lib/blog';
 import { getFeaturedPortfolio } from '@/lib/portfolio';
 import { ARCHITECTURAL_SERIES, lowestPrice } from '@/lib/products';
 import { CAR_PRICES } from '@/lib/carPrices';
@@ -27,6 +28,17 @@ const homeStartingPrice = Math.min(
 const carStartingPrice = Math.min(...CAR_PRICES.map((c) => c.S));
 
 const portfolioItems = getFeaturedPortfolio(2);
+
+/*
+ * บทความล่าสุดสามบท — ทางเดินของ crawler จากหน้าแรกไปหน้าบทความใหม่
+ *
+ * หน้าแรกคือหน้าที่ Google เข้าบ่อยที่สุด ลิงก์จากตรงนี้ทำให้บทความใหม่
+ * ถูกพบเร็วขึ้นมากเมื่อเทียบกับการรอให้ไต่ผ่าน /blog หรือรอ sitemap
+ * เรียงตามวันที่เผยแพร่ล่าสุดเพื่อให้ลิงก์หมุนเวียนไปหาบทที่ใหม่เสมอ
+ */
+const latestPosts = (await getPublishedPosts())
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
 
 const processSteps = [
   {
@@ -327,6 +339,65 @@ const faqItems = [
 
     {/* Testimonials Review Slider Section */}
     <TestimonialSlider client:visible />
+
+    {/*
+      บทความล่าสุด — วางหลังรีวิวก่อน CTA ปิดท้าย
+
+      หน้าที่หลักคือเป็นทางให้ crawler ไต่จากหน้าแรกไปหน้าบทความใหม่
+      (หน้าแรกถูกเก็บบ่อยที่สุด ลิงก์จากตรงนี้ = บทความใหม่ถูกพบเร็ว)
+      หน้าที่รองคือรับคนที่ยังไม่พร้อมขอราคา ให้มีที่ไปต่อก่อนถึง CTA
+    */}
+    {latestPosts.length > 0 && (
+      <section id="blog-updates" class="py-16 md:py-24 px-4 sm:px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto space-y-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div class="max-w-2xl space-y-2">
+            <span class="text-accent-700 font-bold tracking-widest text-xs uppercase">
+              สาระน่ารู้ (KNOWLEDGE HUB)
+            </span>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+              บทความล่าสุดจากทีมงาน
+            </h2>
+            <p class="text-slate-500 text-xs sm:text-sm font-light">
+              ความรู้เรื่องฟิล์มกรองแสง การลดความร้อน และการดูแลบ้าน อัปเดตสม่ำเสมอ
+            </p>
+          </div>
+          <a href="/blog" class="shrink-0 font-bold text-sm text-primary hover:underline">
+            ดูบทความทั้งหมด →
+          </a>
+        </div>
+
+        <ul class="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {latestPosts.map((post) => (
+            <li>
+              <a
+                href={`/blog/${post.id}`}
+                class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-6 transition-shadow hover:shadow-md"
+              >
+                {post.data.heroImage && (
+                  <img
+                    src={post.data.heroImage}
+                    alt={post.data.heroAlt ?? ''}
+                    width={post.data.heroWidth}
+                    height={post.data.heroHeight}
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-[16/9] w-full rounded-xl object-cover"
+                  />
+                )}
+                <h3 class="font-bold text-slate-900 leading-snug">{post.data.title}</h3>
+                <p class="text-sm text-slate-600 line-clamp-2 font-light">{post.data.description}</p>
+                <time
+                  datetime={post.data.pubDate.toISOString()}
+                  class="mt-auto text-xs text-slate-400"
+                >
+                  {new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' }).format(post.data.pubDate)}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     {/*
       FAQ กับฟอร์มถูกย้ายออก คำถามทั้งสี่ข้อซ้ำกับ /contact แบบคำต่อคำ
