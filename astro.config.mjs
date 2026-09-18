@@ -48,15 +48,38 @@ export default defineConfig({
   output: 'static',
 
   /**
+   * บังคับให้ URL ลงท้ายด้วย / เสมอ
+   *
+   * เดิมทั้ง /blog และ /blog/ ตอบ 200 ทั้งคู่โดยไม่ redirect หากัน กลายเป็น
+   * หน้าเดียวกันที่เข้าถึงได้สองทาง ทำให้ Google ต้องเดาเองว่าอันไหนตัวจริง
+   * และเสีย crawl budget ไปกับการเก็บหน้าซ้ำ
+   *
+   * เลือก always เพราะ build.format ของ Astro เป็น directory อยู่แล้ว
+   * (ได้ /blog/index.html) ทำให้ canonical กับ sitemap ลงท้ายด้วย / มาตั้งแต่ต้น
+   * การเลือก never จะกลายเป็นต้องแก้ทั้งสองอย่างให้สวนทางกับโครงไฟล์
+   *
+   * adapter ส่งค่านี้ต่อให้ Vercel ทำ 308 ตั้งแต่ชั้น edge — ลิงก์เก่าที่ไม่มี /
+   * จึงยังใช้ได้ ไม่เป็น 404
+   */
+  trailingSlash: 'always',
+
+  /**
    * บทความสองบทแรกเป็นเนื้อหาตัวอย่างที่ลบออกแล้ว
    *
    * ทั้งคู่เคยอยู่ใน sitemap และถูกส่งให้ Google ไปแล้ว ถ้าปล่อยให้กลายเป็น 404
    * คนที่กดจากผลค้นหาหรือลิงก์เก่าจะเจอหน้าไม่พบ พาไปหน้ารวมบทความแทนเพื่อ
    * ไม่ให้ทางตัน และคงไว้ถาวรเพราะลิงก์เก่าอาจโผล่มาอีกได้หลายปี
+   *
+   * คีย์ต้องลงท้ายด้วย / ให้ตรงกับ trailingSlash: 'always'
+   *
+   * adapter วางกฎเติม / (308) ไว้ "ก่อน" กฎ redirect เหล่านี้ ลิงก์เก่าอย่าง
+   * /services จึงถูกเติม / เป็น /services/ ก่อน แล้วค่อยมาเทียบกับ pattern
+   * ถ้าคีย์เขียนว่า '/services' (ไม่มี /) pattern จะเป็น ^/services$ ซึ่งไม่ตรง
+   * กับ /services/ ที่เพิ่งถูก redirect มา ผลคือ 404 ทั้งที่ตั้งใจให้ 301
    */
   redirects: {
-    '/blog/film-kan-ron-ban-lot-kha-fai': '/blog',
-    '/blog/ppf-paint-protection-film-guide': '/blog',
+    '/blog/film-kan-ron-ban-lot-kha-fai/': '/blog/',
+    '/blog/ppf-paint-protection-film-guide/': '/blog/',
 
     /**
      * /services ยุบไปรวมกับหน้าขายฟิล์มบ้านแล้ว
@@ -67,7 +90,7 @@ export default defineConfig({
      *
      * 301 ไม่ใช่ 404 เพราะหน้านี้เคยอยู่ใน sitemap และถูกส่งให้ Google ไปแล้ว
      */
-    '/services': '/home-film',
+    '/services/': '/home-film/',
   },
 
   adapter: vercel({

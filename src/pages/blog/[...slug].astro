@@ -23,12 +23,12 @@ const { post, posts } = Astro.props;
 const { Content } = await render(post);
 
 const related = getRelatedPosts(post, posts);
-const canonical = absoluteUrl(`/blog/${post.id}`);
+const canonical = absoluteUrl(`/blog/${post.id}/`);
 
 const breadcrumb = [
   { name: 'หน้าแรก', url: '/' },
-  { name: 'บทความ', url: '/blog' },
-  { name: post.data.title, url: `/blog/${post.id}` },
+  { name: 'บทความ', url: '/blog/' },
+  { name: post.data.title, url: `/blog/${post.id}/` },
 ];
 
 const articleSchema = buildArticleSchema({
@@ -114,7 +114,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' });
           {related.map((item) => (
             <li>
               <a
-                href={`/blog/${item.id}`}
+                href={`/blog/${item.id}/`}
                 class="block h-full rounded-xl border border-slate-200 p-5 transition-shadow hover:shadow-md"
               >
                 <h3 class="font-bold text-slate-900 leading-snug">{item.data.title}</h3>

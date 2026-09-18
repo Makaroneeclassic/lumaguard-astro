@@ -113,7 +113,7 @@ const description = `ฟิล์มกรองแสงรถยนต์ ${ca
   <JsonLd
     schema={buildBreadcrumbSchema([
       { name: 'หน้าแรก', url: '/' },
-      { name: 'ฟิล์มรถยนต์', url: '/car-film' },
+      { name: 'ฟิล์มรถยนต์', url: '/car-film/' },
     ])}
   />
   <JsonLd schema={buildFaqSchema(faqItems)} />
@@ -187,7 +187,7 @@ const description = `ฟิล์มกรองแสงรถยนต์ ${ca
               return (
                 <tr class="border-t border-outline-variant/15">
                   <th scope="row" class="px-5 py-4 text-left">
-                    <a href={`/products/${series.slug}`} class="font-bold text-primary hover:underline">
+                    <a href={`/products/${series.slug}/`} class="font-bold text-primary hover:underline">
                       {series.displayName}
                     </a>
                   </th>

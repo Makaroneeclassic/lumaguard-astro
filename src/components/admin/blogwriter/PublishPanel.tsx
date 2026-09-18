@@ -54,7 +54,7 @@ export default function PublishPanel({ result, pickedRow, existingPost }: {
   const [secondaryKeywords, setSecondaryKeywords] = useState("");
   const [cluster, setCluster] = useState<string>(CLUSTERS[0]);
   const [pillar, setPillar] = useState("");
-  const [relatedServiceUrl, setRelatedServiceUrl] = useState("/products");
+  const [relatedServiceUrl, setRelatedServiceUrl] = useState("/products/");
   const [pubDate, setPubDate] = useState(todayISO());
   const [heroImage, setHeroImage] = useState("");
   const [heroAlt, setHeroAlt] = useState("");
@@ -268,7 +268,10 @@ export default function PublishPanel({ result, pickedRow, existingPost }: {
     }, []);
     if (h2Indexes.length < 2) return markdown;
     const midH2 = h2Indexes[Math.floor(h2Indexes.length / 2)];
-    const cta = `\n<ArticleCta href="${relatedServiceUrl.trim() || "/products"}" position="inline" />\n`;
+    // เติม / ปิดท้ายให้เสมอ เพราะเว็บตั้ง trailingSlash: 'always' ลิงก์ที่ไม่มีทับ
+    // จะโดน 308 ก่อนถึงหน้าจริง ทำให้ CTA ในบทความทุกบทเสียจังหวะไปหนึ่งต่อ
+    const ctaHref = (relatedServiceUrl.trim() || "/products").replace(/\/?$/, "/");
+    const cta = `\n<ArticleCta href="${ctaHref}" position="inline" />\n`;
     return [...lines.slice(0, midH2), cta, ...lines.slice(midH2)].join("\n");
   }, [markdown, insertCta, relatedServiceUrl]);
 
@@ -368,7 +371,7 @@ export default function PublishPanel({ result, pickedRow, existingPost }: {
 
         <div className="space-y-1">
           <label className="text-xs text-slate-400">Related Service URL (CTA ชี้ไปหน้าขาย)</label>
-          <input value={relatedServiceUrl} onChange={(e) => setRelatedServiceUrl(e.target.value)} className={inputCls} placeholder="/products" />
+          <input value={relatedServiceUrl} onChange={(e) => setRelatedServiceUrl(e.target.value)} className={inputCls} placeholder="/products/" />
         </div>
 
         <div className="space-y-1">

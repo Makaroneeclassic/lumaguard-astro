@@ -84,16 +84,23 @@ config.routes.unshift({
  * ให้ redirect รับทั้งแบบมีและไม่มีทับปิดท้าย
  *
  * Astro สร้าง regex ที่ปิดท้ายด้วย $ พอดี เช่น ^/blog/ชื่อบทความ$ ซึ่งไม่ match
- * URL ที่มีทับต่อท้าย และการใส่ทั้งสองรูปแบบใน astro.config ก็ไม่ช่วย เพราะ
- * Astro รวมให้เป็นรายการเดียวกันแล้วเตือนว่าชนกัน
+ * URL ที่มีทับต่อท้าย และการใส่ทับปิดท้ายในคีย์ที่ astro.config ก็ไม่ช่วย เพราะ
+ * อะแดปเตอร์อ่านจาก segment ที่ Astro ตัดทับออกไปแล้ว ทับที่เราใส่จึงหายไปก่อน
+ * ถึงขั้นสร้าง regex
  *
  * ปัญหาคือ canonical ของเว็บใช้แบบมีทับปิดท้าย URL ที่ Google เก็บไปจึงเป็น
  * แบบนั้น ถ้าไม่ครอบให้ คนที่กดจากผลค้นหาจะเจอหน้าไม่พบทั้งที่ตั้ง redirect ไว้แล้ว
+ *
+ * ต้องข้ามกฎเติมทับของอะแดปเตอร์เอง ซึ่งมาจาก trailingSlash: 'always' และดูออก
+ * ได้จาก Location ที่อ้าง capture group ($1) แทนที่จะเป็นปลายทางตายตัว
+ * กฎพวกนั้นเขียนว่า ^/(...)$ -> /$1/ ถ้าขยายเป็น /?$ ด้วย มันจะ match URL ที่มี
+ * ทับอยู่แล้วและส่งกลับไปที่เดิม กลายเป็น redirect วนไม่รู้จบทั้งเว็บ
  */
 let widened = 0;
 for (const r of config.routes) {
-  if (!r.headers?.Location || !r.src?.endsWith('$')) continue;
-  if (r.src.endsWith('/?$')) continue;
+  const location = r.headers?.Location;
+  if (!location || !r.src?.endsWith('$')) continue;
+  if (r.src.endsWith('/?$') || /\$\d/.test(location)) continue;
   r.src = r.src.replace(/\$$/, '/?$');
   widened++;
 }

@@ -18,7 +18,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
   <JsonLd
     schema={buildBreadcrumbSchema([
       { name: 'หน้าแรก', url: '/' },
-      { name: 'บทความ', url: '/blog' },
+      { name: 'บทความ', url: '/blog/' },
     ])}
   />
 
@@ -43,7 +43,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
           {posts.map((post, index) => (
             <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
               {post.data.heroImage && (
-                <a href={`/blog/${post.id}`} class="block overflow-hidden">
+                <a href={`/blog/${post.id}/`} class="block overflow-hidden">
                   <img
                     src={post.data.heroImage}
                     alt={post.data.heroAlt ?? ''}
@@ -58,7 +58,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
               <div class="p-6 flex-1 flex flex-col justify-between gap-4">
                 <div class="space-y-3">
                   <h2 class="text-xl font-bold text-slate-900 leading-snug">
-                    <a href={`/blog/${post.id}`} class="hover:text-accent-700 transition-colors">
+                    <a href={`/blog/${post.id}/`} class="hover:text-accent-700 transition-colors">
                       {post.data.title}
                     </a>
                   </h2>
@@ -71,7 +71,7 @@ const dateFormatter = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' });
                   <time datetime={post.data.pubDate.toISOString()}>
                     {dateFormatter.format(post.data.pubDate)}
                   </time>
-                  <a href={`/blog/${post.id}`} class="text-accent-700 font-bold hover:underline">
+                  <a href={`/blog/${post.id}/`} class="text-accent-700 font-bold hover:underline">
                     อ่านต่อ →
                   </a>
                 </div>

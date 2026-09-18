@@ -96,7 +96,7 @@ const description = `ฟิล์มกรองแสงบ้านและ�
   <JsonLd
     schema={buildBreadcrumbSchema([
       { name: 'หน้าแรก', url: '/' },
-      { name: 'ฟิล์มบ้านและอาคาร', url: '/home-film' },
+      { name: 'ฟิล์มบ้านและอาคาร', url: '/home-film/' },
     ])}
   />
   <JsonLd schema={buildFaqSchema(faqItems)} />
@@ -154,7 +154,7 @@ const description = `ฟิล์มกรองแสงบ้านและ�
             {seriesPrices.map(({ series, price }) => (
               <tr class="border-t border-outline-variant/15">
                 <th scope="row" class="px-5 py-4 text-left">
-                  <a href={`/products/${series.slug}`} class="font-bold text-primary hover:underline">
+                  <a href={`/products/${series.slug}/`} class="font-bold text-primary hover:underline">
                     {series.displayName}
                   </a>
                 </th>

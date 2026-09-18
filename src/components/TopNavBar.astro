@@ -21,13 +21,15 @@ interface Props {
 
 const { pathname = '/' } = Astro.props;
 
+// ทุก href ต้องลงท้ายด้วย / ให้ตรงกับ trailingSlash: 'always' ไม่งั้นเมนูหลัก
+// จะพาไป 308 ทุกครั้งที่กด ซึ่งเป็นการเสีย crawl budget ในทุกหน้าของเว็บ
 const navLinks = [
   { name: 'หน้าหลัก', href: '/' },
-  { name: 'ฟิล์มบ้าน & อาคาร', href: '/home-film' },
-  { name: 'ฟิล์มรถยนต์', href: '/car-film' },
-  { name: 'ผลงาน', href: '/portfolio' },
-  { name: 'ติดต่อเรา & FAQ', href: '/contact' },
-  { name: 'บล็อก', href: '/blog' },
+  { name: 'ฟิล์มบ้าน & อาคาร', href: '/home-film/' },
+  { name: 'ฟิล์มรถยนต์', href: '/car-film/' },
+  { name: 'ผลงาน', href: '/portfolio/' },
+  { name: 'ติดต่อเรา & FAQ', href: '/contact/' },
+  { name: 'บล็อก', href: '/blog/' },
 ];
 
 const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
@@ -90,7 +92,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
       </button>
 
       <a
-        href="/contact"
+        href="/contact/"
         data-track-contact="header"
         class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all duration-200 shadow-md shadow-tertiary-container/10"
       >
@@ -190,7 +192,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     </div>
     <div class="pt-4 border-t border-outline-variant/10">
       <a
-        href="/contact"
+        href="/contact/"
         data-track-contact="header_mobile"
         class="block text-center w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-bold shadow-lg"
       >
