@@ -32,6 +32,9 @@ interface ImportMetaEnv {
   readonly GITHUB_TOKEN?: string;
   readonly GITHUB_REPO_OWNER?: string;
   readonly GITHUB_REPO_NAME?: string;
+  readonly OFFICE_LEAD_URL?: string;
+  readonly OFFICE_LEAD_TOKEN?: string;
+  readonly PUBLIC_OFFICE_URL?: string;
 }
 
 interface ImportMeta {

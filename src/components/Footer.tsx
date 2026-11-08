@@ -44,6 +44,11 @@ export default function Footer() {
                 ติดต่อรับคำแนะนำฟรี
               </a>
             </li>
+            <li>
+              <a href="/warranty" className="block py-2 hover:text-primary transition-colors">
+                ตรวจสอบใบรับประกัน
+              </a>
+            </li>
           </ul>
         </div>
 
