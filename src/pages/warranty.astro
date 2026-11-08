@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TopNavBar from '@/components/TopNavBar.astro';
+import Footer from '@/components/Footer';
+import WarrantyCheck from '@/components/WarrantyCheck';
+import { BUSINESS } from '@/lib/site';
+
+const title = 'ตรวจสอบใบรับประกันฟิล์ม | LUMAGUARD';
+const description = 'ตรวจสอบสถานะใบรับประกันฟิล์มกรองแสง LUMAGUARD ด้วยเลขที่ใบรับประกันหรือสแกน QR Code บนบัตรรับประกัน';
+---
+
+<Layout title={title} description={description}>
+  <TopNavBar pathname={Astro.url.pathname} />
+
+  <main class="min-h-screen pt-28 md:pt-36 pb-24 px-4 sm:px-8 max-w-[1440px] mx-auto space-y-10">
+    <div class="text-center max-w-2xl mx-auto space-y-4">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">ตรวจสอบใบรับประกัน</h1>
+      <p class="text-slate-600 text-base leading-relaxed font-light">
+        กรอกเลขที่ใบรับประกันที่อยู่มุมขวาบนของบัตรรับประกัน หรือสแกน QR Code บนบัตร
+      </p>
+    </div>
+
+    <WarrantyCheck client:load />
+
+    <p class="text-center text-sm text-slate-500">
+      สอบถามเงื่อนไขการรับประกัน โทร {BUSINESS.telephoneDisplay}
+    </p>
+  </main>
+
+  <Footer client:visible />
+</Layout>

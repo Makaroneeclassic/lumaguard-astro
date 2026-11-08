@@ -3,6 +3,11 @@
 export function initializeTrafficSourceTracker() {
   if (typeof window === "undefined" || !window.sessionStorage) return;
 
+  // รหัสแนะนำของตัวแทนหรือ Affiliate เก็บแยกจากที่มา เพราะต้องติดไปถึงตอนกรอกฟอร์ม
+  // แม้ลูกค้าจะเข้าเว็บรอบแรกมาจากช่องทางอื่น
+  const ref = new URLSearchParams(window.location.search).get("ref");
+  if (ref && /^[A-Za-z0-9_-]{3,40}$/.test(ref)) window.sessionStorage.setItem("lg_ref", ref.toUpperCase());
+
   // 1. Check if traffic source is already recorded in this session to prevent overwrite
   if (window.sessionStorage.getItem("lg_traffic_source")) return;
 
@@ -55,6 +60,7 @@ export function getTrafficSourceData() {
       utmMedium: null,
       utmCampaign: null,
       gclid: null,
+      ref: null,
     };
   }
 
@@ -65,5 +71,6 @@ export function getTrafficSourceData() {
     utmCampaign: window.sessionStorage.getItem("lg_utm_campaign") || null,
     gclid: window.sessionStorage.getItem("lg_gclid") || null,
     landingPage: window.sessionStorage.getItem("lg_landing_page") || "/",
+    ref: window.sessionStorage.getItem("lg_ref") || null,
   };
 }

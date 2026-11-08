@@ -5,6 +5,7 @@ import { checkRateLimit } from '@/lib/ratelimit';
 import { notifyNewLead } from '@/lib/notify';
 import { sendGa4Event, parseGaClientId, fallbackClientId } from '@/lib/ga4';
 import { sendTrackingEvent } from '@/lib/tracking';
+import { forwardLeadToOffice } from '@/lib/office';
 
 // Force server rendering for this API route
 export const prerender = false;
@@ -44,6 +45,7 @@ const leadValidation = z.object({
   gclid: z.string().nullish(),
   gaClientId: z.string().nullish(),
   landingPage: z.string().nullish(),
+  ref: z.string().max(40).nullish(),
   website_url: z.string().nullish() // Honeypot field
 }).superRefine((data, ctx) => {
   if (data.leadType === 'car') {
@@ -280,6 +282,29 @@ export const POST: APIRoute = async ({ request }) => {
         gclid: data.gclid,
         landingPage: data.landingPage,
         savedToDatabase: lead !== null
+      })
+    );
+
+    // เปิดเป็นงานติดฟิล์มในระบบหลังบ้าน ส่งซ้ำไม่ต้องส่งต่อ เพราะจะกลายเป็นงานซ้ำ
+    if (!isDuplicate) sideEffects.push(
+      forwardLeadToOffice({
+        name: data.name,
+        phone: data.phone,
+        leadType: data.leadType,
+        district: data.district,
+        propertyType: data.propertyType,
+        carBrand: data.carBrand,
+        carModel: data.carModel,
+        areaSize: data.areaSize,
+        estimatedArea: data.estimatedArea,
+        recommendedFilm: data.recommendedFilm,
+        trafficSource: data.trafficSource,
+        utmSource: data.utmSource,
+        utmCampaign: data.utmCampaign,
+        gclid: data.gclid,
+        landingPage: data.landingPage,
+        ref: data.ref,
+        websiteLeadId: lead?.id ?? null,
       })
     );
 
