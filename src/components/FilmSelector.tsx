@@ -55,34 +55,48 @@ export default function FilmSelector() {
 
   const handleSelectOption = (value: string) => {
     const currentQ = questions[step - 1];
-    setAnswers((prev) => ({ ...prev, [currentQ.id]: value }));
+    const nextAnswers = { ...answers, [currentQ.id]: value };
+    setAnswers(nextAnswers);
 
     if (step < questions.length) {
       setStep(step + 1);
     } else {
       // หน้า Loading จำลองการคำนวณ
       setStep(4);
+      // ส่งคำตอบล่าสุดเข้าไปตรง ๆ เพราะ state ในรอบ render นี้ยังไม่มีคำตอบข้อสุดท้าย
       setTimeout(() => {
-        calculateRecommendation();
+        calculateRecommendation(nextAnswers);
       }, 1500);
     }
   };
 
-  const calculateRecommendation = () => {
-    const q1 = answers[1]; // condo, house, commercial
-    const q2 = answers[2]; // heat, glare, privacy
-    const q3 = answers[3]; // west-south, east-north, multi
+  const calculateRecommendation = (finalAnswers: Record<number, string>) => {
+    const q1 = finalAnswers[1]; // condo, house, commercial
+    const q2 = finalAnswers[2]; // heat, glare, privacy
+    const q3 = finalAnswers[3]; // west-south, east-north, multi
 
     let film: any = {};
 
     // Logic ง่ายๆ ในการเลือกฟิล์มที่ดีที่สุดให้ลูกค้า
-    if (q2 === "privacy") {
+    if (q2 === "privacy" && q3 === "west-south") {
+      film = {
+        name: "Nano Quantum 05",
+        series: "Quantum Series",
+        vlt: "5%",
+        irr: "99%",
+        uvr: "99%",
+        tser: "90%",
+        accent: "เข้มเป็นส่วนตัว & ลดความร้อนรวมสูงสุด 90%",
+        description: "ฟิล์มเทคโนโลยี Nano Quantum ระดับเข้มที่สุดในซีรีส์ แสงผ่านเพียง 5% กันรังสีอินฟราเรดช่วง 900-1700 นาโนเมตรได้ 99% และลดความร้อนรวมได้ 90% เหมาะกับกระจกทิศตะวันตกและทิศใต้ที่รับแดดจัดและต้องการความเป็นส่วนตัว",
+        tags: ["ความเป็นส่วนตัว", "TSER 90%", "กัน IR 99%"]
+      };
+    } else if (q2 === "privacy") {
       film = {
         name: "Apex Sputter 20",
         series: "Apex Series",
-        vlt: "22%",
-        irr: "98%",
-        uvr: "99.9%",
+        vlt: "20%",
+        irr: "95%",
+        uvr: "99%",
         tser: "76%",
         accent: "ความเป็นส่วนตัวสูง & กันความร้อนขีดสุด",
         description: "ที่สุดแห่งนวัตกรรมสปัตเตอร์หลายชั้นให้โทนสีดำเข้มขรึมภายนอก แต่ให้ทัศนวิสัยส่องสว่างนวลตาจากภายใน ปิดกั้นพลังงานความร้อนแดดได้สูงสุดถึง 76% เหมาะสำหรับห้องกระจกทิศตะวันตกและผู้ที่รักความเป็นส่วนตัวสูงสุด",
@@ -92,40 +106,53 @@ export default function FilmSelector() {
       film = {
         name: "Guardian Ceramic 35",
         series: "Guardian Series",
-        vlt: "36%",
-        irr: "92%",
-        uvr: "99.9%",
-        tser: "62%",
+        vlt: "35%",
+        irr: "85%",
+        uvr: "100%",
+        tser: "70%",
         accent: "กรองแสงจ้าสะท้อน & เย็นสบายสว่างนวลตา",
-        description: "ฟิล์มนาโนเซรามิคสีชาร์โคลระดับความเข้มปานกลาง ช่วยลดแสงจ้าแยงตาในเวลากลางวันถึง 60% รักษาแสงธรรมชาติให้อบอุ่นสบายตา เหมาะอย่างยิ่งกับห้องทำงาน คอนโดมิเนียม และมุมพักผ่อนที่ต้องการความสบายสายตา",
+        description: "ฟิล์มเซรามิค UHD ระดับความเข้มปานกลาง ช่วยลดแสงจ้าแยงตาในเวลากลางวัน รักษาแสงธรรมชาติให้อบอุ่นสบายตา เหมาะอย่างยิ่งกับห้องทำงาน คอนโดมิเนียม และมุมพักผ่อนที่ต้องการความสบายสายตา",
         tags: ["ลดแสงสะท้อน", "เซรามิคพรีเมียม", "รับประกัน 10 ปี"]
       };
     } else {
       // เน้นกันความร้อนทั่วไป หรือรับแดดทิศตะวันออก
       if (q3 === "east-north") {
         film = {
-          name: "Guardian Ceramic 70",
-          series: "Guardian Series",
-          vlt: "72%",
-          irr: "88%",
-          uvr: "99.9%",
-          tser: "54%",
-          accent: "ใสสว่างพิเศษ & สกัดความร้อนอินฟราเรดดีเยี่ยม",
-          description: "ฟิล์มเซรามิคใสเกรดพรีเมียมที่ยอมให้แสงสว่างเข้าสูงถึง 72% ทำให้ห้องสว่างโล่งและดูกว้างขวางเหมือนไม่ได้ติดฟิล์ม แต่สกัดความร้อนอินฟราเรดได้สูงถึง 88% ช่วยรักษาทัศนียภาพตามธรรมชาติได้อย่างครบถ้วน",
-          tags: ["ใสเคลียร์ระดับ HD", "แสงธรรมชาติผ่านสูง", "รับประกัน 10 ปี"]
+          name: "Nano Quantum 70",
+          series: "Quantum Series",
+          vlt: "65%",
+          irr: "99%",
+          uvr: "99%",
+          tser: "62%",
+          accent: "ใสสว่าง & กันรังสีอินฟราเรด 99%",
+          description: "ฟิล์มเทคโนโลยี Nano Quantum รุ่นใสที่สุดในซีรีส์ ให้แสงผ่าน 65% ห้องยังสว่างตามธรรมชาติ กันรังสีอินฟราเรดช่วง 900-1700 นาโนเมตรได้ 99% และลดความร้อนรวมได้ 62% เหมาะกับกระจกทิศตะวันออกและทิศเหนือ",
+          tags: ["แสงธรรมชาติผ่านสูง", "TSER 62%", "กัน IR 99%"]
+        };
+      } else if (q3 === "west-south") {
+        // แดดบ่ายจัด เน้นลดความร้อน ใช้รุ่นเข้มที่ TSER สูง
+        film = {
+          name: "Nano Quantum 15",
+          series: "Quantum Series",
+          vlt: "15%",
+          irr: "99%",
+          uvr: "99%",
+          tser: "85%",
+          accent: "ลดความร้อนรวม 85% รับแดดบ่ายจัด",
+          description: "ฟิล์มเทคโนโลยี Nano Quantum ระดับเข้ม แสงผ่าน 15% กันรังสีอินฟราเรดช่วง 900-1700 นาโนเมตรได้ 99% และลดความร้อนรวมได้ 85% เหมาะกับกระจกทิศตะวันตกและทิศใต้ที่รับแดดจัดจนห้องร้อนและแอร์ทำงานหนัก",
+          tags: ["เน้นลดความร้อน", "TSER 85%", "กัน IR 99%"]
         };
       } else {
         // แดดจัดปานกลาง/ทิศใต้ แนะนำรุ่นเกราะป้องกันสะท้อนความร้อน
         film = {
           name: "Apex Sputter 50",
           series: "Apex Series",
-          vlt: "51%",
+          vlt: "45%",
           irr: "95%",
-          uvr: "99.9%",
-          tser: "68%",
+          uvr: "99%",
+          tser: "65%",
           accent: "ที่สุดของการสะท้อนแดดด้วยทองคำและโลหะมีค่า",
           description: "ฟิล์มสปัตเตอร์สุญญากาศความสว่างสากล ป้องกันความร้อนแดดด้วยฟิล์มสะท้อนโลหะชั้นเลิศระดับนาโนเมตร สกัดกั้นคลื่นอินฟราเรดสูง 95% มอบความเย็นสบายสูงสุดโดยไม่ทำให้ทัศนียภาพรอบข้างอึดอัด",
-          tags: ["สปัตเตอร์หลายชั้น", "สะท้อนความร้อนขีดสุด", "กัน UV 100%"]
+          tags: ["สปัตเตอร์หลายชั้น", "สะท้อนความร้อนขีดสุด", "กัน UV 99%"]
         };
       }
     }
@@ -324,7 +351,7 @@ export default function FilmSelector() {
                   <span className="font-headline font-bold text-on-surface">{recommendedFilm.vlt}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-on-surface-variant font-light">ป้องกันอินฟราเรด (IRR)</span>
+                  <span className="text-on-surface-variant font-light">ป้องกันอินฟราเรด (1000-1700nm)</span>
                   <span className="font-headline font-bold text-on-surface" style={{ color: "#0ea5e9" }}>{recommendedFilm.irr}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">

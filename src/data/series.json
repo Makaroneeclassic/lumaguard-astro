@@ -63,6 +63,16 @@
     "theme": "blue"
   },
   {
+    "slug": "quantum",
+    "dbName": "Quantum",
+    "displayName": "Quantum Series",
+    "category": "architectural",
+    "tag": "NANO QUANTUM",
+    "subtitle": "เทคโนโลยี Nano Quantum กันรังสี UV และอินฟราเรด 99% ทุกระดับความเข้ม มีตั้งแต่ใสสว่าง VLT 65% จนถึงเข้มสุด VLT 5%",
+    "description": "ฟิล์มกรองแสงอาคารเทคโนโลยี Nano Quantum กันรังสี UV 99% และกันรังสีอินฟราเรดช่วง 900-1700 นาโนเมตรได้ 99% ทุกระดับความเข้ม ค่ากันความร้อนรวม (TSER) สูงสุด 90% ความหนา 2 มิล เลือกได้ 4 ระดับแสงผ่าน ตั้งแต่กระจกใสสว่างไปจนถึงเข้มเพื่อความเป็นส่วนตัว",
+    "theme": "cyan"
+  },
+  {
     "slug": "vanguard",
     "dbName": "Vanguard",
     "displayName": "Vanguard Series",

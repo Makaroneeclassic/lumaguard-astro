@@ -106,6 +106,9 @@ const productSchema = {
  * เข้ามาใช้เทมเพลตหน้าเดียวกัน ข้อความชุดนั้นจะไปโผล่บนหน้าฟิล์มรถทั้งที่
  * ไม่เกี่ยวอะไรกับรถเลย
  */
+const uvRatings = products.map((p) => parseFloat(p.uvr)).filter(Number.isFinite);
+const uvHeading = uvRatings.length ? `ป้องกันรังสี UV ${Math.max(...uvRatings)}%` : 'ป้องกันรังสี UV';
+
 const FEATURES_BY_CATEGORY = {
   architectural: [
     {
@@ -113,7 +116,7 @@ const FEATURES_BY_CATEGORY = {
       body: 'สกัดกั้นอินฟราเรดและความร้อนรังสีโซลาร์อย่างเต็มเปี่ยม ช่วยลดอุณหภูมิผิวสัมผัสกระจกภายในอาคารและประหยัดพลังงานแอร์ได้อย่างชัดเจน',
     },
     {
-      heading: 'ป้องกันรังสี UV 99.9%',
+      heading: uvHeading,
       body: 'ปกป้องดูแลครอบครัวของคุณจากโรคผิวหนัง และยับยั้งการซีดจางเสียสภาพของชิ้นงานศิลปะ ตลอดจนเฟอร์นิเจอร์ไม้ราคาแพงในบ้าน',
     },
     {
@@ -151,7 +154,20 @@ const FEATURES_BY_CATEGORY = {
   ],
 } as const;
 
-const FEATURES = FEATURES_BY_CATEGORY[series.category];
+/**
+ * สเปกของ Quantum ยังไม่ได้ระบุเรื่องสัญญาณ จึงใช้จุดขายจากสเปกจริงแทนข้อ
+ * "สัญญาณผ่าน 100%" ถ้ายืนยันกับผู้ผลิตแล้วค่อยลบเงื่อนไขนี้ออก
+ */
+const FEATURES =
+  series.dbName === 'Quantum'
+    ? [
+        ...FEATURES_BY_CATEGORY.architectural.slice(0, 2),
+        {
+          heading: 'เลือกได้ 4 ระดับแสงผ่าน',
+          body: 'ตั้งแต่ VLT 65% ที่ห้องยังสว่าง ไปจนถึง VLT 5% ที่เข้มเป็นส่วนตัว ทุกรุ่นกันรังสีอินฟราเรดได้ 99% และหนา 2 มิล (50 ไมครอน) เท่ากัน',
+        },
+      ]
+    : FEATURES_BY_CATEGORY[series.category];
 
 /** เครื่องประเมินราคาคิดจากพื้นที่กระจกเป็นตารางฟุต จึงใช้ได้กับหมวดอาคารเท่านั้น */
 const showEstimator = series.category === 'architectural';
