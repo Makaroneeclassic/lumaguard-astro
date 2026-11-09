@@ -347,7 +347,7 @@
   {
     "id": "q1",
     "name": "Qi8-70",
-    "series": "Photon",
+    "series": "Quantum",
     "technology": "Nano Quantum Film",
     "vlt": "65%",
     "uvr": "99%",
@@ -362,7 +362,7 @@
   {
     "id": "q2",
     "name": "Qi8-50",
-    "series": "Photon",
+    "series": "Quantum",
     "technology": "Nano Quantum Film",
     "vlt": "45%",
     "uvr": "99%",
@@ -377,7 +377,7 @@
   {
     "id": "q3",
     "name": "Qi8-15",
-    "series": "Photon",
+    "series": "Quantum",
     "technology": "Nano Quantum Film",
     "vlt": "15%",
     "uvr": "99%",
@@ -392,7 +392,7 @@
   {
     "id": "q4",
     "name": "Qi8-05",
-    "series": "Photon",
+    "series": "Quantum",
     "technology": "Nano Quantum Film",
     "vlt": "5%",
     "uvr": "99%",

@@ -155,11 +155,11 @@ const FEATURES_BY_CATEGORY = {
 } as const;
 
 /**
- * สเปกของ Photon ยังไม่ได้ระบุเรื่องสัญญาณ จึงใช้จุดขายจากสเปกจริงแทนข้อ
+ * สเปกของ Quantum ยังไม่ได้ระบุเรื่องสัญญาณ จึงใช้จุดขายจากสเปกจริงแทนข้อ
  * "สัญญาณผ่าน 100%" ถ้ายืนยันกับผู้ผลิตแล้วค่อยลบเงื่อนไขนี้ออก
  */
 const FEATURES =
-  series.dbName === 'Photon'
+  series.dbName === 'Quantum'
     ? [
         ...FEATURES_BY_CATEGORY.architectural.slice(0, 2),
         {

@@ -63,9 +63,9 @@
     "theme": "blue"
   },
   {
-    "slug": "photon",
-    "dbName": "Photon",
-    "displayName": "Photon Series",
+    "slug": "quantum",
+    "dbName": "Quantum",
+    "displayName": "Quantum Series",
     "category": "architectural",
     "tag": "NANO QUANTUM",
     "subtitle": "เทคโนโลยี Nano Quantum กันรังสี UV และอินฟราเรด 99% ทุกระดับความเข้ม มีตั้งแต่ใสสว่าง VLT 65% จนถึงเข้มสุด VLT 5%",

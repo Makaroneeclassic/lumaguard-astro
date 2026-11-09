@@ -25,7 +25,7 @@ const FEATURED = [
   { series: "Shield", blurb: "นาโนเซรามิกระดับพรีเมียม ป้องกันรังสีความร้อนสูง", badge: null },
   { series: "Apex", blurb: "สปัตเตอร์เคลือบโลหะมีค่า สะท้อนความร้อนขีดสุด", badge: "รุ่นยอดนิยม" },
   { series: "Guardian", blurb: "เซรามิกเกรดพิเศษ สว่างเคลียร์ใส กัน UV 100%", badge: null },
-  { series: "Photon", blurb: "นาโนควอนตัม กันรังสีอินฟราเรด 99% ลดความร้อนรวมสูงสุด 90%", badge: null },
+  { series: "Quantum", blurb: "นาโนควอนตัม กันรังสีอินฟราเรด 99% ลดความร้อนรวมสูงสุด 90%", badge: null },
 ] as const;
 
 /**

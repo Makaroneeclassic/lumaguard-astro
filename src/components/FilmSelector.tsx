@@ -80,8 +80,8 @@ export default function FilmSelector() {
     // Logic ง่ายๆ ในการเลือกฟิล์มที่ดีที่สุดให้ลูกค้า
     if (q2 === "privacy" && q3 === "west-south") {
       film = {
-        name: "Photon Quantum 05",
-        series: "Photon Series",
+        name: "Nano Quantum 05",
+        series: "Quantum Series",
         vlt: "5%",
         irr: "99%",
         uvr: "99%",
@@ -118,8 +118,8 @@ export default function FilmSelector() {
       // เน้นกันความร้อนทั่วไป หรือรับแดดทิศตะวันออก
       if (q3 === "east-north") {
         film = {
-          name: "Photon Quantum 70",
-          series: "Photon Series",
+          name: "Nano Quantum 70",
+          series: "Quantum Series",
           vlt: "65%",
           irr: "99%",
           uvr: "99%",
@@ -131,8 +131,8 @@ export default function FilmSelector() {
       } else if (q3 === "west-south") {
         // แดดบ่ายจัด เน้นลดความร้อน ใช้รุ่นเข้มที่ TSER สูง
         film = {
-          name: "Photon Quantum 15",
-          series: "Photon Series",
+          name: "Nano Quantum 15",
+          series: "Quantum Series",
           vlt: "15%",
           irr: "99%",
           uvr: "99%",
