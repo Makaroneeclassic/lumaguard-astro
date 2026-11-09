@@ -145,6 +145,8 @@ export default function ProductMatrix({ products = [], lockCategory }: ProductMa
         return "bg-amber-50 text-amber-800 border-amber-200";
       case "Guardian":
         return "bg-accent-50 text-accent-700 border-accent-200";
+      case "Photon":
+        return "bg-cyan-50 text-cyan-700 border-cyan-200";
       case "Vanguard":
         return "bg-neutral-100 text-neutral-700 border-neutral-300";
       case "Metallique":

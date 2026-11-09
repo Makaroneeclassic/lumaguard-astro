@@ -18,13 +18,14 @@ interface PriceEstimatorProps {
 /**
  * ซีรีส์ที่นำมาเทียบให้ดู เรียงจากราคาต่ำไปสูง
  *
- * เลือกสามระดับที่ต่างกันชัดเจนเพื่อให้เห็นช่วงราคา ไม่ใช่ทั้งหกซีรีส์
+ * เลือกสี่ระดับที่ต่างกันชัดเจนเพื่อให้เห็นช่วงราคา ไม่ใช่ทุกซีรีส์
  * ซึ่งจะทำให้ตัดสินใจยากขึ้น คำบรรยายอ้างอิงจากคุณสมบัติจริงใน series.ts
  */
 const FEATURED = [
   { series: "Shield", blurb: "นาโนเซรามิกระดับพรีเมียม ป้องกันรังสีความร้อนสูง", badge: null },
   { series: "Apex", blurb: "สปัตเตอร์เคลือบโลหะมีค่า สะท้อนความร้อนขีดสุด", badge: "รุ่นยอดนิยม" },
   { series: "Guardian", blurb: "เซรามิกเกรดพิเศษ สว่างเคลียร์ใส กัน UV 100%", badge: null },
+  { series: "Photon", blurb: "นาโนควอนตัม กันรังสีอินฟราเรด 99% ลดความร้อนรวมสูงสุด 90%", badge: null },
 ] as const;
 
 /**
@@ -160,7 +161,7 @@ export default function PriceEstimator({ rates }: PriceEstimatorProps) {
       </div>
 
       {/* การ์ดเปรียบเทียบรายซีรีส์ */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {FEATURED.map(({ series, blurb, badge }) => {
           const rate = rateOf(series);
           return (
