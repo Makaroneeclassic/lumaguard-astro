@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
@@ -93,18 +93,19 @@ export default defineConfig({
     '/services/': '/home-film/',
   },
 
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-
-    /**
-     * /admin/blog ให้ AI เขียนบทความยาวซึ่งใช้เวลาได้ถึง 2-3 นาที
-     * ค่า default ของ Vercel ฆ่า function ก่อนเขียนเสร็จ ทำให้กด Generate
-     * แล้วได้ error ทั้งที่โมเดลกำลังทำงานปกติ
-     */
-    maxDuration: 300,
-  }),
+  /**
+   * รันบน VPS ด้วย Dokploy (Node.js เซิร์ฟเวอร์ตัวเดียว) แทน Vercel
+   *
+   * standalone = มีเซิร์ฟเวอร์ HTTP ในตัว เสิร์ฟทั้งไฟล์ static ใน dist/client
+   * และหน้าที่ต้องรันบนเซิร์ฟเวอร์ (/admin, /api) — สั่งรันด้วย `npm start`
+   *
+   * ไม่มีเพดานเวลาแบบ serverless แล้ว /admin/blog ที่ให้ AI เขียนบทความนาน
+   * 2-3 นาทีจึงไม่ถูกตัดกลางทาง (เดิมต้องตั้ง maxDuration ให้ Vercel)
+   *
+   * security header (CSP ฯลฯ) ตั้งที่ Traefik ใน Dokploy แทน
+   * scripts/add-security-headers.mjs ซึ่งเขียนลงไฟล์ของ Vercel เท่านั้น
+   */
+  adapter: node({ mode: 'standalone' }),
 
   // ต้องตรงกับโดเมนจริง มิฉะนั้น canonical/OG/sitemap จะชี้ไปโดเมนอื่น
   // ซึ่งบอก Google ว่าเนื้อหาตัวจริงอยู่ที่อื่นและทำให้เว็บหลุด index

@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "astro dev",
-    "build": "astro build && node scripts/add-security-headers.mjs && pagefind --site .vercel/output/static",
+    "build": "astro build && pagefind --site dist/client",
     "preview": "astro preview",
     "astro": "astro",
     "db:push": "prisma db push",
@@ -16,13 +16,14 @@
     "blog:sync": "tsx scripts/blog-sync.mts",
     "indexnow": "tsx scripts/indexnow.mts",
     "notify:test": "tsx scripts/notify-test.mts",
-    "products:sync": "tsx scripts/products-sync.mts"
+    "products:sync": "tsx scripts/products-sync.mts",
+    "start": "HOST=0.0.0.0 PORT=${PORT:-4321} node ./dist/server/entry.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
+    "@astrojs/node": "^11.1.14",
     "@astrojs/react": "^6.0.2",
     "@astrojs/sitemap": "^3.7.3",
-    "@astrojs/vercel": "^11.0.5",
     "@prisma/adapter-mariadb": "^7.9.1",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
