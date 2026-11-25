@@ -36,7 +36,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self'",
-  "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com",
+  "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com https://analytics.google.com https://www.google.com https://stats.g.doubleclick.net",
   "frame-src 'none'",
   "object-src 'none'",
   "base-uri 'self'",

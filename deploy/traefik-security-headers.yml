@@ -7,7 +7,7 @@ http:
           x-frame-options: "SAMEORIGIN"
           referrer-policy: "strict-origin-when-cross-origin"
           permissions-policy: "camera=(), microphone=(), geolocation=(), payment=()"
-          content-security-policy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+          content-security-policy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com https://analytics.google.com https://www.google.com https://stats.g.doubleclick.net; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
     # www.lumaguardthailand.com -> lumaguardthailand.com (เหมือนที่ Vercel ทำ, ถาวร)
     lumaguard-www-redirect:
       redirectRegex:
