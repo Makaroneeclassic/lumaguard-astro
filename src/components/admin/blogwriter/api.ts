@@ -58,7 +58,7 @@ export async function callOpenRouter(params: {
   messages: { role: 'system' | 'user'; content: string }[];
   maxTokens?: number;
 }): Promise<{ content: string; finishReason?: string }> {
-  const res = await fetch('/api/admin/blogwriter/openrouter', {
+  const res = await fetch('/api/admin/blogwriter/openrouter/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
@@ -71,19 +71,19 @@ export async function callOpenRouter(params: {
 }
 
 export async function fetchActiveModels(): Promise<string[]> {
-  const res = await fetch('/api/admin/blogwriter/models');
+  const res = await fetch('/api/admin/blogwriter/models/');
   const data = await parseJsonResponse(res);
   return data.activeModelIds ?? [];
 }
 
 export async function fetchTopicalMap(): Promise<TopicalMapRow[]> {
-  const res = await fetch('/api/admin/blogwriter/topical-map');
+  const res = await fetch('/api/admin/blogwriter/topical-map/');
   const data = await parseJsonResponse(res);
   return data.rows ?? [];
 }
 
 export async function fetchInternalLinks(): Promise<InternalLink[]> {
-  const res = await fetch('/api/admin/blogwriter/internal-links');
+  const res = await fetch('/api/admin/blogwriter/internal-links/');
   const data = await parseJsonResponse(res);
   return data.links ?? [];
 }
@@ -117,18 +117,18 @@ export interface EditablePost {
 }
 
 export async function fetchPostList(): Promise<{ slug: string; title: string; draft: boolean }[]> {
-  const res = await fetch('/api/admin/blogwriter/posts');
+  const res = await fetch('/api/admin/blogwriter/posts/');
   const data = await parseJsonResponse(res);
   return data.posts ?? [];
 }
 
 export async function fetchPost(slug: string): Promise<EditablePost> {
-  const res = await fetch(`/api/admin/blogwriter/posts?slug=${encodeURIComponent(slug)}`);
+  const res = await fetch(`/api/admin/blogwriter/posts/?slug=${encodeURIComponent(slug)}`);
   return (await parseJsonResponse(res)) as EditablePost;
 }
 
 export async function publishPost(payload: PublishRequest): Promise<PublishResult> {
-  const res = await fetch('/api/admin/blogwriter/publish', {
+  const res = await fetch('/api/admin/blogwriter/publish/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

@@ -21,7 +21,7 @@ export const POST: APIRoute = async (context) => {
     console.error("[auth] เข้าสู่ระบบล้มเหลว:", message);
 
     const code = message.includes("AUTH_SECRET") ? "config" : "server";
-    return context.redirect(`/admin/login?error=${code}`, 303);
+    return context.redirect(`/admin/login/?error=${code}`, 303);
   }
 };
 
@@ -31,12 +31,12 @@ const handleLogin: APIRoute = async ({ request, cookies, redirect }) => {
   const password = String(form.get("password") ?? "");
 
   if (!email || !password) {
-    return redirect("/admin/login?error=missing", 303);
+    return redirect("/admin/login/?error=missing", 303);
   }
 
   const { success } = await checkRateLimit(request, "admin");
   if (!success) {
-    return redirect("/admin/login?error=ratelimit", 303);
+    return redirect("/admin/login/?error=ratelimit", 303);
   }
 
   let user: { id: string; email: string; password: string } | null = null;
@@ -47,21 +47,21 @@ const handleLogin: APIRoute = async ({ request, cookies, redirect }) => {
     });
   } catch (e) {
     console.error("[auth] database lookup failed");
-    return redirect("/admin/login?error=server", 303);
+    return redirect("/admin/login/?error=server", 303);
   }
 
   if (!user) {
     await bcrypt.compare(password, DUMMY_HASH);
-    return redirect("/admin/login?error=invalid", 303);
+    return redirect("/admin/login/?error=invalid", 303);
   }
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
-    return redirect("/admin/login?error=invalid", 303);
+    return redirect("/admin/login/?error=invalid", 303);
   }
 
   const token = await createSessionToken({ id: user.id, email: user.email });
   cookies.set(sessionCookie.name, token, sessionCookie.options);
 
-  return redirect("/admin", 303);
+  return redirect("/admin/", 303);
 };

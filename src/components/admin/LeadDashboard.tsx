@@ -52,7 +52,7 @@ export default function LeadDashboard({ initialLeads }: LeadDashboardProps) {
     if (updatingId) return;
     setUpdatingId(id);
     try {
-      const res = await fetch(`/api/leads/${id}`, {
+      const res = await fetch(`/api/leads/${id}/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

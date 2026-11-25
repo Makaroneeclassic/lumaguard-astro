@@ -68,7 +68,7 @@ export async function uploadImage(
   kind: 'hero' | 'body',
 ): Promise<UploadedImage> {
   const prepared = await prepareImage(file);
-  const res = await fetch('/api/admin/blogwriter/upload-image', {
+  const res = await fetch('/api/admin/blogwriter/upload-image/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

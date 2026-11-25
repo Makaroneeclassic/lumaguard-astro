@@ -106,7 +106,7 @@ export default function LeadForm({ tone = "default", variant = "building" }: Lea
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/leads", {
+      const res = await fetch("/api/leads/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

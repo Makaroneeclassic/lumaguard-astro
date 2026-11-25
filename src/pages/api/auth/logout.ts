@@ -5,5 +5,5 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ cookies, redirect }) => {
   cookies.delete(sessionCookie.name, { path: "/" });
-  return redirect("/admin/login", 303);
+  return redirect("/admin/login/", 303);
 };
